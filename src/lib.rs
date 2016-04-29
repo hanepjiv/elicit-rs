@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/08
-// @date 2016/03/21
+// @date 2016/04/29
 
 // The MIT License (MIT)
 //
@@ -84,6 +84,9 @@
 //! ```
 
 /* ////////////////////////////////////////////////////////////////////////// */
+/* attribute  =============================================================== */
+#![warn(missing_docs)]
+/* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// elicit_define!
 #[macro_export]
@@ -112,15 +115,15 @@ macro_rules! elicit_define {
             /* ============================================================== */
             /// enum Error
             #[derive( Debug, Clone, )]
-            pub enum ElicitError< F > {
-                /// PoisonedRead(Elicit),
+            pub enum ElicitError< E > {
+                /// PoisonedRead
                 PoisonedRead(Elicit),
-                /// PoisonedWrite(Elicit),
+                /// PoisonedWrite
                 PoisonedWrite(Elicit),
-                /// WouldBlock,
+                /// WouldBlock
                 WouldBlock,
-                /// Function(F),
-                Function(F),
+                /// Function
+                Function(E),
             }
             /* ////////////////////////////////////////////////////////////// */
             /* ============================================================== */
@@ -163,9 +166,10 @@ macro_rules! elicit_define {
                 fn elicit_from_self(&self) -> Option< Elicit > {
                     match self._weak {
                         None            => None,
-                        Some(ref x)     =>
+                        Some(ref x)     => {
                             Some(Elicit(x.upgrade().
                                         expect("elicit_from_self")))
+                        }
                     }
                 }
                 /* ---------------------------------------------------------- */
@@ -235,7 +239,7 @@ macro_rules! elicit_define {
                     match self.read() {
                         Ok(ref x0) =>
                             f(& *(x0.deref().deref())).map_err(
-                                |e| -> ElicitError<E> {
+                                |e| -> ElicitError< E > {
                                     ElicitError::Function(e)
                                 }),
                         Err(_) => Err(ElicitError::PoisonedRead(self.clone())),
