@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/08
-// @date 2016/04/29
+// @date 2016/05/02
 
 // The MIT License (MIT)
 //
@@ -153,7 +153,6 @@ macro_rules! elicit_define {
             impl EnableElicitFromSelfField {
                 /* ---------------------------------------------------------- */
                 /// new
-                #[inline(always)]
                 pub fn new() -> Self { EnableElicitFromSelfField {
                     _weak:  None,
                 } }
@@ -162,7 +161,6 @@ macro_rules! elicit_define {
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
                 /* ========================================================== */
                 /// elicit_from_self
-                #[inline(always)]
                 fn elicit_from_self(&self) -> Option< Elicit > {
                     match self._weak {
                         None            => None,
@@ -174,7 +172,6 @@ macro_rules! elicit_define {
                 }
                 /* ---------------------------------------------------------- */
                 /// _weak_assign
-                #[inline(always)]
                 fn _weak_assign(&mut self,
                                 weak: Weak< RwLock< Box< $base > > >) -> () {
                     self._weak = Some(weak)
@@ -185,7 +182,6 @@ macro_rules! elicit_define {
             impl Elicit {
                 /* ========================================================== */
                 /// new
-                #[inline(always)]
                 pub fn new< T >(val: T) -> Self
                     where T: Any + $base,
                           $base: Debug + EnableElicitFromSelf, {
@@ -197,7 +193,6 @@ macro_rules! elicit_define {
                 }
                 /* ========================================================== */
                 /// read
-                #[inline(always)]
                     pub fn read(&self) ->
                     LockResult< RwLockReadGuard< Box< $base > > >
                     where $base: Debug + EnableElicitFromSelf, {
@@ -206,7 +201,6 @@ macro_rules! elicit_define {
                     }
                 /* ========================================================== */
                 /// try_read
-                #[inline(always)]
                     pub fn try_read(&self) ->
                     TryLockResult< RwLockReadGuard< Box< $base > > >
                     where $base: Debug + EnableElicitFromSelf, {
@@ -215,7 +209,6 @@ macro_rules! elicit_define {
                     }
                 /* ========================================================== */
                 /// write
-                #[inline(always)]
                     pub fn write(&self) ->
                     LockResult< RwLockWriteGuard< Box< $base > > > {
                         let &Elicit(ref inner) = self;
@@ -223,7 +216,6 @@ macro_rules! elicit_define {
                     }
                 /* ========================================================== */
                 /// try_write
-                #[inline(always)]
                 pub fn try_write(&self) ->
                     TryLockResult< RwLockWriteGuard< Box< $base > > >
                     where $base: Debug + EnableElicitFromSelf, {
@@ -311,12 +303,10 @@ macro_rules! enable_elicit_from_self_impl_inner {
     /* ====================================================================== */
     ($base:ident, $elicit:ident)                => {  // empty
         /* ------------------------------------------------------------------ */
-        #[inline(always)]
         fn elicit_from_self(&self) -> Option< $elicit > {
             None
         }
         /* ------------------------------------------------------------------ */
-        #[inline(always)]
         fn _weak_assign(&mut self,
                         _: ::std::sync::Weak< ::std::sync::RwLock<
                         Box< $base > > >) -> () {
@@ -325,12 +315,10 @@ macro_rules! enable_elicit_from_self_impl_inner {
     /* ====================================================================== */
     ($base:ident, $elicit:ident, $field:ident)  => {  // delegate to field
         /* ------------------------------------------------------------------ */
-        #[inline(always)]
         fn elicit_from_self(&self) -> Option< $elicit > {
             self.$field.elicit_from_self()
         }
         /* ------------------------------------------------------------------ */
-        #[inline(always)]
         fn _weak_assign(&mut self,
                         weak: ::std::sync::Weak< ::std::sync::RwLock<
                         Box< $base > > >) -> () {

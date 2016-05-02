@@ -1,6 +1,6 @@
 [package]
-name = "elicit"
-version = "0.1.0"
-authors = ["hanepjiv <hanepjiv@gmail.com>"]
+name            = "elicit"
+version         = "0.1.1"
+authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 
 [dependencies]
