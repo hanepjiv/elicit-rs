@@ -2,5 +2,6 @@
 name            = "elicit"
 version         = "0.1.1"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
+license         = "MIT"
 
 [dependencies]
