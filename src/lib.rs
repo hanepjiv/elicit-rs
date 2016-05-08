@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/08
-// @date 2016/05/04
+// @date 2016/05/08
 
 // The MIT License (MIT)
 //
@@ -74,7 +74,7 @@
 //!
 //! fn main() {
 //!     let your0 = YourTraitElicit::new(YourStruct{
-//!         _eefsf: YourTraitEnableElicitFromSelfField::new(),
+//!         _eefsf: YourTraitEnableElicitFromSelfField::default(),
 //!         your_field: 0i32,
 //!     });
 //!     let your1 = YourTraitElicit::new(YourStructUnuseEnableElicitFromSelf{
@@ -101,11 +101,11 @@ macro_rules! elicit_define {
             use super::{ $base, };
             /* ============================================================== */
             use ::std::fmt::{ Debug, };
-            use ::std::any::{ Any };
+            use ::std::any::{ Any, };
             use ::std::sync::{ Arc, Weak,
                                RwLock, LockResult, TryLockResult, TryLockError,
                                RwLockReadGuard, RwLockWriteGuard, };
-            use ::std::ops::{ Deref, DerefMut };
+            use ::std::ops::{ Deref, DerefMut, };
             /* ////////////////////////////////////////////////////////////// */
             /* ============================================================== */
             /// struct Elicit
@@ -150,10 +150,9 @@ macro_rules! elicit_define {
                 _weak:  Option< Weak< RwLock< Box< $base > > > >,
             }
             /* ============================================================== */
-            impl EnableElicitFromSelfField {
-                /* ---------------------------------------------------------- */
-                /// new
-                pub fn new() -> Self { EnableElicitFromSelfField {
+            impl Default for EnableElicitFromSelfField {
+                /* ========================================================== */
+                fn default() -> Self { EnableElicitFromSelfField {
                     _weak:  None,
                 } }
             }
@@ -367,7 +366,7 @@ mod tests {
         /* ================================================================== */
         /// new
         pub fn new(i: i32) -> Self { S0 {
-            _eefsf:     EnableElicitFromSelfFieldT0::new(),
+            _eefsf:     EnableElicitFromSelfFieldT0::default(),
             field:      i,
         } }
     }
