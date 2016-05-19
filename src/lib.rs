@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2016/05/11
+//  @date 2016/05/19
 
 //! # Examples
 //!
@@ -85,7 +85,6 @@ macro_rules! elicit_define {
             use ::std::sync::{ Arc, Weak,
                                RwLock, LockResult, TryLockResult, TryLockError,
                                RwLockReadGuard, RwLockWriteGuard, };
-            use ::std::ops::{ Deref, DerefMut, };
             /* ////////////////////////////////////////////////////////////// */
             /* ============================================================== */
             /// struct Elicit
@@ -161,8 +160,8 @@ macro_rules! elicit_define {
                 /* ========================================================== */
                 /// new
                 pub fn new< T >(val: T) -> Self
-                    where T: Any + $base,
-                          $base: Debug + EnableElicitFromSelf, {
+                    where T:            Any + $base,
+                          $base:        Debug + EnableElicitFromSelf, {
                     let arc =
                         Arc::new(RwLock::new(Box::new(val) as Box< $base >));
                     arc.write().expect("Elicit::new").
@@ -171,23 +170,23 @@ macro_rules! elicit_define {
                 }
                 /* ========================================================== */
                 /// read
-                    pub fn read(&self) ->
+                pub fn read(&self) ->
                     LockResult< RwLockReadGuard< Box< $base > > >
-                    where $base: Debug + EnableElicitFromSelf, {
-                        let &Elicit(ref inner) = self;
-                        inner.read()
-                    }
+                    where $base:        Debug + EnableElicitFromSelf, {
+                    let &Elicit(ref inner) = self;
+                    inner.read()
+                }
                 /* ========================================================== */
                 /// try_read
-                    pub fn try_read(&self) ->
+                pub fn try_read(&self) ->
                     TryLockResult< RwLockReadGuard< Box< $base > > >
-                    where $base: Debug + EnableElicitFromSelf, {
-                        let &Elicit(ref inner) = self;
-                        inner.try_read()
-                    }
+                    where $base:        Debug + EnableElicitFromSelf, {
+                    let &Elicit(ref inner) = self;
+                    inner.try_read()
+                }
                 /* ========================================================== */
                 /// write
-                    pub fn write(&self) ->
+                pub fn write(&self) ->
                     LockResult< RwLockWriteGuard< Box< $base > > > {
                         let &Elicit(ref inner) = self;
                         inner.write()
@@ -196,7 +195,7 @@ macro_rules! elicit_define {
                 /// try_write
                 pub fn try_write(&self) ->
                     TryLockResult< RwLockWriteGuard< Box< $base > > >
-                    where $base: Debug + EnableElicitFromSelf, {
+                    where $base:        Debug + EnableElicitFromSelf, {
                     let &Elicit(ref inner) = self;
                     inner.try_write()
                 }
@@ -204,30 +203,32 @@ macro_rules! elicit_define {
                 /// with
                 pub fn with< R, E, F, >(&self, f: F)
                                         -> ElicitResult< R, E >
-                    where F: Fn(&$base) -> Result< R, E >,
-                          $base: Debug + EnableElicitFromSelf, {
+                    where F:            Fn(&$base) -> Result< R, E >,
+                          $base:        Debug + EnableElicitFromSelf, {
                     match self.read() {
-                        Ok(ref x0) =>
-                            f(& *(x0.deref().deref())).map_err(
-                                |e| -> ElicitError< E > {
-                                    ElicitError::Function(e)
-                                }),
-                        Err(_) => Err(ElicitError::PoisonedRead(self.clone())),
+                        Ok(x)   => {
+                            f(x.as_ref()).map_err(|e| -> ElicitError< E > {
+                                ElicitError::Function(e)
+                            })
+                        },
+                        Err(_)  => {
+                            Err(ElicitError::PoisonedRead(self.clone()))
+                        },
                     }
                 }
                 /* ========================================================== */
                 /// try_with
                 pub fn try_with< R, E, F, >(&self, f: F)
                                             -> ElicitResult< R, E >
-                    where F: Fn(&$base) -> Result< R, E >,
-                          $base: Debug + EnableElicitFromSelf, {
+                    where F:            Fn(&$base) -> Result< R, E >,
+                          $base:        Debug + EnableElicitFromSelf, {
                     match self.try_read() {
-                        Ok(ref x0) =>
-                            f(& *(x0.deref().deref())).map_err(
-                                |e| -> ElicitError< E > {
-                                    ElicitError::Function(e)
-                                }),
-                        Err(e0) => match e0 {
+                        Ok(x)   => {
+                            f(x.as_ref()).map_err(|e| -> ElicitError< E > {
+                                ElicitError::Function(e)
+                            })
+                        },
+                        Err(e)  => match e {
                             TryLockError::Poisoned(_)   =>
                                 Err(ElicitError::PoisonedRead(self.clone())),
                             TryLockError::WouldBlock    =>
@@ -239,14 +240,15 @@ macro_rules! elicit_define {
                 /// with_mut
                 pub fn with_mut< R, E, F, >(&self, f: F)
                                             -> ElicitResult< R, E >
-                    where F: Fn(&mut $base) -> Result< R, E >,
-                          $base: Debug + EnableElicitFromSelf, {
+                    where F:            Fn(&mut $base) -> Result< R, E >,
+                          $base:        Debug + EnableElicitFromSelf, {
                     match self.write() {
-                        Ok(ref mut x0) =>
-                            f(&mut *(x0.deref_mut().deref_mut())).map_err(
+                        Ok(mut x)       => {
+                            f(&mut *(x.as_mut())).map_err(
                                 |e| -> ElicitError< E > {
                                     ElicitError::Function(e)
-                                }),
+                                })
+                        },
                         Err(_) => Err(ElicitError::PoisonedWrite(self.clone())),
                     }
                 }
@@ -254,15 +256,16 @@ macro_rules! elicit_define {
                 /// try_with_mut
                 pub fn try_with_mut< R, E, F, >(&self, f: F)
                                                 -> ElicitResult< R, E >
-                    where F: Fn(& mut $base) -> Result< R, E >,
-                          $base: Debug + EnableElicitFromSelf, {
+                    where F:            Fn(& mut $base) -> Result< R, E >,
+                          $base:        Debug + EnableElicitFromSelf, {
                     match self.try_write() {
-                        Ok(ref mut x0) =>
-                            f(&mut *(x0.deref_mut().deref_mut())).map_err(
+                        Ok(mut x)       => {
+                            f(&mut *(x.as_mut())).map_err(
                                 |e| -> ElicitError< E > {
                                     ElicitError::Function(e)
-                                }),
-                        Err(e0) => match e0 {
+                                })
+                        },
+                        Err(e)          => match e {
                             TryLockError::Poisoned(_)   =>
                                 Err(ElicitError::PoisonedWrite(self.clone())),
                             TryLockError::WouldBlock    =>
