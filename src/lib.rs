@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2016/05/19
+//  @date 2016/06/06
 
 //! # Examples
 //!
@@ -203,7 +203,7 @@ macro_rules! elicit_define {
                 /// with
                 pub fn with< R, E, F, >(&self, f: F)
                                         -> ElicitResult< R, E >
-                    where F:            Fn(&$base) -> Result< R, E >,
+                    where F:            FnOnce(&$base) -> Result< R, E >,
                           $base:        Debug + EnableElicitFromSelf, {
                     match self.read() {
                         Ok(x)   => {
@@ -220,7 +220,7 @@ macro_rules! elicit_define {
                 /// try_with
                 pub fn try_with< R, E, F, >(&self, f: F)
                                             -> ElicitResult< R, E >
-                    where F:            Fn(&$base) -> Result< R, E >,
+                    where F:            FnOnce(&$base) -> Result< R, E >,
                           $base:        Debug + EnableElicitFromSelf, {
                     match self.try_read() {
                         Ok(x)   => {
@@ -240,7 +240,7 @@ macro_rules! elicit_define {
                 /// with_mut
                 pub fn with_mut< R, E, F, >(&self, f: F)
                                             -> ElicitResult< R, E >
-                    where F:            Fn(&mut $base) -> Result< R, E >,
+                    where F:            FnOnce(&mut $base) -> Result< R, E >,
                           $base:        Debug + EnableElicitFromSelf, {
                     match self.write() {
                         Ok(mut x)       => {
@@ -256,7 +256,7 @@ macro_rules! elicit_define {
                 /// try_with_mut
                 pub fn try_with_mut< R, E, F, >(&self, f: F)
                                                 -> ElicitResult< R, E >
-                    where F:            Fn(& mut $base) -> Result< R, E >,
+                    where F:            FnOnce(& mut $base) -> Result< R, E >,
                           $base:        Debug + EnableElicitFromSelf, {
                     match self.try_write() {
                         Ok(mut x)       => {
