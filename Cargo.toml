@@ -1,5 +1,5 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
-# ==============================================================================
+# =============================================================================
 [package]
 name            = "elicit"
 version         = "0.4.0"
@@ -11,5 +11,5 @@ readme          = "README.md"
 documentation   = "https://github.com/hanepjiv/elicit-rs/wiki"
 homepage        = "https://github.com/hanepjiv/elicit-rs"
 repository      = "https://github.com/hanepjiv/elicit-rs.git"
-# ==============================================================================
+# =============================================================================
 [dependencies]
