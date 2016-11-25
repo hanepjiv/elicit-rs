@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/10/14
+//  @date 2016/11/26
 
 //! # Examples
 //!
@@ -65,9 +65,6 @@
 //! ```
 
 // ////////////////////////////////////////////////////////////////////////////
-// attribute  =================================================================
-#![deny(missing_docs, dead_code, unused_imports, unused_variables)]
-// ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// aelicit_define!
 #[macro_export]
@@ -79,10 +76,10 @@ macro_rules! aelicit_define {
             //! $modname
             // ////////////////////////////////////////////////////////////////
             // ================================================================
-            use super::{ $base, };
+            use super::$base;
             // ================================================================
-            use ::std::fmt::{ Debug, };
-            use ::std::any::{ Any, };
+            use ::std::fmt::Debug;
+            use ::std::any::Any;
             use ::std::sync::{ Arc, Weak,
                                RwLock, LockResult, TryLockResult, TryLockError,
                                RwLockReadGuard, RwLockWriteGuard, };
