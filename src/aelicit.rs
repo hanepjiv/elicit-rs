@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/11/26
+//  @date 2016/12/04
 
 //! # Examples
 //!
@@ -109,7 +109,7 @@ macro_rules! aelicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableAelicitFromSelf
-            pub trait EnableAelicitFromSelf: ::std::fmt::Debug {
+            pub trait EnableAelicitFromSelf: Debug {
                 // ============================================================
                 /// aelicit_from_self
                 fn aelicit_from_self(&self) -> Option< Aelicit >;

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/11/26
+//  @date 2016/12/04
 
 //! # Examples
 //!
@@ -101,7 +101,7 @@ macro_rules! elicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableElicitFromSelf
-            pub trait EnableElicitFromSelf: ::std::fmt::Debug {
+            pub trait EnableElicitFromSelf: Debug {
                 // ============================================================
                 /// elicit_from_self
                 fn elicit_from_self(&self) -> Option< Elicit >;
