@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/04
+//  @date 2016/12/22
 
 //! # Examples
 //!
@@ -121,17 +121,10 @@ macro_rules! aelicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct EnableAelicitFromSelfField
-            #[derive( Debug, Clone, )]
+            #[derive( Debug, Clone, Default, )]
             pub struct EnableAelicitFromSelfField {
                 /// Weak
                 _weak:  Option< Weak< RwLock< Box< $base > > > >,
-            }
-            // ================================================================
-            impl Default for EnableAelicitFromSelfField {
-                // ============================================================
-                fn default() -> Self { EnableAelicitFromSelfField {
-                    _weak:  None,
-                } }
             }
             // ================================================================
             impl EnableAelicitFromSelf for EnableAelicitFromSelfField {

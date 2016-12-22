@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/04
+//  @date 2016/12/22
 
 //! # Examples
 //!
@@ -113,17 +113,10 @@ macro_rules! elicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct EnableElicitFromSelfField
-            #[derive( Debug, Clone, )]
+            #[derive( Debug, Clone, Default, )]
             pub struct EnableElicitFromSelfField {
                 /// Weak
                 _weak:  Option< Weak< RefCell< Box< $base > > > >,
-            }
-            // ================================================================
-            impl Default for EnableElicitFromSelfField {
-                // ============================================================
-                fn default() -> Self { EnableElicitFromSelfField {
-                    _weak:  None,
-                } }
             }
             // ================================================================
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
