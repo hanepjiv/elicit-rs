@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/22
+//  @date 2016/12/27
 
 //! # Examples
 //!
@@ -77,7 +77,7 @@ macro_rules! elicit_define {
             // ================================================================
             use super::$base;
             // ================================================================
-            use ::std::fmt::Debug;
+            use ::std::fmt::{ Debug, Display, };
             use ::std::any::Any;
             use ::std::cell::RefCell;
             use ::std::rc::{ Rc, Weak, };
@@ -93,6 +93,27 @@ macro_rules! elicit_define {
             pub enum ElicitError< E > {
                 /// Function
                 Function(E),
+            }
+            // ================================================================
+            impl < E > Display for ElicitError< E >
+                where E:        Display,                {
+                // ============================================================
+                fn fmt(&self, f: &mut ::std::fmt::Formatter)
+                       -> ::std::fmt::Result { match *self {
+                    ElicitError::Function(ref e)        => e.fmt(f),
+                } }
+            }
+            // ================================================================
+            impl < E > ::std::error::Error for ElicitError< E >
+                where E:        ::std::error::Error,    {
+                // ============================================================
+                fn description(&self) -> &str { match *self {
+                    ElicitError::Function(ref e)        => e.description(),
+                } }
+                // ============================================================
+                fn cause(&self) -> Option<&::std::error::Error> { match *self {
+                    ElicitError::Function(ref e)        => Some(e),
+                } }
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================

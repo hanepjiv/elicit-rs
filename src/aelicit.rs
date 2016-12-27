@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/22
+//  @date 2016/12/27
 
 //! # Examples
 //!
@@ -78,7 +78,7 @@ macro_rules! aelicit_define {
             // ================================================================
             use super::$base;
             // ================================================================
-            use ::std::fmt::Debug;
+            use ::std::fmt::{ Debug, Display, };
             use ::std::any::Any;
             use ::std::sync::{ Arc, Weak,
                                RwLock, LockResult, TryLockResult, TryLockError,
@@ -101,6 +101,37 @@ macro_rules! aelicit_define {
                 WouldBlock,
                 /// Function
                 Function(E),
+            }
+            // ================================================================
+            impl < E > Display for AelicitError< E >
+                where AelicitError< E >:        Debug,
+                      E:                        Display,        {
+                // ============================================================
+                fn fmt(&self, f: &mut ::std::fmt::Formatter)
+                       -> ::std::fmt::Result { match *self {
+                    ref e@AelicitError::PoisonedRead(_) |
+                    ref e@AelicitError::PoisonedWrite(_)|
+                    ref e@AelicitError::WouldBlock      => write!(f,"{:?}",e),
+                    AelicitError::Function(ref e)       => e.fmt(f),
+                } }
+            }
+            // ================================================================
+            impl < E > ::std::error::Error for AelicitError< E >
+                where E:        ::std::error::Error,            {
+                // ============================================================
+                fn description(&self) -> &str { match *self {
+                    AelicitError::PoisonedRead(_)       => "PoisonedRead",
+                    AelicitError::PoisonedWrite(_)      => "PoisonedWrite",
+                    AelicitError::WouldBlock            => "WouldBlock",
+                    AelicitError::Function(ref e)       => e.description(),
+                } }
+                // ============================================================
+                fn cause(&self) -> Option<&::std::error::Error> { match *self {
+                    AelicitError::PoisonedRead(_)       |
+                    AelicitError::PoisonedWrite(_)      |
+                    AelicitError::WouldBlock            => None,
+                    AelicitError::Function(ref e)       => Some(e),
+                } }
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
