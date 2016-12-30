@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/27
+//  @date 2016/12/30
 
 //! # Examples
 //!
@@ -77,59 +77,57 @@ macro_rules! elicit_define {
             // ================================================================
             use super::$base;
             // ================================================================
-            use ::std::fmt::{ Debug, Display, };
             use ::std::any::Any;
             use ::std::cell::RefCell;
+            use ::std::error::Error as StdError;
+            use ::std::fmt::{ Debug, Display, };
             use ::std::rc::{ Rc, Weak, };
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct Elicit
             #[derive( Debug, Clone, )]
-            pub struct Elicit(Rc< RefCell< Box< $base > > >);
+            pub struct Elicit(Rc<RefCell<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
-            /// enum Error
-            #[derive( Debug, Clone, )]
-            pub enum ElicitError< E > {
+            /// enum ElicitError
+            #[derive( Debug, )]
+            pub enum ElicitError {
                 /// Function
-                Function(E),
+                Function(Box<StdError>),
             }
             // ================================================================
-            impl < E > Display for ElicitError< E >
-                where E:        Display,                {
+            impl Display for ElicitError {
                 // ============================================================
                 fn fmt(&self, f: &mut ::std::fmt::Formatter)
                        -> ::std::fmt::Result { match *self {
-                    ElicitError::Function(ref e)        => e.fmt(f),
+                    ElicitError::Function(ref e)        => Display::fmt(e, f),
                 } }
             }
             // ================================================================
-            impl < E > ::std::error::Error for ElicitError< E >
-                where E:        ::std::error::Error,    {
+            impl StdError for ElicitError {
                 // ============================================================
                 fn description(&self) -> &str { match *self {
                     ElicitError::Function(ref e)        => e.description(),
                 } }
                 // ============================================================
-                fn cause(&self) -> Option<&::std::error::Error> { match *self {
-                    ElicitError::Function(ref e)        => Some(e),
+                fn cause(&self) -> Option<&StdError> { match *self {
+                    ElicitError::Function(ref e)        => Some(e.as_ref()),
                 } }
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// type ElicitResult
-            pub type ElicitResult< R, E > = Result< R, ElicitError< E > >;
+            pub type ElicitResult<R>    = Result<R, Box<StdError>>;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableElicitFromSelf
             pub trait EnableElicitFromSelf: Debug {
                 // ============================================================
                 /// elicit_from_self
-                fn elicit_from_self(&self) -> Option< Elicit >;
+                fn elicit_from_self(&self) -> Option<Elicit>;
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self,
-                                weak: Weak< RefCell< Box< $base > > >) -> ();
+                fn _weak_assign(&mut self, weak: Weak<RefCell<Box<$base>>>);
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -137,25 +135,22 @@ macro_rules! elicit_define {
             #[derive( Debug, Clone, Default, )]
             pub struct EnableElicitFromSelfField {
                 /// Weak
-                _weak:  Option< Weak< RefCell< Box< $base > > > >,
+                _weak:  Option<Weak<RefCell<Box<$base>>>>,
             }
             // ================================================================
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
                 // ============================================================
                 /// elicit_from_self
-                fn elicit_from_self(&self) -> Option< Elicit > {
-                    match self._weak {
-                        None            => None,
-                        Some(ref x)     => {
-                            Some(Elicit(x.upgrade().
-                                        expect("elicit_from_self")))
-                        }
+                fn elicit_from_self(&self) -> Option<Elicit> {
+                    if let Some(ref x) = self._weak {
+                        Some(Elicit(x.upgrade().expect("elicit_from_self")))
+                    } else {
+                        None
                     }
                 }
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self,
-                                weak: Weak< RefCell< Box< $base > > >) -> () {
+                fn _weak_assign(&mut self, weak: Weak<RefCell<Box<$base>>>) {
                     self._weak = Some(weak)
                 }
             }
@@ -164,7 +159,7 @@ macro_rules! elicit_define {
             impl Elicit {
                 // ============================================================
                 /// new
-                pub fn new< T >(val: T) -> Self
+                pub fn new<T>(val: T) -> Self
                     where T:            Any + $base,
                           $base:        Debug + EnableElicitFromSelf,   {
                     let rc =
@@ -174,26 +169,24 @@ macro_rules! elicit_define {
                 }
                 // ============================================================
                 /// with
-                pub fn with< R, E, F, >(&self, f: F)
-                                        -> ElicitResult< R, E >
-                    where F:            FnOnce(&$base) -> Result< R, E >,
+                pub fn with<R, F>(&self, f: F) -> ElicitResult<R>
+                    where F:            FnOnce(&$base) -> ElicitResult<R>,
                           $base:        Debug + EnableElicitFromSelf,   {
                     let &Elicit(ref inner) = self;
                     f(&(*(*(inner.as_ref().borrow())))).map_err(
-                        |e| -> ElicitError< E > {
-                            ElicitError::Function(e)
+                        |e| -> Box<StdError> {
+                            Box::new(ElicitError::Function(e))
                         })
                 }
                 // ============================================================
                 /// with_mut
-                pub fn with_mut< R, E, F, >(&self, f: F)
-                                            -> ElicitResult< R, E >
-                    where F:            FnOnce(&mut $base) -> Result< R, E >,
+                pub fn with_mut<R, F>(&self, f: F) -> ElicitResult<R>
+                    where F:            FnOnce(&mut $base) -> ElicitResult<R>,
                           $base:        Debug + EnableElicitFromSelf,   {
                     let &Elicit(ref inner) = self;
                     f(&mut(*(*(inner.as_ref().borrow_mut())))).map_err(
-                        |e| -> ElicitError< E > {
-                            ElicitError::Function(e)
+                        |e| -> Box<StdError> {
+                            Box::new(ElicitError::Function(e))
                         })
                 }
             }
@@ -207,25 +200,23 @@ macro_rules! enable_elicit_from_self_impl_inner {
     // ========================================================================
     ($base:ident, $elicit:ident)                => {  // empty
         // --------------------------------------------------------------------
-        fn elicit_from_self(&self) -> Option< $elicit > {
+        fn elicit_from_self(&self) -> Option<$elicit> {
             None
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>)
-                        -> () {
+                        _: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>) {
         }
     };
     // ========================================================================
     ($base:ident, $elicit:ident, $field:ident)  => {  // delegate to field
         // --------------------------------------------------------------------
-        fn elicit_from_self(&self) -> Option< $elicit > {
+        fn elicit_from_self(&self) -> Option<$elicit> {
             self.$field.elicit_from_self()
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>)
-                        -> () {
+                        w: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>) {
             self.$field._weak_assign(w)
         }
     };
@@ -238,7 +229,7 @@ mod tests {
     // ========================================================================
     elicit_define!(elicit_t0, T0);
     // use self::elicit_t0::ElicitError               as ElicitErrorT0;
-    // use self::elicit_t0::ElicitResult              as ElicitResultT0;
+    use self::elicit_t0::ElicitResult              as ElicitResultT0;
     use self::elicit_t0::Elicit                    as ElicitT0;
     use self::elicit_t0::EnableElicitFromSelf      as EnableElicitFromSelfT0;
     use self::elicit_t0::EnableElicitFromSelfField
@@ -314,10 +305,10 @@ mod tests {
             ElicitT0::new(S1::new(0)),
         ];
         for v in vs.iter() {
-            assert!(v.with(|x: &T0| -> Result<i32, i32> {
+            assert!(v.with(|x: &T0| -> ElicitResultT0<i32> {
                 Ok(x.get())
             }).unwrap() ==  0, "Elicit::with");
-            assert!(v.with_mut(|x: &mut T0| -> Result<i32, i32> {
+            assert!(v.with_mut(|x: &mut T0| -> ElicitResultT0<i32> {
                 x.set(10);
                 Ok(x.get())
             }).unwrap() == 10, "Elicit::with_mut");
