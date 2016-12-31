@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2016/11/26
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -16,6 +16,8 @@
 #![warn(unused_qualifications, unused_extern_crates, warnings)]
 #![allow(box_pointers, trivial_casts, trivial_numeric_casts, unsafe_code)]
 // use  =======================================================================
+pub use self::error::{ Result, Error, };
 // mod  =======================================================================
-#[macro_use] mod elicit;
-#[macro_use] mod aelicit;
+#[macro_use] pub mod error;
+#[macro_use] pub mod elicit;
+#[macro_use] pub mod aelicit;

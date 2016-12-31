@@ -1,0 +1,60 @@
+// -*- mode:rust; coding:utf-8-unix; -*-
+
+//! error.rs
+
+//  Copyright 2016 hanepjiv
+//  @author hanepjiv <hanepjiv@gmail.com>
+//  @copyright The MIT License (MIT) / Apache License Version 2.0
+//  @since 2016/12/31
+//  @date 2016/12/31
+
+// ////////////////////////////////////////////////////////////////////////////
+// use  =======================================================================
+use ::std::error::Error as StdError;
+use ::std::fmt::Display;
+// ////////////////////////////////////////////////////////////////
+// ================================================================
+/// type AelicitResult
+pub type AelicitResult<R>    = Result<R, Box<StdError>>;
+// ////////////////////////////////////////////////////////////////
+// ================================================================
+/// enum AelicitError
+#[derive( Debug, )]
+pub enum AelicitError {
+    /// PoisonedRead
+    PoisonedRead(Aelicit),
+    /// PoisonedWrite
+    PoisonedWrite(Aelicit),
+    /// WouldBlock
+    WouldBlock,
+    /// Function
+    Function(Box<StdError>),
+}
+// ================================================================
+impl Display for AelicitError {
+    // ============================================================
+    fn fmt(&self, f: &mut ::std::fmt::Formatter)
+           -> ::std::fmt::Result { match *self {
+        ref e@AelicitError::PoisonedRead(_) |
+        ref e@AelicitError::PoisonedWrite(_)|
+        ref e@AelicitError::WouldBlock      => write!(f,"{:?}",e),
+        AelicitError::Function(ref e)       => Display::fmt(e, f),
+    } }
+}
+// ================================================================
+impl StdError for AelicitError {
+    // ============================================================
+    fn description(&self) -> &str { match *self {
+        AelicitError::PoisonedRead(_)       => "PoisonedRead",
+        AelicitError::PoisonedWrite(_)      => "PoisonedWrite",
+        AelicitError::WouldBlock            => "WouldBlock",
+        AelicitError::Function(ref e)       => e.description(),
+    } }
+    // ============================================================
+    fn cause(&self) -> Option<&StdError> { match *self {
+        AelicitError::PoisonedRead(_)       |
+        AelicitError::PoisonedWrite(_)      |
+        AelicitError::WouldBlock            => None,
+        AelicitError::Function(ref e)       => Some(e.as_ref()),
+    } }
+}

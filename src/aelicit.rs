@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/30
+//  @date 2016/12/31
 
 //! # Examples
 //!
@@ -14,10 +14,6 @@
 //! #[macro_use] extern crate elicit;
 //!
 //! aelicit_define!(aelicit_my_trait, MyTrait);
-//! use self::aelicit_my_trait::AelicitError
-//!     as MyTraitAelicitError;
-//! use self::aelicit_my_trait::AelicitResult
-//!     as MyTraitAelicitResult;
 //! use self::aelicit_my_trait::Aelicit
 //!     as MyTraitAelicit;
 //! use self::aelicit_my_trait::EnableAelicitFromSelf
@@ -80,61 +76,16 @@ macro_rules! aelicit_define {
             // ================================================================
             use ::std::any::Any;
             use ::std::error::Error as StdError;
-            use ::std::fmt::{ Debug, Display, };
+            use ::std::fmt::Debug;
             use ::std::sync::{ Arc, Weak,
                                RwLock, LockResult, TryLockResult, TryLockError,
                                RwLockReadGuard, RwLockWriteGuard, };
+            use $crate::{ Result, Error };
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct Aelicit
             #[derive( Debug, Clone, )]
             pub struct Aelicit(Arc<RwLock<Box<$base>>>);
-            // ////////////////////////////////////////////////////////////////
-            // ================================================================
-            /// enum AelicitError
-            #[derive( Debug, )]
-            pub enum AelicitError {
-                /// PoisonedRead
-                PoisonedRead(Aelicit),
-                /// PoisonedWrite
-                PoisonedWrite(Aelicit),
-                /// WouldBlock
-                WouldBlock,
-                /// Function
-                Function(Box<StdError>),
-            }
-            // ================================================================
-            impl Display for AelicitError {
-                // ============================================================
-                fn fmt(&self, f: &mut ::std::fmt::Formatter)
-                       -> ::std::fmt::Result { match *self {
-                    ref e@AelicitError::PoisonedRead(_) |
-                    ref e@AelicitError::PoisonedWrite(_)|
-                    ref e@AelicitError::WouldBlock      => write!(f,"{:?}",e),
-                    AelicitError::Function(ref e)       => Display::fmt(e, f),
-                } }
-            }
-            // ================================================================
-            impl StdError for AelicitError {
-                // ============================================================
-                fn description(&self) -> &str { match *self {
-                    AelicitError::PoisonedRead(_)       => "PoisonedRead",
-                    AelicitError::PoisonedWrite(_)      => "PoisonedWrite",
-                    AelicitError::WouldBlock            => "WouldBlock",
-                    AelicitError::Function(ref e)       => e.description(),
-                } }
-                // ============================================================
-                fn cause(&self) -> Option<&StdError> { match *self {
-                    AelicitError::PoisonedRead(_)       |
-                    AelicitError::PoisonedWrite(_)      |
-                    AelicitError::WouldBlock            => None,
-                    AelicitError::Function(ref e)       => Some(e.as_ref()),
-                } }
-            }
-            // ////////////////////////////////////////////////////////////////
-            // ================================================================
-            /// type AelicitResult
-            pub type AelicitResult<R>    = Result<R, Box<StdError>>;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableAelicitFromSelf
@@ -218,69 +169,70 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// with
-                pub fn with<R, F>(&self, f: F) -> AelicitResult<R>
-                    where F:            FnOnce(&$base) -> AelicitResult<R>,
+                pub fn with<R, F>(&self, f: F) -> Result<R>
+                    where F:            FnOnce(&$base) -> Result<R>,
                           $base:        Debug + EnableAelicitFromSelf,  {
-                    if let Ok(x) = self.read() {
-                        f(x.as_ref()).map_err(|e| -> Box<StdError> {
-                            Box::new(AelicitError::Function(e))
-                        })
-                    } else {
-                        Err(Box::new(AelicitError::PoisonedRead(self.clone())))
+                    match self.read() {
+                        Err(_)  => Err(Box::new(Error::PoisonedRead)),
+                        Ok(x)   => {
+                            f(x.as_ref()).map_err(|e| -> Box<StdError> {
+                                Box::new(Error::Function(e))
+                            })
+                        },
                     }
                 }
                 // ============================================================
                 /// try_with
-                pub fn try_with<R, F>(&self, f: F) -> AelicitResult<R>
-                    where F:            FnOnce(&$base) -> AelicitResult<R>,
+                pub fn try_with<R, F>(&self, f: F) -> Result<R>
+                    where F:            FnOnce(&$base) -> Result<R>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_read() {
-                        Ok(x)           => {
-                            f(x.as_ref()).map_err(|e| -> Box<StdError> {
-                                Box::new(AelicitError::Function(e))
-                            })
-                        },
                         Err(e)          => match e {
                             TryLockError::Poisoned(_)   =>
-                                Err(Box::new(
-                                    AelicitError::PoisonedRead(self.clone()))),
+                                Err(Box::new(Error::PoisonedRead)),
                             TryLockError::WouldBlock    =>
-                                Err(Box::new(AelicitError::WouldBlock)),
+                                Err(Box::new(Error::WouldBlock)),
+                        },
+                        Ok(x)           => {
+                            f(x.as_ref()).map_err(|e| -> Box<StdError> {
+                                Box::new(Error::Function(e))
+                            })
                         },
                     }
                 }
                 // ============================================================
                 /// with_mut
-                pub fn with_mut<R, F>(&self, f: F) -> AelicitResult<R>
-                    where F:            FnOnce(&mut $base) -> AelicitResult<R>,
+                pub fn with_mut<R, F>(&self, f: F) -> Result<R>
+                    where F:            FnOnce(&mut $base) -> Result<R>,
                           $base:        Debug + EnableAelicitFromSelf,  {
-                    if let Ok(mut x) = self.write() {
-                        f(&mut *(x.as_mut())).map_err(|e| -> Box<StdError> {
-                            Box::new(AelicitError::Function(e))
-                        })
-                    } else {
-                        Err(Box::new(
-                            AelicitError::PoisonedWrite(self.clone())))
+                    match self.write() {
+                        Err(_) => Err(Box::new(Error::PoisonedWrite)),
+                        Ok(mut x) => {
+                            f(&mut *(x.as_mut())).map_err(
+                                |e| -> Box<StdError> {
+                                    Box::new(Error::Function(e))
+                                }
+                            )
+                        },
                     }
                 }
                 // ============================================================
                 /// try_with_mut
-                pub fn try_with_mut<R, F>(&self, f: F) -> AelicitResult<R>
-                    where F:    FnOnce(& mut $base) -> AelicitResult<R>,
+                pub fn try_with_mut<R, F>(&self, f: F) -> Result<R>
+                    where F:    FnOnce(& mut $base) -> Result<R>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_write() {
+                        Err(e)          => match e {
+                            TryLockError::Poisoned(_)   =>
+                                Err(Box::new(Error::PoisonedWrite)),
+                            TryLockError::WouldBlock    =>
+                                Err(Box::new(Error::WouldBlock)),
+                        },
                         Ok(mut x)       => {
                             f(&mut *(x.as_mut())).map_err(
                                 |e| -> Box<StdError> {
-                                    Box::new(AelicitError::Function(e))
+                                    Box::new(Error::Function(e))
                                 })
-                        },
-                        Err(e)          => match e {
-                            TryLockError::Poisoned(_)   =>
-                                Err(Box::new(AelicitError::PoisonedWrite(
-                                    self.clone()))),
-                            TryLockError::WouldBlock    =>
-                                Err(Box::new(AelicitError::WouldBlock)),
                         },
                     }
                 }
@@ -321,12 +273,15 @@ macro_rules! enable_aelicit_from_self_impl_inner {
 #[cfg(test)]
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
+    // use  ===================================================================
+    use super::super::Result;
+    // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
-    // use self::aelicit_t0::AelicitError          as AelicitErrorT0;
-    use self::aelicit_t0::AelicitResult         as AelicitResultT0;
-    use self::aelicit_t0::Aelicit               as AelicitT0;
-    use self::aelicit_t0::EnableAelicitFromSelf as EnableAelicitFromSelfT0;
+    use self::aelicit_t0::Aelicit
+        as AelicitT0;
+    use self::aelicit_t0::EnableAelicitFromSelf
+        as EnableAelicitFromSelfT0;
     use self::aelicit_t0::EnableAelicitFromSelfField
         as EnableAelicitFromSelfFieldT0;
     // ////////////////////////////////////////////////////////////////////////
@@ -400,19 +355,19 @@ mod tests {
             AelicitT0::new(S1::new(0)),
         ];
         for v in vs.iter() {
-            assert!(v.with(|x: &T0| -> AelicitResultT0<i32> {
+            assert!(v.with(|x: &T0| -> Result<i32> {
                 Ok(x.get())
             }).unwrap() ==  0, "Aelicit::with");
-            assert!(v.with_mut(|x: &mut T0| -> AelicitResultT0<i32> {
+            assert!(v.with_mut(|x: &mut T0| -> Result<i32> {
                 x.set(10);
                 Ok(x.get())
             }).unwrap() == 10, "Aelicit::with_mut");
         }
         for v in vs.iter() {
-            assert!(v.try_with(|x: &T0| -> AelicitResultT0<i32> {
+            assert!(v.try_with(|x: &T0| -> Result<i32> {
                 Ok(x.get())
             }).unwrap() == 10, "Aelicit::try_with");
-            assert!(v.try_with_mut(|x: &mut T0| -> AelicitResultT0<i32> {
+            assert!(v.try_with_mut(|x: &mut T0| -> Result<i32> {
                 x.set(20);
                 Ok(x.get())
             }).unwrap() == 20, "Aelicit::try_with_mut");
