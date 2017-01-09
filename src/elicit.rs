@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2016/12/31
+//  @date 2017/01/09
 
 //! # Examples
 //!
@@ -31,7 +31,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStruct {
-//!     enable_elicit_from_self_impl_inner!(MyTrait, MyTraitElicit, _eefsf);
+//!     enable_elicit_from_self_impl!(MyTrait, MyTraitElicit, _eefsf);
 //! }
 //! impl MyTrait for MyStruct {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -42,7 +42,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStructUnuseEnableElicitFromSelf {
-//!     enable_elicit_from_self_impl_inner!(MyTrait, MyTraitElicit);
+//!     enable_elicit_from_self_impl!(MyTrait, MyTraitElicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -160,9 +160,9 @@ macro_rules! elicit_define {
     };
 }
 // ============================================================================
-/// enable_elicit_from_self_impl_inner
+/// enable_elicit_from_self_impl
 #[macro_export]
-macro_rules! enable_elicit_from_self_impl_inner {
+macro_rules! enable_elicit_from_self_impl {
     // ========================================================================
     ($base:ident, $elicit:ident)                => {  // empty
         // --------------------------------------------------------------------
@@ -224,7 +224,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S0 {
-        enable_elicit_from_self_impl_inner!(T0, ElicitT0, _eefsf);
+        enable_elicit_from_self_impl!(T0, ElicitT0, _eefsf);
     }
     // ========================================================================
     impl S0 {
@@ -250,7 +250,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S1 {
-        enable_elicit_from_self_impl_inner!(T0, ElicitT0);
+        enable_elicit_from_self_impl!(T0, ElicitT0);
     }
     // ========================================================================
     impl S1 {
