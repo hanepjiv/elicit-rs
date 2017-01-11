@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/01/09
+//  @date 2017/01/12
 
 //! # Examples
 //!
@@ -31,8 +31,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStruct {
-//!     enable_aelicit_from_self_impl!(MyTrait, MyTraitAelicit,
-//!                                          _eefsf);
+//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit, _eefsf);
 //! }
 //! impl MyTrait for MyStruct {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -43,7 +42,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStructUnuseEnableAelicitFromSelf {
-//!     enable_aelicit_from_self_impl!(MyTrait, MyTraitAelicit);
+//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableAelicitFromSelf {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -241,9 +240,9 @@ macro_rules! aelicit_define {
     };
 }
 // ============================================================================
-/// enable_aelicit_from_self_impl
+/// enable_aelicit_from_self_delegate
 #[macro_export]
-macro_rules! enable_aelicit_from_self_impl {
+macro_rules! enable_aelicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $aelicit:ident)                => {  // empty
         // --------------------------------------------------------------------
@@ -305,7 +304,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableAelicitFromSelfT0 for S0 {
-        enable_aelicit_from_self_impl!(T0, AelicitT0, _eefsf);
+        enable_aelicit_from_self_delegate!(T0, AelicitT0, _eefsf);
     }
     // ========================================================================
     impl S0 {
@@ -331,7 +330,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableAelicitFromSelfT0 for S1 {
-        enable_aelicit_from_self_impl!(T0, AelicitT0);
+        enable_aelicit_from_self_delegate!(T0, AelicitT0);
     }
     // ========================================================================
     impl S1 {

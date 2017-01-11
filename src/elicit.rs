@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/01/09
+//  @date 2017/01/12
 
 //! # Examples
 //!
@@ -31,7 +31,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStruct {
-//!     enable_elicit_from_self_impl!(MyTrait, MyTraitElicit, _eefsf);
+//!     enable_elicit_from_self_delegate!(MyTrait, MyTraitElicit, _eefsf);
 //! }
 //! impl MyTrait for MyStruct {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -42,7 +42,7 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStructUnuseEnableElicitFromSelf {
-//!     enable_elicit_from_self_impl!(MyTrait, MyTraitElicit);
+//!     enable_elicit_from_self_delegate!(MyTrait, MyTraitElicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -136,18 +136,18 @@ macro_rules! elicit_define {
                 // ============================================================
                 /// with
                 pub fn with<R, F>(&self, f: F) -> Result<R>
-                where F:                FnOnce(&$base) -> Result<R>,
-        $base:  Debug + EnableElicitFromSelf,   {
-            let &Elicit(ref inner) = self;
-            f(&(*(*(inner.as_ref().borrow())))).map_err(
-                |e| -> Box<StdError> {
-                      Box::new(Error::Function(e))
-            })
-    }
-    // ========================================================================
-    /// with_mut
-    pub fn with_mut<R, F>(&self, f: F) -> Result<R>
-    where F:            FnOnce(&mut $base) -> Result<R>,
+                    where F:            FnOnce(&$base) -> Result<R>,
+                          $base:        Debug + EnableElicitFromSelf,   {
+                    let &Elicit(ref inner) = self;
+                    f(&(*(*(inner.as_ref().borrow())))).map_err(
+                        |e| -> Box<StdError> {
+                            Box::new(Error::Function(e))
+                        })
+                }
+                // ========================================================================
+                /// with_mut
+                pub fn with_mut<R, F>(&self, f: F) -> Result<R>
+                    where F:            FnOnce(&mut $base) -> Result<R>,
                           $base:        Debug + EnableElicitFromSelf,   {
                     let &Elicit(ref inner) = self;
                     f(&mut(*(*(inner.as_ref().borrow_mut())))).map_err(
@@ -160,9 +160,9 @@ macro_rules! elicit_define {
     };
 }
 // ============================================================================
-/// enable_elicit_from_self_impl
+/// enable_elicit_from_self_delegate
 #[macro_export]
-macro_rules! enable_elicit_from_self_impl {
+macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $elicit:ident)                => {  // empty
         // --------------------------------------------------------------------
@@ -224,7 +224,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S0 {
-        enable_elicit_from_self_impl!(T0, ElicitT0, _eefsf);
+        enable_elicit_from_self_delegate!(T0, ElicitT0, _eefsf);
     }
     // ========================================================================
     impl S0 {
@@ -250,7 +250,7 @@ mod tests {
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S1 {
-        enable_elicit_from_self_impl!(T0, ElicitT0);
+        enable_elicit_from_self_delegate!(T0, ElicitT0);
     }
     // ========================================================================
     impl S1 {
