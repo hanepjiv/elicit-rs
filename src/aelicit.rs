@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/01/12
+//  @date 2017/02/24
 
 //! # Examples
 //!
@@ -140,31 +140,27 @@ macro_rules! aelicit_define {
                 pub fn read(&self) ->
                     LockResult<RwLockReadGuard<Box<$base>>>
                     where $base:        Debug + EnableAelicitFromSelf,  {
-                    let &Aelicit(ref inner) = self;
-                    inner.read()
+                    self.0.read()
                 }
                 // ============================================================
                 /// try_read
                 pub fn try_read(&self) ->
                     TryLockResult<RwLockReadGuard<Box<$base>>>
                     where $base:        Debug + EnableAelicitFromSelf,  {
-                    let &Aelicit(ref inner) = self;
-                    inner.try_read()
+                    self.0.try_read()
                 }
                 // ============================================================
                 /// write
                 pub fn write(&self) ->
                     LockResult<RwLockWriteGuard<Box<$base>>> {
-                        let &Aelicit(ref inner) = self;
-                        inner.write()
+                        self.0.write()
                     }
                 // ============================================================
                 /// try_write
                 pub fn try_write(&self) ->
                     TryLockResult<RwLockWriteGuard<Box<$base>>>
                     where $base:        Debug + EnableAelicitFromSelf,  {
-                    let &Aelicit(ref inner) = self;
-                    inner.try_write()
+                    self.0.try_write()
                 }
                 // ============================================================
                 /// with

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/01/12
+//  @date 2017/02/24
 
 //! # Examples
 //!
@@ -138,19 +138,17 @@ macro_rules! elicit_define {
                 pub fn with<R, F>(&self, f: F) -> Result<R>
                     where F:            FnOnce(&$base) -> Result<R>,
                           $base:        Debug + EnableElicitFromSelf,   {
-                    let &Elicit(ref inner) = self;
-                    f(&(*(*(inner.as_ref().borrow())))).map_err(
+                    f(&(*(*(self.0.as_ref().borrow())))).map_err(
                         |e| -> Box<StdError> {
                             Box::new(Error::Function(e))
                         })
                 }
-                // ========================================================================
+                // ============================================================
                 /// with_mut
                 pub fn with_mut<R, F>(&self, f: F) -> Result<R>
                     where F:            FnOnce(&mut $base) -> Result<R>,
                           $base:        Debug + EnableElicitFromSelf,   {
-                    let &Elicit(ref inner) = self;
-                    f(&mut(*(*(inner.as_ref().borrow_mut())))).map_err(
+                    f(&mut(*(*(self.0.as_ref().borrow_mut())))).map_err(
                         |e| -> Box<StdError> {
                             Box::new(Error::Function(e))
                         })
