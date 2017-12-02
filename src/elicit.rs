@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/02/24
+//  @date 2017/11/27
 
 //! # Examples
 //!
@@ -195,12 +195,10 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     elicit_define!(elicit_t0, T0);
-    use self::elicit_t0::Elicit
-        as ElicitT0;
-    use self::elicit_t0::EnableElicitFromSelf
-        as EnableElicitFromSelfT0;
+    use self::elicit_t0::Elicit as ElicitT0;
+    use self::elicit_t0::EnableElicitFromSelf as EnableElicitFromSelfT0;
     use self::elicit_t0::EnableElicitFromSelfField
-        as EnableElicitFromSelfFieldT0;
+as EnableElicitFromSelfFieldT0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
@@ -213,12 +211,12 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// struct S0
-    #[derive( Debug, )]
+    #[derive(Debug)]
     pub struct S0 {
         /// EnableElicitFromSelf
-        _eefsf:         EnableElicitFromSelfFieldT0,
+        _eefsf: EnableElicitFromSelfFieldT0,
         /// field
-        field:          i32,
+        field: i32,
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S0 {
@@ -228,23 +226,29 @@ mod tests {
     impl S0 {
         // ====================================================================
         /// new
-        pub fn new(i: i32) -> Self { S0 {
-            _eefsf:     EnableElicitFromSelfFieldT0::default(),
-            field:      i,
-        } }
+        pub fn new(i: i32) -> Self {
+            S0 {
+                _eefsf: EnableElicitFromSelfFieldT0::default(),
+                field: i,
+            }
+        }
     }
     // ========================================================================
     impl T0 for S0 {
-        fn get(&self) -> i32 { self.field }
-        fn set(&mut self, i: i32) { self.field = i; }
+        fn get(&self) -> i32 {
+            self.field
+        }
+        fn set(&mut self, i: i32) {
+            self.field = i;
+        }
     }
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// struct S1
-    #[derive( Debug, )]
+    #[derive(Debug)]
     pub struct S1 {
         /// field
-        field:          i32,
+        field: i32,
     }
     // ========================================================================
     impl EnableElicitFromSelfT0 for S1 {
@@ -254,31 +258,36 @@ mod tests {
     impl S1 {
         // ====================================================================
         /// new
-        pub fn new(i: i32) -> Self { S1 {
-            field:      i,
-        } }
+        pub fn new(i: i32) -> Self {
+            S1 { field: i }
+        }
     }
     // ========================================================================
     impl T0 for S1 {
-        fn get(&self) -> i32 { self.field }
-        fn set(&mut self, i: i32) { self.field = i; }
+        fn get(&self) -> i32 {
+            self.field
+        }
+        fn set(&mut self, i: i32) {
+            self.field = i;
+        }
     }
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![
-            ElicitT0::new(S0::new(0)),
-            ElicitT0::new(S1::new(0)),
-        ];
+        let vs = vec![ElicitT0::new(S0::new(0)), ElicitT0::new(S1::new(0))];
         for v in vs.iter() {
-            assert!(v.with(|x: &T0| -> Result<i32> {
-                Ok(x.get())
-            }).unwrap() ==  0, "Elicit::with");
-            assert!(v.with_mut(|x: &mut T0| -> Result<i32> {
-                x.set(10);
-                Ok(x.get())
-            }).unwrap() == 10, "Elicit::with_mut");
+            assert!(
+                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,
+                "Elicit::with"
+            );
+            assert!(
+                v.with_mut(|x: &mut T0| -> Result<i32> {
+                    x.set(10);
+                    Ok(x.get())
+                }).unwrap() == 10,
+                "Elicit::with_mut"
+            );
         }
     }
 }
