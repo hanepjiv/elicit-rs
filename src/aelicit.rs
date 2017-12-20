@@ -274,13 +274,12 @@ mod tests {
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
     use self::aelicit_t0::Aelicit as AelicitT0;
-    use self::aelicit_t0::EnableAelicitFromSelf as EnableAelicitFromSelfT0;
-    use self::aelicit_t0::EnableAelicitFromSelfField
-as EnableAelicitFromSelfFieldT0;
+    use self::aelicit_t0::EnableAelicitFromSelf as EAFS_T0;
+    use self::aelicit_t0::EnableAelicitFromSelfField as EAFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
-    pub trait T0: ::std::fmt::Debug + EnableAelicitFromSelfT0 {
+    pub trait T0: ::std::fmt::Debug + EAFS_T0 {
         /// get
         fn get(&self) -> i32;
         /// set
@@ -292,12 +291,12 @@ as EnableAelicitFromSelfFieldT0;
     #[derive(Debug)]
     pub struct S0 {
         /// EnableAelicitFromSelf
-        _eefsf: EnableAelicitFromSelfFieldT0,
+        _eefsf: EAFS_Field_T0,
         /// field
         field: i32,
     }
     // ========================================================================
-    impl EnableAelicitFromSelfT0 for S0 {
+    impl EAFS_T0 for S0 {
         enable_aelicit_from_self_delegate!(T0, AelicitT0, _eefsf);
     }
     // ========================================================================
@@ -306,7 +305,7 @@ as EnableAelicitFromSelfFieldT0;
         /// new
         pub fn new(i: i32) -> Self {
             S0 {
-                _eefsf: EnableAelicitFromSelfFieldT0::default(),
+                _eefsf: EAFS_Field_T0::default(),
                 field: i,
             }
         }
@@ -329,7 +328,7 @@ as EnableAelicitFromSelfFieldT0;
         field: i32,
     }
     // ========================================================================
-    impl EnableAelicitFromSelfT0 for S1 {
+    impl EAFS_T0 for S1 {
         enable_aelicit_from_self_delegate!(T0, AelicitT0);
     }
     // ========================================================================
@@ -369,7 +368,8 @@ as EnableAelicitFromSelfFieldT0;
         }
         for v in vs.iter() {
             assert!(
-                v.try_with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 10,
+                v.try_with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                    == 10,
                 "Aelicit::try_with"
             );
             assert!(

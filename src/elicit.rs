@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/11/27
+//  @date 2017/12/14
 
 //! # Examples
 //!
@@ -196,13 +196,12 @@ mod tests {
     // ========================================================================
     elicit_define!(elicit_t0, T0);
     use self::elicit_t0::Elicit as ElicitT0;
-    use self::elicit_t0::EnableElicitFromSelf as EnableElicitFromSelfT0;
-    use self::elicit_t0::EnableElicitFromSelfField
-as EnableElicitFromSelfFieldT0;
+    use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
+    use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
-    pub trait T0: ::std::fmt::Debug + EnableElicitFromSelfT0 {
+    pub trait T0: ::std::fmt::Debug + EEFS_T0 {
         /// get
         fn get(&self) -> i32;
         /// set
@@ -213,13 +212,13 @@ as EnableElicitFromSelfFieldT0;
     /// struct S0
     #[derive(Debug)]
     pub struct S0 {
-        /// EnableElicitFromSelf
-        _eefsf: EnableElicitFromSelfFieldT0,
+        /// EEFS_
+        _eefsf: EEFS_Field_T0,
         /// field
         field: i32,
     }
     // ========================================================================
-    impl EnableElicitFromSelfT0 for S0 {
+    impl EEFS_T0 for S0 {
         enable_elicit_from_self_delegate!(T0, ElicitT0, _eefsf);
     }
     // ========================================================================
@@ -228,7 +227,7 @@ as EnableElicitFromSelfFieldT0;
         /// new
         pub fn new(i: i32) -> Self {
             S0 {
-                _eefsf: EnableElicitFromSelfFieldT0::default(),
+                _eefsf: EEFS_Field_T0::default(),
                 field: i,
             }
         }
@@ -251,7 +250,7 @@ as EnableElicitFromSelfFieldT0;
         field: i32,
     }
     // ========================================================================
-    impl EnableElicitFromSelfT0 for S1 {
+    impl EEFS_T0 for S1 {
         enable_elicit_from_self_delegate!(T0, ElicitT0);
     }
     // ========================================================================
