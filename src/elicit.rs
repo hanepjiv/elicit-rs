@@ -14,11 +14,11 @@
 //! #[macro_use] extern crate elicit;
 //!
 //! elicit_define!(elicit_my_trait, MyTrait);
-//! use self::elicit_my_trait::Elicit
+//! pub use self::elicit_my_trait::Elicit
 //!     as MyTraitElicit;
-//! use self::elicit_my_trait::EnableElicitFromSelf
+//! pub use self::elicit_my_trait::EnableElicitFromSelf
 //!     as MyTraitEnableElicitFromSelf;
-//! use self::elicit_my_trait::EnableElicitFromSelfField
+//! pub use self::elicit_my_trait::EnableElicitFromSelfField
 //!     as MyTraitEnableElicitFromSelfField;
 //!
 //! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
@@ -75,10 +75,11 @@ macro_rules! elicit_define {
             // ================================================================
             use ::std::any::Any;
             use ::std::cell::RefCell;
-            use ::std::error::Error as StdError;
+            use ::std::convert::From;
             use ::std::fmt::Debug;
             use ::std::rc::{ Rc, Weak, };
-            use $crate::{ Result, Error };
+            use ::std::result::Result as StdResult;
+            use $crate::Error;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct Elicit
@@ -135,23 +136,19 @@ macro_rules! elicit_define {
                 }
                 // ============================================================
                 /// with
-                pub fn with<R, F>(&self, f: F) -> Result<R>
-                    where F:            FnOnce(&$base) -> Result<R>,
+                pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
+                    where E:            From<Error>,
+                          F:            FnOnce(&$base) -> StdResult<T, E>,
                           $base:        Debug + EnableElicitFromSelf,   {
-                    f(&(*(*(self.0.as_ref().borrow())))).map_err(
-                        |e| -> Box<StdError> {
-                            Box::new(Error::Function(e))
-                        })
+                    f(&(*(*(self.0.as_ref().borrow()))))
                 }
                 // ============================================================
                 /// with_mut
-                pub fn with_mut<R, F>(&self, f: F) -> Result<R>
-                    where F:            FnOnce(&mut $base) -> Result<R>,
+                pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
+                    where E:            From<Error>,
+                          F:            FnOnce(&mut $base) -> StdResult<T, E>,
                           $base:        Debug + EnableElicitFromSelf,   {
-                    f(&mut(*(*(self.0.as_ref().borrow_mut())))).map_err(
-                        |e| -> Box<StdError> {
-                            Box::new(Error::Function(e))
-                        })
+                    f(&mut(*(*(self.0.as_ref().borrow_mut()))))
                 }
             }
         }
@@ -195,9 +192,9 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     elicit_define!(elicit_t0, T0);
-    use self::elicit_t0::Elicit as ElicitT0;
-    use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
-    use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
+    pub use self::elicit_t0::Elicit as ElicitT0;
+    pub use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
+    pub use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0

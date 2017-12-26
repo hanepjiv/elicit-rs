@@ -14,12 +14,8 @@ use std::error::Error as StdError;
 use std::fmt::Display;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type Result
-pub type Result<R> = ::std::result::Result<R, Box<StdError>>;
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
 /// enum Error
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Error {
     /// PoisonedRead
     PoisonedRead,
@@ -27,8 +23,6 @@ pub enum Error {
     PoisonedWrite,
     /// WouldBlock
     WouldBlock,
-    /// Function
-    Function(Box<StdError>),
 }
 // ============================================================================
 impl Display for Error {
@@ -37,8 +31,7 @@ impl Display for Error {
         match *self {
             ref e @ Error::PoisonedRead
             | ref e @ Error::PoisonedWrite
-            | ref e @ Error::WouldBlock
-            | ref e @ Error::Function(_) => write!(f, "{:?}", e),
+            | ref e @ Error::WouldBlock => write!(f, "{:?}", e),
         }
     }
 }
@@ -50,16 +43,18 @@ impl StdError for Error {
             Error::PoisonedRead => "::elicit::Error::PoisonedRead",
             Error::PoisonedWrite => "::elicit::Error::PoisonedWrite",
             Error::WouldBlock => "::elicit::Error::WouldBlock",
-            Error::Function(ref e) => e.description(),
         }
     }
     // ========================================================================
     fn cause(&self) -> Option<&StdError> {
         match *self {
-            Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
-                None
-            }
-            Error::Function(ref e) => Some(e.as_ref()),
+            Error::PoisonedRead
+                | Error::PoisonedWrite
+                | Error::WouldBlock => None,
         }
     }
 }
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+/// type Result
+pub type Result<R> = ::std::result::Result<R, Box<StdError>>;
