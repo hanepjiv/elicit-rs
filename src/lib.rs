@@ -31,7 +31,7 @@
 #![warn(dead_code)]
 #![allow(box_pointers, unsafe_code, trivial_casts, trivial_numeric_casts)]
 // use  =======================================================================
-pub use self::error::{Error, Result};
+pub use self::error::Error;
 // mod  =======================================================================
 #[macro_use]
 pub mod error;
