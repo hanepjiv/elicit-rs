@@ -30,9 +30,6 @@
         while_true)]
 #![warn(dead_code)]
 #![allow(box_pointers, unsafe_code, trivial_casts, trivial_numeric_casts)]
-// extern  ====================================================================
-#[macro_use]
-extern crate log;
 // use  =======================================================================
 pub use self::error::Error;
 // mod  =======================================================================

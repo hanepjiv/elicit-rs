@@ -170,8 +170,8 @@ macro_rules! aelicit_define {
                           F:            FnOnce(&$base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.read() {
-                        Err(e)  => {
-                            debug!("::elicit::Aelicit::with: {}", e);
+                        Err(_e)  => {
+                            //debug!("::elicit::Aelicit::with: {}", e);
                             Err(E::from(Error::PoisonedRead))
                         },
                         Ok(x)   => f(x.as_ref())
@@ -185,7 +185,7 @@ macro_rules! aelicit_define {
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_read() {
                         Err(e)          => {
-                            debug!("::elicit::Aelicit::try_with: {}", e);
+                            //debug!("::elicit::Aelicit::try_with: {}", e);
                             match e {
                                 TryLockError::Poisoned(_)   =>
                                     Err(E::from(Error::PoisonedRead)),
@@ -203,8 +203,8 @@ macro_rules! aelicit_define {
                           F:            FnOnce(&mut $base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.write() {
-                        Err(e) => {
-                            debug!("::elicit::Aelicit::with_mut: {}", e);
+                        Err(_e) => {
+                            //debug!("::elicit::Aelicit::with_mut: {}", e);
                             Err(E::from(Error::PoisonedWrite))
                         },
                         Ok(mut x) => f(&mut *(x.as_mut())),
@@ -218,7 +218,7 @@ macro_rules! aelicit_define {
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_write() {
                         Err(e)          =>  {
-                            debug!("::elicit::Aelicit::try_with_mut: {}", e);
+                            //debug!("::elicit::Aelicit::try_with_mut: {}", e);
                             match e {
                                 TryLockError::Poisoned(_)   =>
                                     Err(E::from(Error::PoisonedWrite)),
@@ -352,6 +352,7 @@ mod tests {
     // ========================================================================
     #[test]
     fn aelicit_with() {
+        //info!("::elicit::aelicit::tests::aelicit_with()");
         let vs = vec![AelicitT0::new(S0::new(0)), AelicitT0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(

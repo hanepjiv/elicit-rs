@@ -29,9 +29,9 @@ impl Display for Error {
     // ========================================================================
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            e @ Error::PoisonedRead
-                | e @ Error::PoisonedWrite
-                | e @ Error::WouldBlock => write!(f, "{:?}", e),
+            ref e @ Error::PoisonedRead
+                | ref e @ Error::PoisonedWrite
+                | ref e @ Error::WouldBlock => write!(f, "{:?}", e),
         }
     }
 }
@@ -47,7 +47,7 @@ impl StdError for Error {
     }
     // ========================================================================
     fn cause(&self) -> Option<&StdError> {
-        info!("::elicit::Error::cause"); // gurd "extern crate log" auto strip
+        //info!("::elicit::Error::cause");// gurd "extern crate log" auto strip
         match *self {
             Error::PoisonedRead
                 | Error::PoisonedWrite
