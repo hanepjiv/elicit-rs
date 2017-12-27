@@ -154,8 +154,8 @@ macro_rules! aelicit_define {
                 /// write
                 pub fn write(&self) ->
                     LockResult<RwLockWriteGuard<Box<$base>>> {
-                    self.0.write()
-                }
+                        self.0.write()
+                    }
                 // ============================================================
                 /// try_write
                 pub fn try_write(&self) ->
@@ -170,10 +170,11 @@ macro_rules! aelicit_define {
                           F:            FnOnce(&$base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.read() {
-                        Err(_)  => Err(E::from(Error::PoisonedRead)),
-                        Ok(x)   => {
-                            f(x.as_ref())
+                        Err(e)  => {
+                            debug!("::elicit::Aelicit::with: {}", e);
+                            Err(E::from(Error::PoisonedRead))
                         },
+                        Ok(x)   => f(x.as_ref())
                     }
                 }
                 // ============================================================
@@ -183,11 +184,14 @@ macro_rules! aelicit_define {
                           F:            FnOnce(&$base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_read() {
-                        Err(e)          => match e {
-                            TryLockError::Poisoned(_)   =>
-                                Err(E::from(Error::PoisonedRead)),
-                            TryLockError::WouldBlock    =>
-                                Err(E::from(Error::WouldBlock)),
+                        Err(e)          => {
+                            debug!("::elicit::Aelicit::try_with: {}", e);
+                            match e {
+                                TryLockError::Poisoned(_)   =>
+                                    Err(E::from(Error::PoisonedRead)),
+                                TryLockError::WouldBlock    =>
+                                    Err(E::from(Error::WouldBlock)),
+                            }
                         },
                         Ok(x)           => { f(x.as_ref()) },
                     }
@@ -199,7 +203,10 @@ macro_rules! aelicit_define {
                           F:            FnOnce(&mut $base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.write() {
-                        Err(_) => Err(E::from(Error::PoisonedWrite)),
+                        Err(e) => {
+                            debug!("::elicit::Aelicit::with_mut: {}", e);
+                            Err(E::from(Error::PoisonedWrite))
+                        },
                         Ok(mut x) => f(&mut *(x.as_mut())),
                     }
                 }
@@ -210,11 +217,14 @@ macro_rules! aelicit_define {
                           F:            FnOnce(& mut $base) -> StdResult<T, E>,
                           $base:        Debug + EnableAelicitFromSelf,  {
                     match self.try_write() {
-                        Err(e)          => match e {
-                            TryLockError::Poisoned(_)   =>
-                                Err(E::from(Error::PoisonedWrite)),
-                            TryLockError::WouldBlock    =>
-                                Err(E::from(Error::WouldBlock)),
+                        Err(e)          =>  {
+                            debug!("::elicit::Aelicit::try_with_mut: {}", e);
+                            match e {
+                                TryLockError::Poisoned(_)   =>
+                                    Err(E::from(Error::PoisonedWrite)),
+                                TryLockError::WouldBlock    =>
+                                    Err(E::from(Error::WouldBlock)),
+                            }
                         },
                         Ok(mut x)       => f(&mut *(x.as_mut())),
                     }
