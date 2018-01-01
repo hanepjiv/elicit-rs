@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/02/24
+//  @date 2018/01/02
 
 //! # Examples
 //!
@@ -96,6 +96,9 @@ macro_rules! aelicit_define {
                 // ------------------------------------------------------------
                 /// _weak_assign
                 fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>);
+                // ============================================================
+                /// weak
+                fn weak(&self) -> Option<Weak<RwLock<Box<$base>>>>;
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -120,6 +123,11 @@ macro_rules! aelicit_define {
                 /// _weak_assign
                 fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>) {
                     self._weak = Some(weak)
+                }
+                // ============================================================
+                /// weak
+                fn weak(&self) -> Option<Weak<RwLock<Box<$base>>>> {
+                    self._weak.clone()
                 }
             }
             // ////////////////////////////////////////////////////////////////
@@ -247,6 +255,11 @@ macro_rules! enable_aelicit_from_self_delegate {
         fn _weak_assign(&mut self,
                         _: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
         }
+        // --------------------------------------------------------------------
+        fn weak(&self) ->
+            Option<::std::sync::Weak<::std::sync::RwLock<Box<$base>>>> {
+            None
+        }
     };
     // ========================================================================
     ($base:ident, $aelicit:ident, $field:ident)  => {  // delegate to field
@@ -258,6 +271,11 @@ macro_rules! enable_aelicit_from_self_delegate {
         fn _weak_assign(&mut self,
                         w: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
             self.$field._weak_assign(w)
+        }
+        // --------------------------------------------------------------------
+        fn weak(&self) ->
+            Option<::std::sync::Weak<::std::sync::RwLock<Box<$base>>>> {
+            self.$field.weak()
         }
     };
 }
