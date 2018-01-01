@@ -16,6 +16,8 @@
 //! aelicit_define!(aelicit_my_trait, MyTrait);
 //! pub use self::aelicit_my_trait::Aelicit
 //!     as MyTraitAelicit;
+//! pub use self::aelicit_my_trait::WeakAelicit
+//!     as MyTraitWeakAelicit;
 //! pub use self::aelicit_my_trait::EnableAelicitFromSelf
 //!     as MyTraitEnableAelicitFromSelf;
 //! pub use self::aelicit_my_trait::EnableAelicitFromSelfField
@@ -31,7 +33,9 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStruct {
-//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit, _eafsf);
+//!     enable_aelicit_from_self_delegate!(MyTrait,
+//!                                        MyTraitAelicit,
+//!                                        _eafsf);
 //! }
 //! impl MyTrait for MyStruct {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -42,7 +46,8 @@
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStructUnuseEnableAelicitFromSelf {
-//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit);
+//!     enable_aelicit_from_self_delegate!(MyTrait,
+//!                                        MyTraitAelicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableAelicitFromSelf {
 //!     fn my_function(&self) -> i32 { self.my_field }
@@ -88,6 +93,19 @@ macro_rules! aelicit_define {
             pub struct Aelicit(Arc<RwLock<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
+            /// struct WealAelicit
+            #[derive( Debug, Clone, )]
+            pub struct WeakAelicit(Weak<RwLock<Box<$base>>>);
+            // ================================================================
+            impl WeakAelicit {
+                // ============================================================
+                /// fn upgrade
+                fn upgrade(&self) -> Option<Aelicit> {
+                    self.0.upgrade().map(Aelicit)
+                }
+            }
+            // ////////////////////////////////////////////////////////////////
+            // ================================================================
             /// trait EnableAelicitFromSelf
             pub trait EnableAelicitFromSelf: Debug {
                 // ============================================================
@@ -96,9 +114,6 @@ macro_rules! aelicit_define {
                 // ------------------------------------------------------------
                 /// _weak_assign
                 fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>);
-                // ============================================================
-                /// weak
-                fn weak(&self) -> Option<Weak<RwLock<Box<$base>>>>;
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -124,11 +139,6 @@ macro_rules! aelicit_define {
                 fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>) {
                     self._weak = Some(weak)
                 }
-                // ============================================================
-                /// weak
-                fn weak(&self) -> Option<Weak<RwLock<Box<$base>>>> {
-                    self._weak.clone()
-                }
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -143,6 +153,11 @@ macro_rules! aelicit_define {
                     arc.write().expect("Aelicit::new").
                         _weak_assign(Arc::downgrade(&arc));
                     Aelicit(arc)
+                }
+                // ============================================================
+                /// weak
+                fn weak(&self) -> WeakAelicit {
+                    WeakAelicit(Arc::downgrade(&self.0))
                 }
                 // ============================================================
                 /// read
@@ -246,7 +261,7 @@ macro_rules! aelicit_define {
 #[macro_export]
 macro_rules! enable_aelicit_from_self_delegate {
     // ========================================================================
-    ($base:ident, $aelicit:ident)                => {  // empty
+    ($base:ident, $aelicit:ident) => {  // empty
         // --------------------------------------------------------------------
         fn aelicit_from_self(&self) -> Option<$aelicit> {
             None
@@ -254,11 +269,6 @@ macro_rules! enable_aelicit_from_self_delegate {
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
                         _: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
-        }
-        // --------------------------------------------------------------------
-        fn weak(&self) ->
-            Option<::std::sync::Weak<::std::sync::RwLock<Box<$base>>>> {
-            None
         }
     };
     // ========================================================================
@@ -271,11 +281,6 @@ macro_rules! enable_aelicit_from_self_delegate {
         fn _weak_assign(&mut self,
                         w: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
             self.$field._weak_assign(w)
-        }
-        // --------------------------------------------------------------------
-        fn weak(&self) ->
-            Option<::std::sync::Weak<::std::sync::RwLock<Box<$base>>>> {
-            self.$field.weak()
         }
     };
 }
@@ -292,6 +297,7 @@ mod tests {
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
     pub use self::aelicit_t0::Aelicit as AelicitT0;
+    pub use self::aelicit_t0::WeakAelicit as WeakAelicitT0;
     pub use self::aelicit_t0::EnableAelicitFromSelf as EAFS_T0;
     pub use self::aelicit_t0::EnableAelicitFromSelfField as EAFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2017/12/14
+//  @date 2018/01/02
 
 //! # Examples
 //!
@@ -16,6 +16,8 @@
 //! elicit_define!(elicit_my_trait, MyTrait);
 //! pub use self::elicit_my_trait::Elicit
 //!     as MyTraitElicit;
+//! pub use self::elicit_my_trait::WeakElicit
+//!     as MyTraitWeakElicit;
 //! pub use self::elicit_my_trait::EnableElicitFromSelf
 //!     as MyTraitEnableElicitFromSelf;
 //! pub use self::elicit_my_trait::EnableElicitFromSelfField
@@ -87,6 +89,19 @@ macro_rules! elicit_define {
             pub struct Elicit(Rc<RefCell<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
+            /// struct WealElicit
+            #[derive( Debug, Clone, )]
+            pub struct WeakElicit(Weak<RefCell<Box<$base>>>);
+            // ================================================================
+            impl WeakElicit {
+                // ============================================================
+                /// fn upgrade
+                fn upgrade(&self) -> Option<Elicit> {
+                    self.0.upgrade().map(Elicit)
+                }
+            }
+            // ////////////////////////////////////////////////////////////////
+            // ================================================================
             /// trait EnableElicitFromSelf
             pub trait EnableElicitFromSelf: Debug {
                 // ============================================================
@@ -135,6 +150,11 @@ macro_rules! elicit_define {
                     Elicit(rc)
                 }
                 // ============================================================
+                /// weak
+                fn weak(&self) -> WeakElicit {
+                    WeakElicit(Rc::downgrade(&self.0))
+                }
+                // ============================================================
                 /// with
                 pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
                     where E:            From<Error>,
@@ -159,7 +179,7 @@ macro_rules! elicit_define {
 #[macro_export]
 macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
-    ($base:ident, $elicit:ident)                => {  // empty
+    ($base:ident, $elicit:ident) => {  // empty
         // --------------------------------------------------------------------
         fn elicit_from_self(&self) -> Option<$elicit> {
             None
@@ -170,7 +190,7 @@ macro_rules! enable_elicit_from_self_delegate {
         }
     };
     // ========================================================================
-    ($base:ident, $elicit:ident, $field:ident)  => {  // delegate to field
+    ($base:ident, $elicit:ident, $field:ident) => {  // delegate to field
         // --------------------------------------------------------------------
         fn elicit_from_self(&self) -> Option<$elicit> {
             self.$field.elicit_from_self()
@@ -195,6 +215,7 @@ mod tests {
     // ========================================================================
     elicit_define!(elicit_t0, T0);
     pub use self::elicit_t0::Elicit as ElicitT0;
+    pub use self::elicit_t0::WeakElicit as WeakElicitT0;
     pub use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
     pub use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
