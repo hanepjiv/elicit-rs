@@ -151,7 +151,7 @@ macro_rules! elicit_define {
                 }
                 // ============================================================
                 /// weak
-                fn weak(&self) -> WeakElicit {
+                pub fn weak(&self) -> WeakElicit {
                     WeakElicit(Rc::downgrade(&self.0))
                 }
                 // ============================================================
@@ -214,8 +214,8 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     elicit_define!(elicit_t0, T0);
-    pub use self::elicit_t0::Elicit as ElicitT0;
-    pub use self::elicit_t0::WeakElicit as WeakElicitT0;
+    pub use self::elicit_t0::Elicit as Elicit_T0;
+    pub use self::elicit_t0::WeakElicit as WeakElicit_T0;
     pub use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
     pub use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ mod tests {
     }
     // ========================================================================
     impl EEFS_T0 for S0 {
-        enable_elicit_from_self_delegate!(T0, ElicitT0, _eefsf);
+        enable_elicit_from_self_delegate!(T0, Elicit_T0, _eefsf);
     }
     // ========================================================================
     impl S0 {
@@ -271,7 +271,7 @@ mod tests {
     }
     // ========================================================================
     impl EEFS_T0 for S1 {
-        enable_elicit_from_self_delegate!(T0, ElicitT0);
+        enable_elicit_from_self_delegate!(T0, Elicit_T0);
     }
     // ========================================================================
     impl S1 {
@@ -294,7 +294,7 @@ mod tests {
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![ElicitT0::new(S0::new(0)), ElicitT0::new(S1::new(0))];
+        let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
                 v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,

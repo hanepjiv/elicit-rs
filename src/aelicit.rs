@@ -156,7 +156,7 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// weak
-                fn weak(&self) -> WeakAelicit {
+                pub fn weak(&self) -> WeakAelicit {
                     WeakAelicit(Arc::downgrade(&self.0))
                 }
                 // ============================================================
@@ -296,8 +296,8 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
-    pub use self::aelicit_t0::Aelicit as AelicitT0;
-    pub use self::aelicit_t0::WeakAelicit as WeakAelicitT0;
+    pub use self::aelicit_t0::Aelicit as Aelicit_T0;
+    pub use self::aelicit_t0::WeakAelicit as WeakAelicit_T0;
     pub use self::aelicit_t0::EnableAelicitFromSelf as EAFS_T0;
     pub use self::aelicit_t0::EnableAelicitFromSelfField as EAFS_Field_T0;
     // ////////////////////////////////////////////////////////////////////////
@@ -321,7 +321,7 @@ mod tests {
     }
     // ========================================================================
     impl EAFS_T0 for S0 {
-        enable_aelicit_from_self_delegate!(T0, AelicitT0, _eafsf);
+        enable_aelicit_from_self_delegate!(T0, Aelicit_T0, _eafsf);
     }
     // ========================================================================
     impl S0 {
@@ -353,7 +353,7 @@ mod tests {
     }
     // ========================================================================
     impl EAFS_T0 for S1 {
-        enable_aelicit_from_self_delegate!(T0, AelicitT0);
+        enable_aelicit_from_self_delegate!(T0, Aelicit_T0);
     }
     // ========================================================================
     impl S1 {
@@ -377,7 +377,8 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs = vec![AelicitT0::new(S0::new(0)), AelicitT0::new(S1::new(0))];
+        let vs =
+            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
                 v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,
