@@ -104,6 +104,10 @@ macro_rules! aelicit_define {
                     self.0.upgrade().map(Aelicit)
                 }
             }
+            // ================================================================
+            impl From<Aelicit> for WeakAelicit {
+                fn from(x: Aelicit) -> WeakAelicit { x.weak() }
+            }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableAelicitFromSelf

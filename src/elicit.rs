@@ -100,6 +100,10 @@ macro_rules! elicit_define {
                     self.0.upgrade().map(Elicit)
                 }
             }
+            // ================================================================
+            impl From<Elicit> for WeakElicit {
+                fn from(x: Elicit) -> WeakElicit { x.weak() }
+            }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableElicitFromSelf
