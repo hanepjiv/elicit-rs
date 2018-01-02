@@ -96,7 +96,7 @@ macro_rules! elicit_define {
             impl WeakElicit {
                 // ============================================================
                 /// fn upgrade
-                fn upgrade(&self) -> Option<Elicit> {
+                pub fn upgrade(&self) -> Option<Elicit> {
                     self.0.upgrade().map(Elicit)
                 }
             }

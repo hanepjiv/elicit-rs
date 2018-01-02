@@ -100,7 +100,7 @@ macro_rules! aelicit_define {
             impl WeakAelicit {
                 // ============================================================
                 /// fn upgrade
-                fn upgrade(&self) -> Option<Aelicit> {
+                pub fn upgrade(&self) -> Option<Aelicit> {
                     self.0.upgrade().map(Aelicit)
                 }
             }
