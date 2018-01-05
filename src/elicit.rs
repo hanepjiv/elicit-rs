@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/01/02
+//  @date 2018/01/05
 
 //! # Examples
 //!
@@ -109,8 +109,8 @@ macro_rules! elicit_define {
             /// trait EnableElicitFromSelf
             pub trait EnableElicitFromSelf: Debug {
                 // ============================================================
-                /// elicit_from_self
-                fn elicit_from_self(&self) -> Option<Elicit>;
+                /// elicit
+                fn elicit(&self) -> Option<Elicit>;
                 // ------------------------------------------------------------
                 /// _weak_assign
                 fn _weak_assign(&mut self, weak: Weak<RefCell<Box<$base>>>);
@@ -127,11 +127,10 @@ macro_rules! elicit_define {
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
                 // ============================================================
                 /// elicit_from_self
-                fn elicit_from_self(&self) -> Option<Elicit> {
-                    if let Some(ref x) = self._weak {
-                        Some(Elicit(x.upgrade().expect("elicit_from_self")))
-                    } else {
-                        None
+                fn elicit(&self) -> Option<Elicit> {
+                    match self._weak {
+                        Some(ref x) => x.upgrade().map(Elicit),
+                        None => None,
                     }
                 }
                 // ------------------------------------------------------------
@@ -185,7 +184,7 @@ macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $elicit:ident) => {  // empty
         // --------------------------------------------------------------------
-        fn elicit_from_self(&self) -> Option<$elicit> {
+        fn elicit(&self) -> Option<$elicit> {
             None
         }
         // --------------------------------------------------------------------
@@ -196,8 +195,8 @@ macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $elicit:ident, $field:ident) => {  // delegate to field
         // --------------------------------------------------------------------
-        fn elicit_from_self(&self) -> Option<$elicit> {
-            self.$field.elicit_from_self()
+        fn elicit(&self) -> Option<$elicit> {
+            self.$field.elicit()
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,

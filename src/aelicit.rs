@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/01/02
+//  @date 2018/01/05
 
 //! # Examples
 //!
@@ -114,7 +114,7 @@ macro_rules! aelicit_define {
             pub trait EnableAelicitFromSelf: Debug {
                 // ============================================================
                 /// aelicit_from_self
-                fn aelicit_from_self(&self) -> Option<Aelicit>;
+                fn aelicit(&self) -> Option<Aelicit>;
                 // ------------------------------------------------------------
                 /// _weak_assign
                 fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>);
@@ -130,12 +130,11 @@ macro_rules! aelicit_define {
             // ================================================================
             impl EnableAelicitFromSelf for EnableAelicitFromSelfField {
                 // ============================================================
-                /// aelicit_from_self
-                fn aelicit_from_self(&self) -> Option<Aelicit> {
-                    if let Some(ref x) = self._weak {
-                        Some(Aelicit(x.upgrade().expect("aelicit_from_self")))
-                    } else {
-                        None
+                /// aelicit
+                fn aelicit(&self) -> Option<Aelicit> {
+                    match self._weak {
+                        Some(ref x) => x.upgrade().map(Aelicit),
+                        None => None,
                     }
                 }
                 // ------------------------------------------------------------
@@ -267,7 +266,7 @@ macro_rules! enable_aelicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $aelicit:ident) => {  // empty
         // --------------------------------------------------------------------
-        fn aelicit_from_self(&self) -> Option<$aelicit> {
+        fn aelicit(&self) -> Option<$aelicit> {
             None
         }
         // --------------------------------------------------------------------
@@ -278,8 +277,8 @@ macro_rules! enable_aelicit_from_self_delegate {
     // ========================================================================
     ($base:ident, $aelicit:ident, $field:ident)  => {  // delegate to field
         // --------------------------------------------------------------------
-        fn aelicit_from_self(&self) -> Option<$aelicit> {
-            self.$field.aelicit_from_self()
+        fn aelicit(&self) -> Option<$aelicit> {
+            self.$field.aelicit()
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
