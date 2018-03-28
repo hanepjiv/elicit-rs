@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/01/05
+//  @date 2018/03/14
 
 //! # Examples
 //!
@@ -89,7 +89,7 @@ macro_rules! elicit_define {
             pub struct Elicit(Rc<RefCell<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
-            /// struct WealElicit
+            /// struct WeakElicit
             #[derive( Debug, Clone, )]
             pub struct WeakElicit(Weak<RefCell<Box<$base>>>);
             // ================================================================

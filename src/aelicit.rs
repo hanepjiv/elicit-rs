@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/01/05
+//  @date 2018/03/14
 
 //! # Examples
 //!
@@ -93,7 +93,7 @@ macro_rules! aelicit_define {
             pub struct Aelicit(Arc<RwLock<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
-            /// struct WealAelicit
+            /// struct WeakAelicit
             #[derive( Debug, Clone, )]
             pub struct WeakAelicit(Weak<RwLock<Box<$base>>>);
             // ================================================================
