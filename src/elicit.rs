@@ -75,22 +75,22 @@ macro_rules! elicit_define {
             // ================================================================
             use super::$base;
             // ================================================================
-            use ::std::any::Any;
-            use ::std::cell::RefCell;
-            use ::std::convert::From;
-            use ::std::fmt::Debug;
-            use ::std::rc::{ Rc, Weak, };
-            use ::std::result::Result as StdResult;
+            use std::any::Any;
+            use std::cell::RefCell;
+            use std::convert::From;
+            use std::fmt::Debug;
+            use std::rc::{Rc, Weak};
+            use std::result::Result as StdResult;
             use $crate::Error;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct Elicit
-            #[derive( Debug, Clone, )]
+            #[derive(Debug, Clone)]
             pub struct Elicit(Rc<RefCell<Box<$base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct WeakElicit
-            #[derive( Debug, Clone, )]
+            #[derive(Debug, Clone)]
             pub struct WeakElicit(Weak<RefCell<Box<$base>>>);
             // ================================================================
             impl WeakElicit {
@@ -102,7 +102,9 @@ macro_rules! elicit_define {
             }
             // ================================================================
             impl From<Elicit> for WeakElicit {
-                fn from(x: Elicit) -> WeakElicit { x.weak() }
+                fn from(x: Elicit) -> WeakElicit {
+                    x.weak()
+                }
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -118,10 +120,10 @@ macro_rules! elicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct EnableElicitFromSelfField
-            #[derive( Debug, Clone, Default, )]
+            #[derive(Debug, Clone, Default)]
             pub struct EnableElicitFromSelfField {
                 /// Weak
-                _weak:  Option<Weak<RefCell<Box<$base>>>>,
+                _weak: Option<Weak<RefCell<Box<$base>>>>,
             }
             // ================================================================
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
@@ -145,11 +147,15 @@ macro_rules! elicit_define {
                 // ============================================================
                 /// new
                 pub fn new<T>(val: T) -> Self
-                    where T:            Any + $base,
-                          $base:        Debug + EnableElicitFromSelf,   {
+                where
+                    T: Any + $base,
+                    $base: Debug + EnableElicitFromSelf,
+                {
                     let rc =
                         Rc::new(RefCell::new(Box::new(val) as Box<$base>));
-                    rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc));
+                    rc.as_ref()
+                        .borrow_mut()
+                        ._weak_assign(Rc::downgrade(&rc));
                     Elicit(rc)
                 }
                 // ============================================================
@@ -160,18 +166,22 @@ macro_rules! elicit_define {
                 // ============================================================
                 /// with
                 pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
-                    where E:            From<Error>,
-                          F:            FnOnce(&$base) -> StdResult<T, E>,
-                          $base:        Debug + EnableElicitFromSelf,   {
+                where
+                    E: From<Error>,
+                    F: FnOnce(&$base) -> StdResult<T, E>,
+                    $base: Debug + EnableElicitFromSelf,
+                {
                     f(&(*(*(self.0.as_ref().borrow()))))
                 }
                 // ============================================================
                 /// with_mut
                 pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
-                    where E:            From<Error>,
-                          F:            FnOnce(&mut $base) -> StdResult<T, E>,
-                          $base:        Debug + EnableElicitFromSelf,   {
-                    f(&mut(*(*(self.0.as_ref().borrow_mut()))))
+                where
+                    E: From<Error>,
+                    F: FnOnce(&mut $base) -> StdResult<T, E>,
+                    $base: Debug + EnableElicitFromSelf,
+                {
+                    f(&mut (*(*(self.0.as_ref().borrow_mut()))))
                 }
             }
         }
@@ -218,9 +228,9 @@ mod tests {
     // ========================================================================
     elicit_define!(elicit_t0, T0);
     pub use self::elicit_t0::Elicit as Elicit_T0;
-    pub use self::elicit_t0::WeakElicit as WeakElicit_T0;
     pub use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
     pub use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
+    pub use self::elicit_t0::WeakElicit as WeakElicit_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
@@ -297,10 +307,14 @@ mod tests {
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
+        let vs = vec![
+            Elicit_T0::new(S0::new(0)),
+            Elicit_T0::new(S1::new(0)),
+        ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,
+                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) })
+                    .unwrap() == 0,
                 "Elicit::with"
             );
             assert!(
