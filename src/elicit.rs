@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/03/14
+//  @date 2018/04/12
 
 //! # Examples
 //!
@@ -14,21 +14,21 @@
 //! #[macro_use] extern crate elicit;
 //!
 //! elicit_define!(elicit_my_trait, MyTrait);
-//! pub use self::elicit_my_trait::Elicit
+//! use self::elicit_my_trait::Elicit
 //!     as MyTraitElicit;
-//! pub use self::elicit_my_trait::WeakElicit
+//! use self::elicit_my_trait::WeakElicit
 //!     as MyTraitWeakElicit;
-//! pub use self::elicit_my_trait::EnableElicitFromSelf
+//! use self::elicit_my_trait::EnableElicitFromSelf
 //!     as MyTraitEnableElicitFromSelf;
-//! pub use self::elicit_my_trait::EnableElicitFromSelfField
+//! use self::elicit_my_trait::EnableElicitFromSelfField
 //!     as MyTraitEnableElicitFromSelfField;
 //!
-//! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
+//! trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
 //! #[derive( Debug, )]
-//! pub struct MyStruct {
+//! struct MyStruct {
 //!     _eefsf:        MyTraitEnableElicitFromSelfField,
 //!     my_field:     i32,
 //! }
@@ -40,7 +40,7 @@
 //! }
 //!
 //! #[derive( Debug, )]
-//! pub struct MyStructUnuseEnableElicitFromSelf {
+//! struct MyStructUnuseEnableElicitFromSelf {
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStructUnuseEnableElicitFromSelf {
@@ -230,7 +230,7 @@ mod tests {
     pub use self::elicit_t0::Elicit as Elicit_T0;
     pub use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
     pub use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
-    pub use self::elicit_t0::WeakElicit as WeakElicit_T0;
+    // pub use self::elicit_t0::WeakElicit as WeakElicit_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
@@ -307,14 +307,10 @@ mod tests {
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![
-            Elicit_T0::new(S0::new(0)),
-            Elicit_T0::new(S1::new(0)),
-        ];
+        let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 0,
+                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,
                 "Elicit::with"
             );
             assert!(

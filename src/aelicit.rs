@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/03/14
+//  @date 2018/04/12
 
 //! # Examples
 //!
@@ -14,21 +14,21 @@
 //! #[macro_use] extern crate elicit;
 //!
 //! aelicit_define!(aelicit_my_trait, MyTrait);
-//! pub use self::aelicit_my_trait::Aelicit
+//! use self::aelicit_my_trait::Aelicit
 //!     as MyTraitAelicit;
-//! pub use self::aelicit_my_trait::WeakAelicit
+//! use self::aelicit_my_trait::WeakAelicit
 //!     as MyTraitWeakAelicit;
-//! pub use self::aelicit_my_trait::EnableAelicitFromSelf
+//! use self::aelicit_my_trait::EnableAelicitFromSelf
 //!     as MyTraitEnableAelicitFromSelf;
-//! pub use self::aelicit_my_trait::EnableAelicitFromSelfField
+//! use self::aelicit_my_trait::EnableAelicitFromSelfField
 //!     as MyTraitEnableAelicitFromSelfField;
 //!
-//! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableAelicitFromSelf {
+//! trait MyTrait: ::std::fmt::Debug + MyTraitEnableAelicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
 //! #[derive( Debug, )]
-//! pub struct MyStruct {
+//! struct MyStruct {
 //!     _eafsf:        MyTraitEnableAelicitFromSelfField,
 //!     my_field:     i32,
 //! }
@@ -42,7 +42,7 @@
 //! }
 //!
 //! #[derive( Debug, )]
-//! pub struct MyStructUnuseEnableAelicitFromSelf {
+//! struct MyStructUnuseEnableAelicitFromSelf {
 //!     my_field:     i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStructUnuseEnableAelicitFromSelf {
@@ -327,7 +327,7 @@ mod tests {
     pub use self::aelicit_t0::Aelicit as Aelicit_T0;
     pub use self::aelicit_t0::EnableAelicitFromSelf as EAFS_T0;
     pub use self::aelicit_t0::EnableAelicitFromSelfField as EAFS_Field_T0;
-    pub use self::aelicit_t0::WeakAelicit as WeakAelicit_T0;
+    //pub use self::aelicit_t0::WeakAelicit as WeakAelicit_T0;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
@@ -405,14 +405,11 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs = vec![
-            Aelicit_T0::new(S0::new(0)),
-            Aelicit_T0::new(S1::new(0)),
-        ];
+        let vs =
+            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 0,
+                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap() == 0,
                 "Aelicit::with"
             );
             assert!(
@@ -425,8 +422,8 @@ mod tests {
         }
         for v in vs.iter() {
             assert!(
-                v.try_with(|x: &T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 10,
+                v.try_with(|x: &T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                    == 10,
                 "Aelicit::try_with"
             );
             assert!(
