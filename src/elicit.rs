@@ -23,7 +23,7 @@
 //! use self::elicit_my_trait::EnableElicitFromSelfField
 //!     as MyTraitEnableElicitFromSelfField;
 //!
-//! trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
+//! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
