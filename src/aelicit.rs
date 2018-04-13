@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/04/12
+//  @date 2018/04/14
 
 //! # Examples
 //!
@@ -72,6 +72,7 @@ macro_rules! aelicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        #[allow(unreachable_pub)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
