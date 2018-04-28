@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/04/14
+//  @date 2018/04/28
 
 //! # Examples
 //!
@@ -91,12 +91,12 @@ macro_rules! aelicit_define {
             // ================================================================
             /// struct Aelicit
             #[derive(Debug, Clone)]
-            pub struct Aelicit(Arc<RwLock<Box<$base>>>);
+            pub struct Aelicit(Arc<RwLock<Box<dyn $base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct WeakAelicit
             #[derive(Debug, Clone)]
-            pub struct WeakAelicit(Weak<RwLock<Box<$base>>>);
+            pub struct WeakAelicit(Weak<RwLock<Box<dyn $base>>>);
             // ================================================================
             impl WeakAelicit {
                 // ============================================================
@@ -120,7 +120,7 @@ macro_rules! aelicit_define {
                 fn aelicit(&self) -> Option<Aelicit>;
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>);
+                fn _weak_assign(&mut self, weak: Weak<RwLock<Box<dyn $base>>>);
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -128,7 +128,7 @@ macro_rules! aelicit_define {
             #[derive(Debug, Clone, Default)]
             pub struct EnableAelicitFromSelfField {
                 /// Weak
-                _weak: Option<Weak<RwLock<Box<$base>>>>,
+                _weak: Option<Weak<RwLock<Box<dyn $base>>>>,
             }
             // ================================================================
             impl EnableAelicitFromSelf for EnableAelicitFromSelfField {
@@ -142,7 +142,10 @@ macro_rules! aelicit_define {
                 }
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self, weak: Weak<RwLock<Box<$base>>>) {
+                fn _weak_assign(
+                    &mut self,
+                    weak: Weak<RwLock<Box<dyn $base>>>,
+                ) {
                     self._weak = Some(weak)
                 }
             }
@@ -154,10 +157,10 @@ macro_rules! aelicit_define {
                 pub fn new<T>(val: T) -> Self
                 where
                     T: Any + $base,
-                    $base: Debug + EnableAelicitFromSelf,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     let arc =
-                        Arc::new(RwLock::new(Box::new(val) as Box<$base>));
+                        Arc::new(RwLock::new(Box::new(val) as Box<dyn $base>));
                     arc.write()
                         .expect("Aelicit::new")
                         ._weak_assign(Arc::downgrade(&arc));
@@ -170,9 +173,11 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// read
-                pub fn read(&self) -> LockResult<RwLockReadGuard<Box<$base>>>
+                pub fn read(
+                    &self,
+                ) -> LockResult<RwLockReadGuard<Box<dyn $base>>>
                 where
-                    $base: Debug + EnableAelicitFromSelf,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     self.0.read()
                 }
@@ -180,9 +185,9 @@ macro_rules! aelicit_define {
                 /// try_read
                 pub fn try_read(
                     &self,
-                ) -> TryLockResult<RwLockReadGuard<Box<$base>>>
+                ) -> TryLockResult<RwLockReadGuard<Box<dyn $base>>>
                 where
-                    $base: Debug + EnableAelicitFromSelf,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     self.0.try_read()
                 }
@@ -190,16 +195,16 @@ macro_rules! aelicit_define {
                 /// write
                 pub fn write(
                     &self,
-                ) -> LockResult<RwLockWriteGuard<Box<$base>>> {
+                ) -> LockResult<RwLockWriteGuard<Box<dyn $base>>> {
                     self.0.write()
                 }
                 // ============================================================
                 /// try_write
                 pub fn try_write(
                     &self,
-                ) -> TryLockResult<RwLockWriteGuard<Box<$base>>>
+                ) -> TryLockResult<RwLockWriteGuard<Box<dyn $base>>>
                 where
-                    $base: Debug + EnableAelicitFromSelf,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     self.0.try_write()
                 }
@@ -208,8 +213,8 @@ macro_rules! aelicit_define {
                 pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&$base) -> StdResult<T, E>,
-                    $base: Debug + EnableAelicitFromSelf,
+                    F: FnOnce(&dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.read() {
                         Err(_e) => {
@@ -224,8 +229,8 @@ macro_rules! aelicit_define {
                 pub fn try_with<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&$base) -> StdResult<T, E>,
-                    $base: Debug + EnableAelicitFromSelf,
+                    F: FnOnce(&dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.try_read() {
                         Err(e) => {
@@ -247,8 +252,8 @@ macro_rules! aelicit_define {
                 pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut $base) -> StdResult<T, E>,
-                    $base: Debug + EnableAelicitFromSelf,
+                    F: FnOnce(&mut dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.write() {
                         Err(_e) => {
@@ -263,8 +268,8 @@ macro_rules! aelicit_define {
                 pub fn try_with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut $base) -> StdResult<T, E>,
-                    $base: Debug + EnableAelicitFromSelf,
+                    F: FnOnce(&mut dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.try_write() {
                         Err(e) => {
@@ -297,7 +302,7 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
+                        _: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
         }
     };
     // ========================================================================
@@ -308,7 +313,7 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::sync::Weak<::std::sync::RwLock<Box<$base>>>){
+                        w: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
             self.$field._weak_assign(w)
         }
     };
@@ -412,12 +417,12 @@ mod tests {
         ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) })
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
                     .unwrap() == 0,
                 "Aelicit::with"
             );
             assert!(
-                v.with_mut(|x: &mut T0| -> Result<i32> {
+                v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
                 }).unwrap() == 10,
@@ -426,12 +431,12 @@ mod tests {
         }
         for v in vs.iter() {
             assert!(
-                v.try_with(|x: &T0| -> Result<i32> { Ok(x.get()) })
+                v.try_with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
                     .unwrap() == 10,
                 "Aelicit::try_with"
             );
             assert!(
-                v.try_with_mut(|x: &mut T0| -> Result<i32> {
+                v.try_with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(20);
                     Ok(x.get())
                 }).unwrap() == 20,

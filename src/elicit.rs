@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/04/14
+//  @date 2018/04/28
 
 //! # Examples
 //!
@@ -87,12 +87,12 @@ macro_rules! elicit_define {
             // ================================================================
             /// struct Elicit
             #[derive(Debug, Clone)]
-            pub struct Elicit(Rc<RefCell<Box<$base>>>);
+            pub struct Elicit(Rc<RefCell<Box<dyn $base>>>);
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// struct WeakElicit
             #[derive(Debug, Clone)]
-            pub struct WeakElicit(Weak<RefCell<Box<$base>>>);
+            pub struct WeakElicit(Weak<RefCell<Box<dyn $base>>>);
             // ================================================================
             impl WeakElicit {
                 // ============================================================
@@ -116,7 +116,10 @@ macro_rules! elicit_define {
                 fn elicit(&self) -> Option<Elicit>;
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self, weak: Weak<RefCell<Box<$base>>>);
+                fn _weak_assign(
+                    &mut self,
+                    weak: Weak<RefCell<Box<dyn $base>>>,
+                );
             }
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -124,7 +127,7 @@ macro_rules! elicit_define {
             #[derive(Debug, Clone, Default)]
             pub struct EnableElicitFromSelfField {
                 /// Weak
-                _weak: Option<Weak<RefCell<Box<$base>>>>,
+                _weak: Option<Weak<RefCell<Box<dyn $base>>>>,
             }
             // ================================================================
             impl EnableElicitFromSelf for EnableElicitFromSelfField {
@@ -138,7 +141,10 @@ macro_rules! elicit_define {
                 }
                 // ------------------------------------------------------------
                 /// _weak_assign
-                fn _weak_assign(&mut self, weak: Weak<RefCell<Box<$base>>>) {
+                fn _weak_assign(
+                    &mut self,
+                    weak: Weak<RefCell<Box<dyn $base>>>,
+                ) {
                     self._weak = Some(weak)
                 }
             }
@@ -150,10 +156,10 @@ macro_rules! elicit_define {
                 pub fn new<T>(val: T) -> Self
                 where
                     T: Any + $base,
-                    $base: Debug + EnableElicitFromSelf,
+                    dyn $base: Debug + EnableElicitFromSelf,
                 {
                     let rc =
-                        Rc::new(RefCell::new(Box::new(val) as Box<$base>));
+                        Rc::new(RefCell::new(Box::new(val) as Box<dyn $base>));
                     rc.as_ref()
                         .borrow_mut()
                         ._weak_assign(Rc::downgrade(&rc));
@@ -169,8 +175,8 @@ macro_rules! elicit_define {
                 pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&$base) -> StdResult<T, E>,
-                    $base: Debug + EnableElicitFromSelf,
+                    F: FnOnce(&dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableElicitFromSelf,
                 {
                     f(&(*(*(self.0.as_ref().borrow()))))
                 }
@@ -179,8 +185,8 @@ macro_rules! elicit_define {
                 pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut $base) -> StdResult<T, E>,
-                    $base: Debug + EnableElicitFromSelf,
+                    F: FnOnce(&mut dyn $base) -> StdResult<T, E>,
+                    dyn $base: Debug + EnableElicitFromSelf,
                 {
                     f(&mut (*(*(self.0.as_ref().borrow_mut()))))
                 }
@@ -200,7 +206,7 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>) {
+                        _: ::std::rc::Weak<::std::cell::RefCell<Box<dyn $base>>>) {
         }
     };
     // ========================================================================
@@ -211,7 +217,7 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::rc::Weak<::std::cell::RefCell<Box<$base>>>) {
+                        w: ::std::rc::Weak<::std::cell::RefCell<Box<dyn $base>>>) {
             self.$field._weak_assign(w)
         }
     };
@@ -314,12 +320,12 @@ mod tests {
         ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &T0| -> Result<i32> { Ok(x.get()) })
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
                     .unwrap() == 0,
                 "Elicit::with"
             );
             assert!(
-                v.with_mut(|x: &mut T0| -> Result<i32> {
+                v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
                 }).unwrap() == 10,

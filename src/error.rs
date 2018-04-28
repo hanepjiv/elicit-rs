@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2016/12/31
+//  @date 2018/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -46,7 +46,7 @@ impl StdError for Error {
         }
     }
     // ========================================================================
-    fn cause(&self) -> Option<&StdError> {
+    fn cause(&self) -> Option<&dyn StdError> {
         //info!("::elicit::Error::cause");// gurd "extern crate log" auto strip
         match *self {
             Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
