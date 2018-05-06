@@ -6,11 +6,10 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/04/28
+//  @date 2018/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-#![feature(try_trait)]
 #![deny(
     anonymous_parameters, bare_trait_object, missing_copy_implementations,
     missing_debug_implementations, missing_docs, unused_extern_crates,
