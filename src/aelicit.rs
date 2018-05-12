@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/05/06
+//  @date 2018/05/12
 
 //! # Examples
 //!
@@ -302,7 +302,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
+                        _: ::std::sync::Weak<
+                        ::std::sync::RwLock<Box<dyn $base>>>){
         }
     };
     // ========================================================================
@@ -313,7 +314,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
+                        w: ::std::sync::Weak<
+                        ::std::sync::RwLock<Box<dyn $base>>>){
             self.$field._weak_assign(w)
         }
     };
@@ -411,14 +413,12 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs = vec![
-            Aelicit_T0::new(S0::new(0)),
-            Aelicit_T0::new(S1::new(0)),
-        ];
+        let vs =
+            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 0,
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                    == 0,
                 "Aelicit::with"
             );
             assert!(
