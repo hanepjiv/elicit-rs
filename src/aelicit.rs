@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/04/14
+//  @date 2018/05/13
 
 //! # Examples
 //!
@@ -83,9 +83,10 @@ macro_rules! aelicit_define {
             use std::convert::From;
             use std::fmt::Debug;
             use std::result::Result as StdResult;
-            use std::sync::{Arc, LockResult, RwLock, RwLockReadGuard,
-                            RwLockWriteGuard, TryLockError, TryLockResult,
-                            Weak};
+            use std::sync::{
+                Arc, LockResult, RwLock, RwLockReadGuard, RwLockWriteGuard,
+                TryLockError, TryLockResult, Weak,
+            };
             use $crate::Error;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -205,10 +206,12 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// with
-                pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn with<T, E>(
+                    &self,
+                    f: impl FnOnce(&$base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&$base) -> StdResult<T, E>,
                     $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.read() {
@@ -221,10 +224,12 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// try_with
-                pub fn try_with<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn try_with<T, E>(
+                    &self,
+                    f: impl FnOnce(&$base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&$base) -> StdResult<T, E>,
                     $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.try_read() {
@@ -244,10 +249,12 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// with_mut
-                pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn with_mut<T, E>(
+                    &self,
+                    f: impl FnOnce(&mut $base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut $base) -> StdResult<T, E>,
                     $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.write() {
@@ -260,10 +267,12 @@ macro_rules! aelicit_define {
                 }
                 // ============================================================
                 /// try_with_mut
-                pub fn try_with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn try_with_mut<T, E>(
+                    &self,
+                    f: impl FnOnce(&mut $base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut $base) -> StdResult<T, E>,
                     $base: Debug + EnableAelicitFromSelf,
                 {
                     match self.try_write() {
