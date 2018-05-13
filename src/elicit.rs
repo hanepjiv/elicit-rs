@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/05/12
+//  @date 2018/05/13
 
 //! # Examples
 //!
@@ -170,20 +170,24 @@ macro_rules! elicit_define {
                 }
                 // ============================================================
                 /// with
-                pub fn with<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn with<T, E>(
+                    &self,
+                    f: impl FnOnce(&dyn $base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&dyn $base) -> StdResult<T, E>,
                     dyn $base: Debug + EnableElicitFromSelf,
                 {
                     f(&(*(*(self.0.as_ref().borrow()))))
                 }
                 // ============================================================
                 /// with_mut
-                pub fn with_mut<T, E, F>(&self, f: F) -> StdResult<T, E>
+                pub fn with_mut<T, E>(
+                    &self,
+                    f: impl FnOnce(&mut dyn $base) -> StdResult<T, E>,
+                ) -> StdResult<T, E>
                 where
                     E: From<Error>,
-                    F: FnOnce(&mut dyn $base) -> StdResult<T, E>,
                     dyn $base: Debug + EnableElicitFromSelf,
                 {
                     f(&mut (*(*(self.0.as_ref().borrow_mut()))))
