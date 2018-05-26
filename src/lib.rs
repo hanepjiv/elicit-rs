@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/05/13
+//  @date 2018/05/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.26.0 (a77568041 2018-05-07)
+// rustc stable-1.26.0 (a77568041 2018-05-07)
 #![deny(
     anonymous_parameters, missing_copy_implementations,
     missing_debug_implementations, missing_docs, unstable_features,
