@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/05/13
+//  @date 2018/06/01
 
 //! # Examples
 //!
@@ -160,7 +160,9 @@ macro_rules! elicit_define {
                 {
                     let rc =
                         Rc::new(RefCell::new(Box::new(val) as Box<dyn $base>));
-                    rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc));
+                    rc.as_ref()
+                        .borrow_mut()
+                        ._weak_assign(Rc::downgrade(&rc));
                     Elicit(rc)
                 }
                 // ============================================================
@@ -229,6 +231,7 @@ macro_rules! enable_elicit_from_self_delegate {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
+#[allow(unreachable_pub)]
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================
@@ -318,11 +321,14 @@ mod tests {
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
+        let vs = vec![
+            Elicit_T0::new(S0::new(0)),
+            Elicit_T0::new(S1::new(0)),
+        ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
-                    == 0,
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
+                    .unwrap() == 0,
                 "Elicit::with"
             );
             assert!(

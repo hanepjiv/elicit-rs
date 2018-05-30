@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/05/30
+//  @date 2018/06/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -38,10 +38,12 @@
     pub_use_of_private_extern_crate, safe_extern_statics, unknown_crate_types
 )]
 #![warn(
-    dead_code, elided_lifetimes_in_paths, single_use_lifetimes,
-    unreachable_pub, renamed_and_removed_lints, unstable_features
+    dead_code, unreachable_pub, renamed_and_removed_lints, unstable_features
 )]
-#![allow(box_pointers, trivial_casts, trivial_numeric_casts, unsafe_code)]
+#![allow(
+    box_pointers, elided_lifetimes_in_paths, single_use_lifetimes,
+    trivial_casts, trivial_numeric_casts, unsafe_code
+)]
 // use  =======================================================================
 pub use self::error::Error;
 // mod  =======================================================================

@@ -1,16 +1,16 @@
 language: rust
 sudo: false
 cache:
-  - apt
-  - cargo
+- apt
+- cargo
 rust:
-  - stable
-  - beta
-  - nightly
+- stable
+- beta
+- nightly
 matrix:
   allow_failures:
-    - rust: stable
-    - rust: beta
+  - rust: stable
+  - rust: beta
 notifications:
   slack:
     rooms:

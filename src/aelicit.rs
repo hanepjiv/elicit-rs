@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/05/13
+//  @date 2018/06/01
 
 //! # Examples
 //!
@@ -83,10 +83,9 @@ macro_rules! aelicit_define {
             use std::convert::From;
             use std::fmt::Debug;
             use std::result::Result as StdResult;
-            use std::sync::{
-                Arc, LockResult, RwLock, RwLockReadGuard, RwLockWriteGuard,
-                TryLockError, TryLockResult, Weak,
-            };
+            use std::sync::{Arc, LockResult, RwLock, RwLockReadGuard,
+                            RwLockWriteGuard, TryLockError, TryLockResult,
+                            Weak};
             use $crate::Error;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -332,6 +331,7 @@ macro_rules! enable_aelicit_from_self_delegate {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
+#[allow(unreachable_pub)]
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================
@@ -422,12 +422,14 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs =
-            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
+        let vs = vec![
+            Aelicit_T0::new(S0::new(0)),
+            Aelicit_T0::new(S1::new(0)),
+        ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
-                    == 0,
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
+                    .unwrap() == 0,
                 "Aelicit::with"
             );
             assert!(
