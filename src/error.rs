@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2018/05/30
+//  @date 2018/06/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -15,7 +15,7 @@ use std::fmt::Display;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
     /// PoisonedRead
     PoisonedRead,
@@ -28,11 +28,7 @@ pub enum Error {
 impl Display for Error {
     // ========================================================================
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        match *self {
-            ref e @ Error::PoisonedRead
-            | ref e @ Error::PoisonedWrite
-            | ref e @ Error::WouldBlock => write!(f, "{:?}", e),
-        }
+        write!(f, "{:?}", self)
     }
 }
 // ============================================================================
@@ -53,5 +49,24 @@ impl StdError for Error {
                 None
             }
         }
+    }
+}
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+#[cfg(test)]
+mod tests {
+    // use  ===================================================================
+    use super::Error;
+    // ========================================================================
+    #[test]
+    fn test_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<Error>();
+    }
+    // ------------------------------------------------------------------------
+    #[test]
+    fn test_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<Error>();
     }
 }

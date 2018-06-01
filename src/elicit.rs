@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/05/13
+//  @date 2018/06/01
 
 //! # Examples
 //!
@@ -309,7 +309,7 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     #[test]
-    fn elicit_with() {
+    fn test_elicit_with() {
         let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
