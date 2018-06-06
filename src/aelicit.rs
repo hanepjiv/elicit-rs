@@ -83,9 +83,10 @@ macro_rules! aelicit_define {
             use std::convert::From;
             use std::fmt::Debug;
             use std::result::Result as StdResult;
-            use std::sync::{Arc, LockResult, RwLock, RwLockReadGuard,
-                            RwLockWriteGuard, TryLockError, TryLockResult,
-                            Weak};
+            use std::sync::{
+                Arc, LockResult, RwLock, RwLockReadGuard, RwLockWriteGuard,
+                TryLockError, TryLockResult, Weak,
+            };
             use $crate::Error;
             // ////////////////////////////////////////////////////////////////
             // ================================================================
@@ -422,14 +423,12 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs = vec![
-            Aelicit_T0::new(S0::new(0)),
-            Aelicit_T0::new(S1::new(0)),
-        ];
+        let vs =
+            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 0,
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                    == 0,
                 "Aelicit::with"
             );
             assert!(

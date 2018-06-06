@@ -6,18 +6,18 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/06/01
+//  @date 2018/06/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.28.0-nightly (5bf68db6e 2018-05-28)  -------------------------------
+// rustc 1.28.0-nightly (4a9c58c6b 2018-06-05)
 #![deny(
     absolute_paths_not_starting_with_crate, anonymous_parameters,
     bare_trait_objects, missing_copy_implementations,
-    missing_debug_implementations, missing_docs, unnecessary_extern_crates,
-    unused_extern_crates, unused_import_braces, unused_labels,
-    unused_lifetimes, unused_qualifications, unused_results,
-    variant_size_differences, deprecated, duplicate_associated_type_bindings,
+    missing_debug_implementations, missing_docs, unused_extern_crates,
+    unused_import_braces, unused_labels, unused_lifetimes,
+    unused_qualifications, unused_results, variant_size_differences,
+    deprecated, duplicate_associated_type_bindings,
     illegal_floating_point_literal_pattern, improper_ctypes,
     late_bound_lifetime_arguments, non_camel_case_types,
     non_shorthand_field_patterns, non_snake_case, non_upper_case_globals,
@@ -38,7 +38,7 @@
     pub_use_of_private_extern_crate, safe_extern_statics, unknown_crate_types
 )]
 #![warn(
-    dead_code, unreachable_pub, renamed_and_removed_lints, unstable_features
+    dead_code, renamed_and_removed_lints, unstable_features, unreachable_pub
 )]
 #![allow(
     box_pointers, elided_lifetimes_in_paths, single_use_lifetimes,
