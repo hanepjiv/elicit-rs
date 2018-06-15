@@ -43,11 +43,10 @@ impl StdError for Error {
     }
     // ========================================================================
     fn cause(&self) -> Option<&dyn StdError> {
-        //info!("::elicit::Error::cause");// gurd "extern crate log" auto strip
         match *self {
-            Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
-                None
-            }
+            | Error::PoisonedRead
+            | Error::PoisonedWrite
+            | Error::WouldBlock => None,
         }
     }
 }
