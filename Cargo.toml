@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.7.5-alpha.1"
+version                 = "0.7.5"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["core"]
@@ -11,6 +11,6 @@ readme                  = "README.md"
 documentation           = "https://github.com/hanepjiv/elicit-rs/wiki"
 homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
-publish                 = false
+publish                 = true
 # =============================================================================
 [dependencies]
