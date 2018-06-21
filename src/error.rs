@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2018/06/15
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -27,7 +27,7 @@ pub enum Error {
 // ============================================================================
 impl Display for Error {
     // ========================================================================
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         <Self as ::std::fmt::Debug>::fmt(self, f)
     }
 }
@@ -42,7 +42,7 @@ impl StdError for Error {
         }
     }
     // ========================================================================
-    fn cause(&self) -> Option<&StdError> {
+    fn cause(&self) -> Option<&dyn StdError> {
         match *self {
             | Error::PoisonedRead
             | Error::PoisonedWrite
