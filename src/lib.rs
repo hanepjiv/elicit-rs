@@ -42,7 +42,6 @@
     private_in_public,
     private_no_mangle_fns,
     private_no_mangle_statics,
-    renamed_and_removed_lints,
     safe_packed_borrows,
     stable_features,
     type_alias_bounds,
