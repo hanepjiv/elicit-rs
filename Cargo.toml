@@ -2,10 +2,10 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.7.5"
+version                 = "0.7.6-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
-keywords                = ["core"]
+keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
 documentation           = "https://github.com/hanepjiv/elicit-rs/wiki"

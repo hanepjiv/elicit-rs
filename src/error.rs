@@ -44,9 +44,9 @@ impl StdError for Error {
     // ========================================================================
     fn cause(&self) -> Option<&dyn StdError> {
         match *self {
-            | Error::PoisonedRead
-            | Error::PoisonedWrite
-            | Error::WouldBlock => None,
+            Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
+                None
+            }
         }
     }
 }
