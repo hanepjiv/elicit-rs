@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/06/22
+//  @date 2018/08/03
 
 //! # Examples
 //!
@@ -311,7 +311,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
+                        _: ::std::sync::Weak<
+                        ::std::sync::RwLock<Box<dyn $base>>>){
         }
     };
     // ========================================================================
@@ -322,7 +323,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::sync::Weak<::std::sync::RwLock<Box<dyn $base>>>){
+                        w: ::std::sync::Weak<
+                        ::std::sync::RwLock<Box<dyn $base>>>){
             self.$field._weak_assign(w)
         }
     };
@@ -330,6 +332,7 @@ macro_rules! enable_aelicit_from_self_delegate {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
+#[allow(unreachable_pub)]
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================

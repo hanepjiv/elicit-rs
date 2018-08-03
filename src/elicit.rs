@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/06/22
+//  @date 2018/08/03
 
 //! # Examples
 //!
@@ -208,7 +208,8 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::rc::Weak<::std::cell::RefCell<Box<dyn $base>>>) {
+                        _: ::std::rc::Weak<
+                        ::std::cell::RefCell<Box<dyn $base>>>) {
         }
     };
     // ========================================================================
@@ -219,7 +220,8 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::rc::Weak<::std::cell::RefCell<Box<dyn $base>>>) {
+                        w: ::std::rc::Weak<
+                        ::std::cell::RefCell<Box<dyn $base>>>) {
             self.$field._weak_assign(w)
         }
     };
@@ -227,6 +229,7 @@ macro_rules! enable_elicit_from_self_delegate {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
+#[allow(unreachable_pub)]
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================
@@ -315,7 +318,7 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     #[test]
-    fn test_elicit_with() {
+    fn elicit_with() {
         let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
         for v in vs.iter() {
             assert!(
