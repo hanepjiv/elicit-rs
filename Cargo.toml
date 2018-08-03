@@ -8,9 +8,16 @@ license                 = "MIT/Apache-2.0"
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
-documentation           = "https://github.com/hanepjiv/elicit-rs/wiki"
-homepage                = "https://github.com/hanepjiv/elicit-rs"
+documentation           = "https://docs.rs/elicit/"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
+include                 = [ "Cargo.toml",
+                            "build.rs",
+                            "src/**/*.rs",
+                            "crates-io.md",
+                            "README.md",
+                            "LICENSE-APACHE-2.0",
+                            "LICENSE-MIT"
+                            ]
 publish                 = true
 # =============================================================================
 [dependencies]

@@ -432,21 +432,24 @@ mod tests {
                 v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
-                }).unwrap() == 10,
+                }).unwrap()
+                    == 10,
                 "Aelicit::with_mut"
             );
         }
         for v in vs.iter() {
             assert!(
                 v.try_with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap() == 10,
+                    .unwrap()
+                    == 10,
                 "Aelicit::try_with"
             );
             assert!(
                 v.try_with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(20);
                     Ok(x.get())
-                }).unwrap() == 20,
+                }).unwrap()
+                    == 20,
                 "Aelicit::try_with_mut"
             );
         }
