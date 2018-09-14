@@ -6,22 +6,29 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/08/03
+//  @date 2018/09/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.29.0-nightly (97085f9fb 2018-08-01)
+// rustc 1.30.0-nightly (90d36fb59 2018-09-13)
 #![deny(
     absolute_paths_not_starting_with_crate,
     anonymous_parameters,
-    async_idents,
     bare_trait_objects,
+    box_pointers,
+    elided_lifetimes_in_paths,
     ellipsis_inclusive_range_patterns,
+    keyword_idents,
     macro_use_extern_crate,
     missing_copy_implementations,
     missing_debug_implementations,
     missing_docs,
     question_mark_macro_sep,
+    single_use_lifetimes,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    unsafe_code,
     unstable_features,
     unused_extern_crates,
     unused_import_braces,
@@ -30,6 +37,7 @@
     unused_qualifications,
     unused_results,
     variant_size_differences,
+    dead_code,
     deprecated,
     duplicate_associated_type_bindings,
     illegal_floating_point_literal_pattern,
@@ -49,6 +57,7 @@
     private_no_mangle_fns,
     private_no_mangle_statics,
     proc_macro_derive_resolution_fallback,
+    renamed_and_removed_lints,
     safe_packed_borrows,
     stable_features,
     trivial_bounds,
@@ -57,7 +66,7 @@
     unconditional_recursion,
     unions_with_drop_fields,
     unknown_lints,
-    unnameable_test_functions,
+    unnameable_test_items,
     unreachable_code,
     unreachable_patterns,
     unstable_name_collisions,
@@ -84,6 +93,7 @@
     irrefutable_let_patterns,
     legacy_constructor_visibility,
     legacy_directory_ownership,
+    macro_expanded_macro_exports_accessed_by_absolute_paths,
     missing_fragment_specifier,
     mutable_transmutes,
     no_mangle_const_items,
