@@ -423,11 +423,14 @@ mod tests {
     #[test]
     fn aelicit_with() {
         //info!("::elicit::aelicit::tests::aelicit_with()");
-        let vs =
-            vec![Aelicit_T0::new(S0::new(0)), Aelicit_T0::new(S1::new(0))];
+        let vs = vec![
+            Aelicit_T0::new(S0::new(0)),
+            Aelicit_T0::new(S1::new(0)),
+        ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
+                    .unwrap()
                     == 0,
                 "Aelicit::with"
             );
@@ -435,15 +438,18 @@ mod tests {
                 v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 10,
                 "Aelicit::with_mut"
             );
         }
         for v in vs.iter() {
             assert!(
-                v.try_with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
-                    .unwrap()
+                v.try_with(|x: &dyn T0| -> Result<i32> {
+                    Ok(x.get())
+                })
+                .unwrap()
                     == 10,
                 "Aelicit::try_with"
             );
@@ -451,7 +457,8 @@ mod tests {
                 v.try_with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(20);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 20,
                 "Aelicit::try_with_mut"
             );

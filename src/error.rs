@@ -27,7 +27,10 @@ pub enum Error {
 // ============================================================================
 impl Display for Error {
     // ========================================================================
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    fn fmt(
+        &self,
+        f: &mut ::std::fmt::Formatter<'_>,
+    ) -> ::std::fmt::Result {
         <Self as ::std::fmt::Debug>::fmt(self, f)
     }
 }
@@ -44,9 +47,9 @@ impl StdError for Error {
     // ========================================================================
     fn cause(&self) -> Option<&dyn StdError> {
         match *self {
-            Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
-                None
-            }
+            Error::PoisonedRead
+            | Error::PoisonedWrite
+            | Error::WouldBlock => None,
         }
     }
 }

@@ -158,9 +158,12 @@ macro_rules! elicit_define {
                     T: Any + $base,
                     dyn $base: Debug + EnableElicitFromSelf,
                 {
-                    let rc =
-                        Rc::new(RefCell::new(Box::new(val) as Box<dyn $base>));
-                    rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc));
+                    let rc = Rc::new(RefCell::new(
+                        Box::new(val) as Box<dyn $base>
+                    ));
+                    rc.as_ref()
+                        .borrow_mut()
+                        ._weak_assign(Rc::downgrade(&rc));
                     Elicit(rc)
                 }
                 // ============================================================
@@ -319,10 +322,14 @@ mod tests {
     // ========================================================================
     #[test]
     fn elicit_with() {
-        let vs = vec![Elicit_T0::new(S0::new(0)), Elicit_T0::new(S1::new(0))];
+        let vs = vec![
+            Elicit_T0::new(S0::new(0)),
+            Elicit_T0::new(S1::new(0)),
+        ];
         for v in vs.iter() {
             assert!(
-                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) }).unwrap()
+                v.with(|x: &dyn T0| -> Result<i32> { Ok(x.get()) })
+                    .unwrap()
                     == 0,
                 "Elicit::with"
             );
@@ -330,7 +337,8 @@ mod tests {
                 v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 10,
                 "Elicit::with_mut"
             );
