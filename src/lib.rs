@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2018/09/14
+//  @date 2018/10/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -65,7 +65,6 @@
     tyvar_behind_raw_pointer,
     unconditional_recursion,
     unions_with_drop_fields,
-    unknown_lints,
     unnameable_test_items,
     unreachable_code,
     unreachable_patterns,
@@ -102,7 +101,12 @@
     safe_extern_statics,
     unknown_crate_types,
 )]
-#![warn(dead_code, renamed_and_removed_lints, unreachable_pub)]
+#![warn(
+    dead_code,
+    renamed_and_removed_lints,
+    unknown_lints,
+    unreachable_pub
+)]
 #![allow(
     box_pointers,
     elided_lifetimes_in_paths,
