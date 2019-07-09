@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/08/03
+//  @date 2019/07/09
 
 //! # Examples
 //!
@@ -176,7 +176,7 @@ macro_rules! aelicit_define {
                 /// read
                 pub fn read(
                     &self,
-                ) -> LockResult<RwLockReadGuard<Box<dyn $base>>>
+                ) -> LockResult<RwLockReadGuard<'_, Box<dyn $base>>>
                 where
                     dyn $base: Debug + EnableAelicitFromSelf,
                 {
@@ -186,7 +186,7 @@ macro_rules! aelicit_define {
                 /// try_read
                 pub fn try_read(
                     &self,
-                ) -> TryLockResult<RwLockReadGuard<Box<dyn $base>>>
+                ) -> TryLockResult<RwLockReadGuard<'_, Box<dyn $base>>>
                 where
                     dyn $base: Debug + EnableAelicitFromSelf,
                 {
@@ -196,14 +196,14 @@ macro_rules! aelicit_define {
                 /// write
                 pub fn write(
                     &self,
-                ) -> LockResult<RwLockWriteGuard<Box<dyn $base>>> {
+                ) -> LockResult<RwLockWriteGuard<'_, Box<dyn $base>>> {
                     self.0.write()
                 }
                 // ============================================================
                 /// try_write
                 pub fn try_write(
                     &self,
-                ) -> TryLockResult<RwLockWriteGuard<Box<dyn $base>>>
+                ) -> TryLockResult<RwLockWriteGuard<'_, Box<dyn $base>>>
                 where
                     dyn $base: Debug + EnableAelicitFromSelf,
                 {
@@ -435,7 +435,8 @@ mod tests {
                 v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 10,
                 "Aelicit::with_mut"
             );
@@ -451,7 +452,8 @@ mod tests {
                 v.try_with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(20);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 20,
                 "Aelicit::try_with_mut"
             );

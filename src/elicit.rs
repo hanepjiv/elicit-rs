@@ -330,7 +330,8 @@ mod tests {
                 v.with_mut(|x: &mut dyn T0| -> Result<i32> {
                     x.set(10);
                     Ok(x.get())
-                }).unwrap()
+                })
+                .unwrap()
                     == 10,
                 "Elicit::with_mut"
             );
