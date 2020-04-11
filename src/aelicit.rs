@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2019/07/09
+//  @date 2020/04/03
 
 //! # Examples
 //!
@@ -23,7 +23,7 @@
 //! use self::aelicit_my_trait::EnableAelicitFromSelfField
 //!     as MyTraitEnableAelicitFromSelfField;
 //!
-//! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableAelicitFromSelf {
+//! pub trait MyTrait: std::fmt::Debug + MyTraitEnableAelicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
@@ -72,7 +72,6 @@ macro_rules! aelicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        #[allow(unreachable_pub)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
@@ -155,6 +154,7 @@ macro_rules! aelicit_define {
             impl Aelicit {
                 // ============================================================
                 /// new
+                #[allow(trivial_casts)]
                 pub fn new<T>(val: T) -> Self
                 where
                     T: Any + $base,
@@ -311,8 +311,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::sync::Weak<
-                        ::std::sync::RwLock<Box<dyn $base>>>){
+                        _: std::sync::Weak<
+                        std::sync::RwLock<Box<dyn $base>>>){
         }
     };
     // ========================================================================
@@ -323,8 +323,8 @@ macro_rules! enable_aelicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::sync::Weak<
-                        ::std::sync::RwLock<Box<dyn $base>>>){
+                        w: std::sync::Weak<
+                        std::sync::RwLock<Box<dyn $base>>>){
             self.$field._weak_assign(w)
         }
     };
@@ -336,9 +336,9 @@ macro_rules! enable_aelicit_from_self_delegate {
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================
-    use super::super::Error;
+    use crate::Error;
     // type  ==================================================================
-    type Result<T> = ::std::result::Result<T, Error>;
+    type Result<T> = std::result::Result<T, Error>;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
@@ -349,7 +349,7 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
-    pub trait T0: ::std::fmt::Debug + EAFS_T0 {
+    pub trait T0: std::fmt::Debug + EAFS_T0 {
         /// get
         fn get(&self) -> i32;
         /// set

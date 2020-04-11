@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2018/08/03
+//  @date 2020/04/03
 
 //! # Examples
 //!
@@ -23,7 +23,7 @@
 //! use self::elicit_my_trait::EnableElicitFromSelfField
 //!     as MyTraitEnableElicitFromSelfField;
 //!
-//! pub trait MyTrait: ::std::fmt::Debug + MyTraitEnableElicitFromSelf {
+//! pub trait MyTrait: std::fmt::Debug + MyTraitEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
@@ -69,7 +69,6 @@ macro_rules! elicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        #[allow(unreachable_pub)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
@@ -153,6 +152,7 @@ macro_rules! elicit_define {
             impl Elicit {
                 // ============================================================
                 /// new
+                #[allow(trivial_casts)]
                 pub fn new<T>(val: T) -> Self
                 where
                     T: Any + $base,
@@ -208,8 +208,8 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        _: ::std::rc::Weak<
-                        ::std::cell::RefCell<Box<dyn $base>>>) {
+                        _: std::rc::Weak<
+                        std::cell::RefCell<Box<dyn $base>>>) {
         }
     };
     // ========================================================================
@@ -220,8 +220,8 @@ macro_rules! enable_elicit_from_self_delegate {
         }
         // --------------------------------------------------------------------
         fn _weak_assign(&mut self,
-                        w: ::std::rc::Weak<
-                        ::std::cell::RefCell<Box<dyn $base>>>) {
+                        w: std::rc::Weak<
+                        std::cell::RefCell<Box<dyn $base>>>) {
             self.$field._weak_assign(w)
         }
     };
@@ -233,9 +233,9 @@ macro_rules! enable_elicit_from_self_delegate {
 mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // use  ===================================================================
-    use super::super::Error;
+    use crate::Error;
     // type  ==================================================================
-    type Result<T> = ::std::result::Result<T, Error>;
+    type Result<T> = std::result::Result<T, Error>;
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     elicit_define!(elicit_t0, T0);
@@ -246,7 +246,7 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
-    pub trait T0: ::std::fmt::Debug + EEFS_T0 {
+    pub trait T0: std::fmt::Debug + EEFS_T0 {
         /// get
         fn get(&self) -> i32;
         /// set
