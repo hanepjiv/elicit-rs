@@ -3,7 +3,7 @@
 [package]
 edition                 = "2018"
 name                    = "elicit"
-version                 = "0.7.7-alpha.3+nightly"
+version                 = "0.7.9-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["utility"]
