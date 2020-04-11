@@ -6,10 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2020/04/03
+//  @date 2020/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
+/*
 // rustc 1.42.0 (b8cedc004 2020-03-09)
 #![deny(
     absolute_paths_not_starting_with_crate,
@@ -110,6 +111,7 @@
 )]
 #![warn(dead_code, renamed_and_removed_lints)]
 #![allow(box_pointers)]
+*/
 // mod  =======================================================================
 pub mod aelicit;
 pub mod elicit;
