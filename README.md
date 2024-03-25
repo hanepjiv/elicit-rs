@@ -1,7 +1,7 @@
 # elicit-rs
 
 ## build status
-- master: [![Build Status](https://travis-ci.org/hanepjiv/elicit-rs.svg?branch=main)](https://travis-ci.org/hanepjiv/elicit-rs)
+- main: [![Build Status](https://travis-ci.org/hanepjiv/elicit-rs.svg?branch=main)](https://travis-ci.org/hanepjiv/elicit-rs)
 
 ## License
 
