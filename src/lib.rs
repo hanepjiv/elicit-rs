@@ -6,18 +6,18 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/03/30
+//  @date 2024/04/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-#![deny(
+#![forbid(
     clippy::all,
     future_incompatible,
     let_underscore,
     nonstandard_style,
     rust_2021_compatibility
 )]
-#![warn(unused)]
+#![warn(unused, warnings)]
 // mod  =======================================================================
 pub mod aelicit;
 pub mod elicit;
