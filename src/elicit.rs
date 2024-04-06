@@ -53,6 +53,7 @@
 //!         self.my_field
 //!     }
 //! }
+//!
 //! fn main() {
 //!     let _my0 = MyTraitElicit::new(MyStruct {
 //!         _eefsf: MyTraitEnableElicitFromSelfField::default(),
