@@ -54,13 +54,13 @@
 //!     }
 //! }
 //! fn main() {
-//! let _my0 = MyTraitElicit::new(MyStruct {
-//!     _eefsf: MyTraitEnableElicitFromSelfField::default(),
-//!     my_field: 0i32,
-//! });
-//! let _my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf {
-//!     my_field: 1i32,
-//! });
+//!     let _my0 = MyTraitElicit::new(MyStruct {
+//!         _eefsf: MyTraitEnableElicitFromSelfField::default(),
+//!         my_field: 0i32,
+//!     });
+//!     let _my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf {
+//!         my_field: 1i32,
+//!     });
 //! }
 //! ```
 
