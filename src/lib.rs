@@ -6,13 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/04/06
+//  @date 2024/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
 // rustc 1.77.1 (7cf61ebde 2024-03-27)
 #![forbid(
-    clippy::all,
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
     elided_lifetimes_in_paths,
@@ -192,7 +191,7 @@
     useless_deprecated,
     missing_debug_implementations
 )]
-#![deny(trivial_casts, unreachable_pub, box_pointers, dead_code)]
+#![deny(clippy::all, trivial_casts, unreachable_pub, box_pointers, dead_code)]
 // mod  =======================================================================
 pub mod aelicit;
 pub mod elicit;

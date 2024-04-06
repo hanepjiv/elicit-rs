@@ -8,13 +8,15 @@
 //  @since 2016/08/18
 //  @date 2024/04/07
 
+#![allow(clippy::needless_doctest_main)]
+
 //! # Examples
 //!
 //! ```
 //! use elicit::{elicit_define, enable_elicit_from_self_delegate};
 //!
 //! elicit_define!(elicit_my_trait, MyTrait);
-//! use self::elicit_my_trait::{
+//! use elicit_my_trait::{
 //!     Elicit as MyTraitElicit,
 //!     EnableElicitFromSelf as MyTraitEnableElicitFromSelf,
 //!     EnableElicitFromSelfField as MyTraitEnableElicitFromSelfField,
@@ -51,15 +53,14 @@
 //!         self.my_field
 //!     }
 //! }
-//!
 //! fn main() {
-//!     let _my0 = MyTraitElicit::new(MyStruct {
-//!         _eefsf: MyTraitEnableElicitFromSelfField::default(),
-//!         my_field: 0i32,
-//!     });
-//!     let _my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf {
-//!         my_field: 1i32,
-//!     });
+//! let _my0 = MyTraitElicit::new(MyStruct {
+//!     _eefsf: MyTraitEnableElicitFromSelfField::default(),
+//!     my_field: 0i32,
+//! });
+//! let _my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf {
+//!     my_field: 1i32,
+//! });
 //! }
 //! ```
 
@@ -247,10 +248,12 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     elicit_define!(elicit_t0, T0);
-    pub(crate) use self::elicit_t0::Elicit as Elicit_T0;
-    pub(crate) use self::elicit_t0::EnableElicitFromSelf as EEFS_T0;
-    pub(crate) use self::elicit_t0::EnableElicitFromSelfField as EEFS_Field_T0;
-    // pub(crate) use self::elicit_t0::WeakElicit as WeakElicit_T0;
+    pub(crate) use self::elicit_t0::{
+        Elicit as Elicit_T0,
+        EnableElicitFromSelf as EEFS_T0,
+        EnableElicitFromSelfField as EEFS_Field_T0,
+        // WeakElicit as WeakElicit_T0,
+    };
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0

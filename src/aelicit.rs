@@ -8,13 +8,15 @@
 //  @since 2016/08/18
 //  @date 2024/04/07
 
+#![allow(clippy::needless_doctest_main)]
+
 //! # Examples
 //!
 //! ```
 //! use elicit::{aelicit_define, enable_aelicit_from_self_delegate};
 //!
 //! aelicit_define!(aelicit_my_trait, MyTrait);
-//! use self::aelicit_my_trait::{
+//! use aelicit_my_trait::{
 //!     Aelicit as MyTraitAelicit,
 //!     EnableAelicitFromSelf as MyTraitEnableAelicitFromSelf,
 //!     EnableAelicitFromSelfField as MyTraitEnableAelicitFromSelfField,
@@ -347,10 +349,12 @@ mod tests {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     aelicit_define!(aelicit_t0, T0);
-    pub(crate) use self::aelicit_t0::Aelicit as Aelicit_T0;
-    pub(crate) use self::aelicit_t0::EnableAelicitFromSelf as EAFS_T0;
-    pub(crate) use self::aelicit_t0::EnableAelicitFromSelfField as EAFS_Field_T0;
-    //pub(crate) use self::aelicit_t0::WeakAelicit as WeakAelicit_T0;
+    pub(crate) use self::aelicit_t0::{
+        Aelicit as Aelicit_T0,
+        EnableAelicitFromSelf as EAFS_T0,
+        EnableAelicitFromSelfField as EAFS_Field_T0,
+        // WeakAelicit as WeakAelicit_T0,
+    };
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// trait T0
