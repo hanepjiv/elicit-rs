@@ -3,9 +3,9 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.7.11-alpha.2"
+version                 = "0.7.11-alpha.3"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
-license                 = "MIT/Apache-2.0"
+license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
