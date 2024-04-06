@@ -6,59 +6,58 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2020/04/03
+//  @date 2024/04/07
 
 //! # Examples
 //!
 //! ```
-//! #[macro_use] extern crate elicit;
+//! use elicit::{aelicit_define, enable_aelicit_from_self_delegate};
 //!
 //! aelicit_define!(aelicit_my_trait, MyTrait);
-//! use self::aelicit_my_trait::Aelicit
-//!     as MyTraitAelicit;
-//! use self::aelicit_my_trait::WeakAelicit
-//!     as MyTraitWeakAelicit;
-//! use self::aelicit_my_trait::EnableAelicitFromSelf
-//!     as MyTraitEnableAelicitFromSelf;
-//! use self::aelicit_my_trait::EnableAelicitFromSelfField
-//!     as MyTraitEnableAelicitFromSelfField;
+//! use self::aelicit_my_trait::{
+//!     Aelicit as MyTraitAelicit,
+//!     EnableAelicitFromSelf as MyTraitEnableAelicitFromSelf,
+//!     EnableAelicitFromSelfField as MyTraitEnableAelicitFromSelfField,
+//!     WeakAelicit as MyTraitWeakAelicit,
+//! };
 //!
 //! pub trait MyTrait: std::fmt::Debug + MyTraitEnableAelicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
-//! #[derive( Debug, )]
+//! #[derive(Debug)]
 //! struct MyStruct {
-//!     _eafsf:        MyTraitEnableAelicitFromSelfField,
-//!     my_field:     i32,
+//!     _eafsf: MyTraitEnableAelicitFromSelfField,
+//!     my_field: i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStruct {
-//!     enable_aelicit_from_self_delegate!(MyTrait,
-//!                                        MyTraitAelicit,
-//!                                        _eafsf);
+//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit, _eafsf);
 //! }
 //! impl MyTrait for MyStruct {
-//!     fn my_function(&self) -> i32 { self.my_field }
+//!     fn my_function(&self) -> i32 {
+//!         self.my_field
+//!     }
 //! }
 //!
-//! #[derive( Debug, )]
+//! #[derive(Debug)]
 //! struct MyStructUnuseEnableAelicitFromSelf {
-//!     my_field:     i32,
+//!     my_field: i32,
 //! }
 //! impl MyTraitEnableAelicitFromSelf for MyStructUnuseEnableAelicitFromSelf {
-//!     enable_aelicit_from_self_delegate!(MyTrait,
-//!                                        MyTraitAelicit);
+//!     enable_aelicit_from_self_delegate!(MyTrait, MyTraitAelicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableAelicitFromSelf {
-//!     fn my_function(&self) -> i32 { self.my_field }
+//!     fn my_function(&self) -> i32 {
+//!         self.my_field
+//!     }
 //! }
 //!
 //! fn main() {
-//!     let my0 = MyTraitAelicit::new(MyStruct{
+//!     let _my0 = MyTraitAelicit::new(MyStruct {
 //!         _eafsf: MyTraitEnableAelicitFromSelfField::default(),
 //!         my_field: 0i32,
 //!     });
-//!     let my1 = MyTraitAelicit::new(MyStructUnuseEnableAelicitFromSelf{
+//!     let _my1 = MyTraitAelicit::new(MyStructUnuseEnableAelicitFromSelf {
 //!         my_field: 1i32,
 //!     });
 //! }
@@ -72,6 +71,7 @@ macro_rules! aelicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        #[allow(box_pointers, dead_code)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
@@ -304,27 +304,32 @@ macro_rules! aelicit_define {
 #[macro_export]
 macro_rules! enable_aelicit_from_self_delegate {
     // ========================================================================
-    ($base:ident, $aelicit:ident) => {  // empty
+    ($base:ident, $aelicit:ident) => {
+        // empty
         // --------------------------------------------------------------------
         fn aelicit(&self) -> Option<$aelicit> {
             None
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        _: std::sync::Weak<
-                        std::sync::RwLock<Box<dyn $base>>>){
+        fn _weak_assign(
+            &mut self,
+            _: std::sync::Weak<std::sync::RwLock<Box<dyn $base>>>,
+        ) {
         }
     };
     // ========================================================================
-    ($base:ident, $aelicit:ident, $field:ident)  => {  // delegate to field
+    ($base:ident, $aelicit:ident, $field:ident) => {
+        // delegate to field
         // --------------------------------------------------------------------
         fn aelicit(&self) -> Option<$aelicit> {
             self.$field.aelicit()
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        w: std::sync::Weak<
-                        std::sync::RwLock<Box<dyn $base>>>){
+        #[allow(box_pointers)]
+        fn _weak_assign(
+            &mut self,
+            w: std::sync::Weak<std::sync::RwLock<Box<dyn $base>>>,
+        ) {
             self.$field._weak_assign(w)
         }
     };

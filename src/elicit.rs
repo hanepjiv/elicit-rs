@@ -6,56 +6,58 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2020/04/03
+//  @date 2024/04/07
 
 //! # Examples
 //!
 //! ```
-//! #[macro_use] extern crate elicit;
+//! use elicit::{elicit_define, enable_elicit_from_self_delegate};
 //!
 //! elicit_define!(elicit_my_trait, MyTrait);
-//! use self::elicit_my_trait::Elicit
-//!     as MyTraitElicit;
-//! use self::elicit_my_trait::WeakElicit
-//!     as MyTraitWeakElicit;
-//! use self::elicit_my_trait::EnableElicitFromSelf
-//!     as MyTraitEnableElicitFromSelf;
-//! use self::elicit_my_trait::EnableElicitFromSelfField
-//!     as MyTraitEnableElicitFromSelfField;
+//! use self::elicit_my_trait::{
+//!     Elicit as MyTraitElicit,
+//!     EnableElicitFromSelf as MyTraitEnableElicitFromSelf,
+//!     EnableElicitFromSelfField as MyTraitEnableElicitFromSelfField,
+//!     WeakElicit as MyTraitWeakElicit,
+//! };
 //!
 //! pub trait MyTrait: std::fmt::Debug + MyTraitEnableElicitFromSelf {
 //!     fn my_function(&self) -> i32;
 //! }
 //!
-//! #[derive( Debug, )]
+//! #[derive(Debug)]
 //! struct MyStruct {
-//!     _eefsf:        MyTraitEnableElicitFromSelfField,
-//!     my_field:     i32,
+//!     _eefsf: MyTraitEnableElicitFromSelfField,
+//!     my_field: i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStruct {
 //!     enable_elicit_from_self_delegate!(MyTrait, MyTraitElicit, _eefsf);
 //! }
 //! impl MyTrait for MyStruct {
-//!     fn my_function(&self) -> i32 { self.my_field }
+//!     fn my_function(&self) -> i32 {
+//!         self.my_field
+//!     }
 //! }
 //!
-//! #[derive( Debug, )]
+//! #[derive(Debug)]
 //! struct MyStructUnuseEnableElicitFromSelf {
-//!     my_field:     i32,
+//!     my_field: i32,
 //! }
 //! impl MyTraitEnableElicitFromSelf for MyStructUnuseEnableElicitFromSelf {
 //!     enable_elicit_from_self_delegate!(MyTrait, MyTraitElicit);
 //! }
 //! impl MyTrait for MyStructUnuseEnableElicitFromSelf {
-//!     fn my_function(&self) -> i32 { self.my_field }
+//!     fn my_function(&self) -> i32 {
+//!         self.my_field
+//!     }
 //! }
 //!
 //! fn main() {
-//!     let my0 = MyTraitElicit::new(MyStruct{
+//!     let _my0 = MyTraitElicit::new(MyStruct {
 //!         _eefsf: MyTraitEnableElicitFromSelfField::default(),
 //!         my_field: 0i32,
 //!     });
-//!     let my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf{
+//!     let _my1 = MyTraitElicit::new(MyStructUnuseEnableElicitFromSelf {
 //!         my_field: 1i32,
 //!     });
 //! }
@@ -69,6 +71,7 @@ macro_rules! elicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        #[allow(box_pointers, dead_code)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
@@ -201,27 +204,32 @@ macro_rules! elicit_define {
 #[macro_export]
 macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
-    ($base:ident, $elicit:ident) => {  // empty
+    ($base:ident, $elicit:ident) => {
+        // empty
         // --------------------------------------------------------------------
         fn elicit(&self) -> Option<$elicit> {
             None
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        _: std::rc::Weak<
-                        std::cell::RefCell<Box<dyn $base>>>) {
+        fn _weak_assign(
+            &mut self,
+            _: std::rc::Weak<std::cell::RefCell<Box<dyn $base>>>,
+        ) {
         }
     };
     // ========================================================================
-    ($base:ident, $elicit:ident, $field:ident) => {  // delegate to field
+    ($base:ident, $elicit:ident, $field:ident) => {
+        // delegate to field
         // --------------------------------------------------------------------
         fn elicit(&self) -> Option<$elicit> {
             self.$field.elicit()
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        w: std::rc::Weak<
-                        std::cell::RefCell<Box<dyn $base>>>) {
+        #[allow(box_pointers)]
+        fn _weak_assign(
+            &mut self,
+            w: std::rc::Weak<std::cell::RefCell<Box<dyn $base>>>,
+        ) {
             self.$field._weak_assign(w)
         }
     };
