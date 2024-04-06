@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2020/04/03
+//  @date 2024/04/06
 
 //! # Examples
 //!
@@ -69,6 +69,7 @@ macro_rules! elicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        #[allow(box_pointers, dead_code)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////
@@ -201,27 +202,32 @@ macro_rules! elicit_define {
 #[macro_export]
 macro_rules! enable_elicit_from_self_delegate {
     // ========================================================================
-    ($base:ident, $elicit:ident) => {  // empty
+    ($base:ident, $elicit:ident) => {
+        // empty
         // --------------------------------------------------------------------
         fn elicit(&self) -> Option<$elicit> {
             None
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        _: std::rc::Weak<
-                        std::cell::RefCell<Box<dyn $base>>>) {
+        fn _weak_assign(
+            &mut self,
+            _: std::rc::Weak<std::cell::RefCell<Box<dyn $base>>>,
+        ) {
         }
     };
     // ========================================================================
-    ($base:ident, $elicit:ident, $field:ident) => {  // delegate to field
+    ($base:ident, $elicit:ident, $field:ident) => {
+        // delegate to field
         // --------------------------------------------------------------------
         fn elicit(&self) -> Option<$elicit> {
             self.$field.elicit()
         }
         // --------------------------------------------------------------------
-        fn _weak_assign(&mut self,
-                        w: std::rc::Weak<
-                        std::cell::RefCell<Box<dyn $base>>>) {
+        #[allow(box_pointers)]
+        fn _weak_assign(
+            &mut self,
+            w: std::rc::Weak<std::cell::RefCell<Box<dyn $base>>>,
+        ) {
             self.$field._weak_assign(w)
         }
     };

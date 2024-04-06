@@ -14,7 +14,6 @@
 #![forbid(
     clippy::all,
     absolute_paths_not_starting_with_crate,
-    box_pointers,
     deprecated_in_future,
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
@@ -34,7 +33,6 @@
     single_use_lifetimes,
     trivial_numeric_casts,
     unit_bindings,
-    unreachable_pub,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
     unstable_features,
@@ -63,7 +61,6 @@
     const_evaluatable_unchecked,
     const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
-    dead_code,
     deprecated,
     deprecated_where_clause_location,
     deref_into_dyn_supertrait,
@@ -193,9 +190,9 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    trivial_casts,
     missing_debug_implementations
 )]
+#![deny(trivial_casts, unreachable_pub, box_pointers, dead_code)]
 // mod  =======================================================================
 pub mod aelicit;
 pub mod elicit;
