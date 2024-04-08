@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.8.0-alpha.0"
+version                 = "0.8.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
@@ -19,6 +19,6 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = false
+publish                 = true
 # =============================================================================
 [dependencies]
