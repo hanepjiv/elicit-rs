@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2024/04/07
+//  @date 2024/04/08
 
 #![allow(clippy::needless_doctest_main)]
 
@@ -116,7 +116,7 @@ macro_rules! aelicit_define {
             // ////////////////////////////////////////////////////////////////
             // ================================================================
             /// trait EnableAelicitFromSelf
-            pub trait EnableAelicitFromSelf: Debug {
+            pub trait EnableAelicitFromSelf: Debug + Sync + Send {
                 // ============================================================
                 /// aelicit_from_self
                 fn aelicit(&self) -> Option<Aelicit>;
