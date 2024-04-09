@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2024/04/06
+//  @date 2024/04/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -34,19 +34,11 @@ impl Display for Error {
 // ============================================================================
 impl StdError for Error {
     // ========================================================================
-    fn description(&self) -> &str {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
-            Error::PoisonedRead => "::elicit::Error::PoisonedRead",
-            Error::PoisonedWrite => "::elicit::Error::PoisonedWrite",
-            Error::WouldBlock => "::elicit::Error::WouldBlock",
-        }
-    }
-    // ========================================================================
-    fn cause(&self) -> Option<&dyn StdError> {
-        match *self {
-            Error::PoisonedRead | Error::PoisonedWrite | Error::WouldBlock => {
-                None
-            }
+            Error::PoisonedRead => None,
+            Error::PoisonedWrite => None,
+            Error::WouldBlock => None,
         }
     }
 }
