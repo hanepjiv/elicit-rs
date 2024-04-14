@@ -15,12 +15,16 @@ use std::fmt::Display;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug)]
 pub enum Error {
     /// Poisoned
     Poisoned,
     /// WouldBlock
     WouldBlock,
+    /// Borrow
+    Borrow(std::cell::BorrowError),
+    /// BorrowMut
+    BorrowMut(std::cell::BorrowMutError),
 }
 // ============================================================================
 impl Display for Error {
@@ -30,12 +34,26 @@ impl Display for Error {
     }
 }
 // ============================================================================
+impl From<std::cell::BorrowError> for Error {
+    fn from(e: std::cell::BorrowError) -> Self {
+        Error::Borrow(e)
+    }
+}
+// ----------------------------------------------------------------------------
+impl From<std::cell::BorrowMutError> for Error {
+    fn from(e: std::cell::BorrowMutError) -> Self {
+        Error::BorrowMut(e)
+    }
+}
+// ============================================================================
 impl StdError for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
             Error::Poisoned => None,
             Error::WouldBlock => None,
+            Error::Borrow(ref e) => Some(e),
+            Error::BorrowMut(ref e) => Some(e),
         }
     }
 }

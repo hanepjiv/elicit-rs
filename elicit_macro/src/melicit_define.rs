@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                     Melicit, MelicitBase, MelicitFromSelf,
+                     Error, Melicit, MelicitBase, MelicitFromSelf,
                 };
             }
 
@@ -69,7 +69,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 TryLockError, TryLockResult, Weak, PoisonError
             },
         };
-        use elicit::Error;
+        pub use elicit::Error;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait MelicitBase:

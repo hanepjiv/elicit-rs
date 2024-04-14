@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -76,7 +76,7 @@ pub fn fire() {
     let mut e: MineElicit;
 
     e = MineElicit::new(MineX::default());
-    e.with(|m| {
+    e.try_with(|m| {
         println!("{:?}", m);
 
         assert!(m.action() == 0);
@@ -89,7 +89,7 @@ pub fn fire() {
     // y.evil();
 
     e = MineElicit::new(y);
-    e.with(|m| {
+    e.try_with_mut(|m| {
         println!("{:?}", m);
 
         assert!(m.action() == 2);

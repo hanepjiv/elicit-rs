@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Elicit, ElicitBase, ElicitFromSelf,
+                    Error, Elicit, ElicitBase, ElicitFromSelf,
                 };
             }
 
@@ -67,6 +67,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             rc::{Rc, Weak},
             result::Result as StdResult,
         };
+        pub use elicit::Error;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait ElicitBase:
@@ -182,6 +183,28 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             ) -> StdResult<T, E>
             {
                 f(&mut (*(*(self.0.as_ref().borrow_mut()))))
+            }
+            // ============================================================
+            /// try_with
+            pub fn try_with<T, E>(
+                &self,
+                f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
+            ) -> StdResult<T, E>
+            where
+                E: From<Error>
+            {
+                f(&(*(*(self.0.as_ref().try_borrow().map_err(Error::from)?))))
+            }
+            // ============================================================
+            /// try_with_mut
+            pub fn try_with_mut<T, E>(
+                &self,
+                f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
+            ) -> StdResult<T, E>
+            where
+                E: From<Error>
+            {
+                f(&mut (*(*(self.0.as_ref().try_borrow_mut().map_err(Error::from)?))))
             }
         }
     })

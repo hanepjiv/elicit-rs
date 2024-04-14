@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Aelicit, AelicitBase, AelicitFromSelf,
+                    Error, Aelicit, AelicitBase, AelicitFromSelf,
                 };
             }
 
@@ -60,7 +60,6 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     Ok(quote! {
         // ////////////////////////////////////////////////////////////////
         // ================================================================
-        use elicit::Error;
         use std::{
             convert::From,
             fmt::Debug,
@@ -70,6 +69,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 TryLockError, TryLockResult, Weak,
             },
         };
+        pub use elicit::Error;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait AelicitBase:

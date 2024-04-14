@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -68,7 +68,7 @@ pub mod mine {
 }
 // ////////////////////////////////////////////////////////////////////////////
 pub fn fire() {
-    use elicit::Error;
+    use mine::aelicit_user::Error;
     use mine::aelicit_user::Aelicit as MineAelicit;
     use mine::{MineX, MineY};
 
