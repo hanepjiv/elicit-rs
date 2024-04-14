@@ -14,7 +14,6 @@ use crate::include::*;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-// #[warn(unreachable_code)]
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut elicit_mod_author = Option::<TokenStream2>::default();
     let mut elicit_from_self_field = Option::<TokenStream2>::default();
