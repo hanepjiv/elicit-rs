@@ -283,3 +283,34 @@ pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
         ts as DeriveInput
     )))
 }
+// ////////////////////////////////////////////////////////////////////////////
+mod melicit_define;
+mod melicit_derive;
+// ============================================================================
+///
+/// #[melicit_define(MODULE)]
+/// trait Base {..}
+///
+#[proc_macro_attribute]
+pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
+    into_tokens(melicit_define::expand(
+        parse_macro_input!(attr as Ident),
+        parse_macro_input!(item as ItemTrait),
+    ))
+}
+// ============================================================================
+///
+/// #[derive(Debug, Melicit(BASE))]
+/// #[melicit_mod_author(MODULE)]       // required
+/// #[melicit_from_self_field(FIELD)]   // option
+/// struct Derived {..}
+///
+#[proc_macro_derive(
+    Melicit,
+    attributes(melicit_mod_author, melicit_from_self_field)
+)]
+pub fn on_melicit_derive(ts: TokenStream) -> TokenStream {
+    into_tokens(melicit_derive::expand(parse_macro_input!(
+        ts as DeriveInput
+    )))
+}

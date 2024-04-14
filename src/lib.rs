@@ -200,4 +200,6 @@
 mod error;
 // use  =======================================================================
 pub use self::error::Error;
-pub use elicit_macro::{aelicit_define, elicit_define, Aelicit, Elicit};
+pub use elicit_macro::{
+    aelicit_define, elicit_define, melicit_define, Aelicit, Elicit, Melicit,
+};
