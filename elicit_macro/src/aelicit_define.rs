@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -213,13 +213,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.read() {
-                    Err(_e) => {
-                        //debug!("::elicit::Aelicit::with: {}", e);
-                        Err(E::from(Error::PoisonedRead))
-                    }
-                    Ok(x) => f(x.as_ref()),
-                }
+                self.read().map_or_else(|_| Err(E::from(Error::Poisoned)),
+                                        |x| f(x.as_ref()))
             }
             // ============================================================
             /// try_with
@@ -230,20 +225,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.try_read() {
-                    Err(e) => {
-                        //debug!("::elicit::Aelicit::try_with: {}", e);
-                        match e {
-                            TryLockError::Poisoned(_) => {
-                                Err(E::from(Error::PoisonedRead))
-                            }
-                            TryLockError::WouldBlock => {
-                                Err(E::from(Error::WouldBlock))
-                            }
+                self.try_read().map_or_else(
+                    |x| match x {
+                        TryLockError::Poisoned(_) => {
+                            Err(E::from(Error::Poisoned))
                         }
-                    }
-                    Ok(x) => f(x.as_ref()),
-                }
+                        TryLockError::WouldBlock => {
+                            Err(E::from(Error::WouldBlock))
+                        }
+                    },
+                    |x| f(x.as_ref())
+                )
             }
             // ============================================================
             /// with_mut
@@ -254,13 +246,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.write() {
-                    Err(_e) => {
-                        //debug!("::elicit::Aelicit::with_mut: {}", e);
-                        Err(E::from(Error::PoisonedWrite))
-                    }
-                    Ok(mut x) => f(&mut *(x.as_mut())),
-                }
+                self.write().map_or_else(
+                    |_| Err(E::from(Error::Poisoned)),
+                    |mut x| f(x.as_mut())
+                )
             }
             // ============================================================
             /// try_with_mut
@@ -271,20 +260,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.try_write() {
-                    Err(e) => {
-                        //debug!("::elicit::Aelicit::try_with_mut: {}", e);
-                        match e {
-                            TryLockError::Poisoned(_) => {
-                                Err(E::from(Error::PoisonedWrite))
-                            }
-                            TryLockError::WouldBlock => {
-                                Err(E::from(Error::WouldBlock))
-                            }
+                self.try_write().map_or_else(
+                    |x| match x {
+                        TryLockError::Poisoned(_) => {
+                            Err(E::from(Error::Poisoned))
                         }
-                    }
-                    Ok(mut x) => f(&mut *(x.as_mut())),
-                }
+                        TryLockError::WouldBlock => {
+                            Err(E::from(Error::WouldBlock))
+                        }
+                    },
+                    |mut x| f(x.as_mut())
+                )
             }
         }
     })

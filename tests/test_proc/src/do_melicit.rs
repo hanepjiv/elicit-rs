@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -69,32 +69,37 @@ pub mod mine {
 }
 // ////////////////////////////////////////////////////////////////////////////
 pub fn fire() {
-    use elicit::Error;
     use mine::melicit_user::Melicit as MineMelicit;
     use mine::{MineX, MineY};
 
     let mut e: MineMelicit;
 
     e = MineMelicit::new(MineX::default());
-    e.with(|m| {
-        println!("{:?}", m);
-
-        assert!(m.action() == 0);
-
-        Ok::<(), Error>(())
-    })
-    .expect("MineMelicit::with X");
+    {
+        match e.lock() {
+            Err(x) => {
+                panic!("MineX: {x:?}");
+            }
+            Ok(x) => {
+                println!("{:?}", x);
+                assert!(x.action() == 0);
+            }
+        };
+    }
 
     let y = MineY::new(3);
     // y.evil();
 
     e = MineMelicit::new(y);
-    e.with(|m| {
-        println!("{:?}", m);
-
-        assert!(m.action() == 3);
-
-        Ok::<(), Error>(())
-    })
-    .expect("MineMelicit::with Y");
+    {
+        match e.lock() {
+            Err(x) => {
+                panic!("MineY: {x:?}");
+            }
+            Ok(x) => {
+                println!("{:?}", x);
+                assert!(x.action() == 3);
+            }
+        };
+    }
 }

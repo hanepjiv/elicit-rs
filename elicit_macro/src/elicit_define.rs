@@ -60,7 +60,6 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     Ok(quote! {
         // ////////////////////////////////////////////////////////////////
         // ================================================================
-        use elicit::Error;
         use std::{
             cell::RefCell,
             convert::From,
@@ -71,7 +70,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait ElicitBase:
-            'static + Debug + #orig + ElicitFromSelf + WeakAssign
+        'static + Debug + #orig + ElicitFromSelf + WeakAssign
         {
         }
         impl<T: 'static + Debug + #orig + ElicitFromSelf + WeakAssign>
@@ -172,8 +171,6 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 &self,
                 f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
-            where
-                E: From<Error>,
             {
                 f(&(*(*(self.0.as_ref().borrow()))))
             }
@@ -183,8 +180,6 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 &self,
                 f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
-            where
-                E: From<Error>,
             {
                 f(&mut (*(*(self.0.as_ref().borrow_mut()))))
             }

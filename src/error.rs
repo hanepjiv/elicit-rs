@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2024/04/09
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -17,10 +17,8 @@ use std::fmt::Display;
 /// enum Error
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
-    /// PoisonedRead
-    PoisonedRead,
-    /// PoisonedWrite
-    PoisonedWrite,
+    /// Poisoned
+    Poisoned,
     /// WouldBlock
     WouldBlock,
 }
@@ -36,8 +34,7 @@ impl StdError for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
-            Error::PoisonedRead => None,
-            Error::PoisonedWrite => None,
+            Error::Poisoned => None,
             Error::WouldBlock => None,
         }
     }

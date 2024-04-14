@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Melicit, MelicitBase, MelicitFromSelf,
+                     Melicit, MelicitBase, MelicitFromSelf,
                 };
             }
 
@@ -60,20 +60,20 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     Ok(quote! {
         // ////////////////////////////////////////////////////////////////
         // ================================================================
-        use elicit::Error;
         use std::{
             convert::From,
             fmt::Debug,
             result::Result as StdResult,
             sync::{
                 Arc, LockResult, Mutex, MutexGuard,
-                TryLockError, TryLockResult, Weak,
+                TryLockError, TryLockResult, Weak, PoisonError
             },
         };
+        use elicit::Error;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait MelicitBase:
-            'static + Debug + #orig + MelicitFromSelf + WeakAssign
+        'static + Debug + #orig + MelicitFromSelf + WeakAssign
         {
         }
         impl<T: 'static + Debug + #orig + MelicitFromSelf + WeakAssign>
@@ -197,13 +197,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.lock() {
-                    Err(_e) => {
-                        //debug!("::elicit::Melicit::with: {}", e);
-                        Err(E::from(Error::PoisonedRead))
-                    }
-                    Ok(x) => f((*x).as_ref()),
-                }
+                self.lock().map_or_else(|_| Err(E::from(Error::Poisoned)),
+                                        |x| f((*x).as_ref()))
             }
             // ============================================================
             /// try_with
@@ -214,20 +209,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.try_lock() {
-                    Err(e) => {
-                        //debug!("::elicit::Melicit::try_with: {}", e);
-                        match e {
-                            TryLockError::Poisoned(_) => {
-                                Err(E::from(Error::PoisonedRead))
-                            }
-                            TryLockError::WouldBlock => {
-                                Err(E::from(Error::WouldBlock))
-                            }
+                self.try_lock().map_or_else(
+                    |x| match x {
+                        TryLockError::Poisoned(_) => {
+                            Err(E::from(Error::Poisoned))
                         }
-                    }
-                    Ok(x) => f((*x).as_ref()),
-                }
+                        TryLockError::WouldBlock => {
+                            Err(E::from(Error::WouldBlock))
+                        }
+                    },
+                    |x| f((*x).as_ref())
+                )
             }
             // ============================================================
             /// with_mut
@@ -238,13 +230,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.lock() {
-                    Err(_e) => {
-                        //debug!("::elicit::Melicit::with_mut: {}", e);
-                        Err(E::from(Error::PoisonedWrite))
-                    }
-                    Ok(mut x) => f((*x).as_mut()),
-                }
+                self.lock().map_or_else(
+                    |_| Err(E::from(Error::Poisoned)),
+                    |mut x| f((*x).as_mut())
+                )
             }
             // ============================================================
             /// try_with_mut
@@ -255,20 +244,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<Error>,
             {
-                match self.try_lock() {
-                    Err(e) => {
-                        //debug!("::elicit::Melicit::try_with_mut: {}", e);
-                        match e {
-                            TryLockError::Poisoned(_) => {
-                                Err(E::from(Error::PoisonedWrite))
-                            }
-                            TryLockError::WouldBlock => {
-                                Err(E::from(Error::WouldBlock))
-                            }
+                self.try_lock().map_or_else(
+                    |x| match x {
+                        TryLockError::Poisoned(_) => {
+                            Err(E::from(Error::Poisoned))
                         }
-                    }
-                    Ok(mut x) => f((*x).as_mut()),
-                }
+                        TryLockError::WouldBlock => {
+                            Err(E::from(Error::WouldBlock))
+                        }
+                    },
+                    |mut x| f((*x).as_mut())
+                )
             }
         }
     })
