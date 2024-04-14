@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/08/18
-//  @date 2024/04/08
+//  @date 2024/04/14
 
 #![allow(clippy::needless_doctest_main)]
 
@@ -73,7 +73,7 @@ macro_rules! aelicit_define {
     ($modname:ident, $base:ident) => {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        #[allow(box_pointers, dead_code)]
+        #[allow(box_pointers, dead_code, unreachable_pub)]
         pub mod $modname {
             //! $modname
             // ////////////////////////////////////////////////////////////////

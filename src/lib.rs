@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/04/08
+//  @date 2024/04/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.77.1 (7cf61ebde 2024-03-27)
+// rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
@@ -23,6 +23,7 @@
     meta_variable_misuse,
     missing_abi,
     missing_copy_implementations,
+    missing_debug_implementations,
     missing_docs,
     non_ascii_idents,
     rust_2021_incompatible_closure_captures,
@@ -188,10 +189,9 @@
     unconditional_panic,
     undropped_manually_drops,
     unknown_crate_types,
-    useless_deprecated,
-    missing_debug_implementations
+    useless_deprecated
 )]
-#![deny(clippy::all, trivial_casts, unreachable_pub, box_pointers, dead_code)]
+#![deny(clippy::all, box_pointers, dead_code, trivial_casts, unreachable_pub)]
 // mod  =======================================================================
 pub mod aelicit;
 pub mod elicit;
