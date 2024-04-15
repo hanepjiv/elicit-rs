@@ -6,23 +6,23 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/15
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-pub mod mine {
+pub(crate) mod mine {
     use elicit::{aelicit_define, Aelicit, Result};
     #[aelicit_define(mine_aelicit)]
-    pub trait Mine: Send + Sync {
+    pub(crate) trait Mine: Send + Sync {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
-    // pub use mine_aelicit::author as aelicit_author;
-    pub use mine_aelicit::user as aelicit_user;
+    // pub(crate) use mine_aelicit::author as aelicit_author;
+    pub(crate) use mine_aelicit::user as aelicit_user;
     // ========================================================================
     #[derive(Debug, Default, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
-    pub struct MineX {}
+    pub(crate) struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -33,13 +33,13 @@ pub mod mine {
     #[derive(Debug, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
     #[aelicit_from_self_field(_fsf)]
-    pub struct MineY {
+    pub(crate) struct MineY {
         _fsf: mine_aelicit::author::AelicitFromSelfField,
-        pub i: i32,
+        i: i32,
     }
     // ------------------------------------------------------------------------
     impl MineY {
-        pub fn new(a: i32) -> Self {
+        pub(crate) fn new(a: i32) -> Self {
             MineY {
                 _fsf: Default::default(),
                 i: a,
@@ -52,8 +52,8 @@ pub mod mine {
         /// It is not possible to suppress calls to _weak_assign within
         /// the same module.
         ///
-        #[allow(dead_code)]
-        pub fn evil(&mut self) -> Result<()> {
+        #[allow(box_pointers, dead_code)]
+        pub(crate) fn evil(&mut self) -> Result<()> {
             use mine_aelicit::author::*;
             use std::sync::{Arc, RwLock};
             self._weak_assign(Arc::<RwLock<Box<dyn AelicitBase>>>::downgrade(
@@ -69,7 +69,7 @@ pub mod mine {
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
-pub fn fire() {
+pub(crate) fn fire() {
     use elicit::Error;
     use mine::aelicit_user::Aelicit as MineAelicit;
     use mine::{MineX, MineY};

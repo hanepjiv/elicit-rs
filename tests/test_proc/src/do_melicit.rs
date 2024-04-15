@@ -6,24 +6,24 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/15
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-pub mod mine {
+pub(crate) mod mine {
     use elicit::{melicit_define, Melicit};
     // ========================================================================
     #[melicit_define(mine_melicit)]
-    pub trait Mine: Send {
+    pub(crate) trait Mine: Send {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
-    // pub use mine_melicit::author as melicit_author;
-    pub use mine_melicit::user as melicit_user;
+    // pub(crate) mine_melicit::author as melicit_author;
+    pub(crate) use mine_melicit::user as melicit_user;
     // ========================================================================
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    pub struct MineX {}
+    pub(crate) struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -34,13 +34,13 @@ pub mod mine {
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
     #[melicit_from_self_field(_fsf)]
-    pub struct MineY {
+    pub(crate) struct MineY {
         _fsf: mine_melicit::author::MelicitFromSelfField,
-        pub i: i32,
+        i: i32,
     }
     // ------------------------------------------------------------------------
     impl MineY {
-        pub fn new(a: i32) -> Self {
+        pub(crate) fn new(a: i32) -> Self {
             MineY {
                 _fsf: Default::default(),
                 i: a,
@@ -53,8 +53,8 @@ pub mod mine {
         /// It is not possible to suppress calls to _weak_assign within
         /// the same module.
         ///
-        #[allow(dead_code)]
-        pub fn evil(&mut self) -> elicit::Result<()> {
+        #[allow(box_pointers, dead_code)]
+        pub(crate) fn evil(&mut self) -> elicit::Result<()> {
             use mine_melicit::author::*;
             use std::sync::{Arc, Mutex};
             self._weak_assign(Arc::<Mutex<Box<dyn MelicitBase>>>::downgrade(
@@ -70,13 +70,15 @@ pub mod mine {
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
-pub fn fire() {
+pub(crate) fn fire() {
     use mine::melicit_user::Melicit as MineMelicit;
     use mine::{MineX, MineY};
 
     let mut e: MineMelicit;
 
     e = MineMelicit::new(MineX::default());
+
+    #[allow(box_pointers)]
     {
         match e.lock() {
             Err(x) => {
@@ -93,6 +95,8 @@ pub fn fire() {
     // eprintln!("{:?}", y.evil());
 
     e = MineMelicit::new(y);
+
+    #[allow(box_pointers)]
     {
         match e.lock() {
             Err(x) => {

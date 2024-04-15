@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/15
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -28,7 +28,7 @@ pub(crate) fn expand(
 fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
     let inner = quote_inner(&item.ident)?;
     Ok(quote! {
-        #[allow(box_pointers, dead_code)]
+        #[allow(box_pointers)]
         mod #mod_ident {
             mod _inner { #inner }
 
@@ -38,6 +38,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 };
             }
 
+            /// mod author
             pub mod author {
                 pub use super::_common::*;
                 pub use super::_inner::{
@@ -46,6 +47,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 };
             }
 
+            /// mod user
             pub mod user {
                 pub use super::_common::*;
                 pub use super::_inner::WeakMelicit;
@@ -72,6 +74,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         pub use elicit::{ Result as ElicitResult, Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
         // ================================================================
+        /// trait MelicitBase
         pub trait MelicitBase:
         'static + Debug + #orig + MelicitFromSelf + WeakAssign
         {
@@ -129,14 +132,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         }
         // ================================================================
         impl MelicitFromSelf for MelicitFromSelfField {
-            /// melicit_from_self
             fn melicit_from_self(&self) -> Option<Melicit> {
                 self._weak.get()?.upgrade().map(Melicit)
             }
         }
         // ================================================================
         impl WeakAssign for MelicitFromSelfField {
-            /// _weak_assign
             fn _weak_assign(
                 &mut self,
                 weak: Weak<Mutex<Box<dyn MelicitBase>>>,
