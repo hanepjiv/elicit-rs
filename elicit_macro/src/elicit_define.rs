@@ -123,16 +123,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct ElicitFromSelfField {
             /// _weak
-            _weak: Option<Weak<RefCell<Box<dyn ElicitBase>>>>,
+            _weak: Weak<RefCell<Box<dyn ElicitBase>>>,
         }
         // ================================================================
         impl ElicitFromSelf for ElicitFromSelfField {
             /// elicit_from_self
             fn elicit_from_self(&self) -> Option<Elicit> {
-                match self._weak {
-                    Some(ref x) => x.upgrade().map(Elicit),
-                    None => None,
-                }
+                self._weak.upgrade().map(Elicit)
             }
         }
         // ================================================================
@@ -142,7 +139,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 &mut self,
                 weak: Weak<RefCell<Box<dyn ElicitBase>>>,
             ) {
-                self._weak = Some(weak)
+                self._weak = weak
             }
         }
         // ////////////////////////////////////////////////////////////////
