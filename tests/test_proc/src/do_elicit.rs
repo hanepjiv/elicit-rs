@@ -23,10 +23,7 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
-    #[elicit_from_self_field(_eefsf)]
-    pub struct MineX {
-        _eefsf: mine_elicit::author::ElicitFromSelfField,
-    }
+    pub struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -36,13 +33,18 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
+    #[elicit_from_self_field(_fsf)]
     pub struct MineY {
+        _fsf: mine_elicit::author::ElicitFromSelfField,
         pub i: i32,
     }
     // ------------------------------------------------------------------------
     impl MineY {
         pub fn new(a: i32) -> Self {
-            MineY { i: a }
+            MineY {
+                _fsf: Default::default(),
+                i: a,
+            }
         }
 
         ///
@@ -52,12 +54,12 @@ pub mod mine {
         /// the same module.
         ///
         #[allow(dead_code)]
-        pub fn evil(&mut self) {
+        pub fn evil(&mut self) -> elicit::Result<()> {
             use mine_elicit::author::*;
             use std::{cell::RefCell, rc::Rc};
             self._weak_assign(Rc::<RefCell<Box<dyn ElicitBase>>>::downgrade(
                 &Rc::new(RefCell::new(Box::<MineX>::default())),
-            ));
+            ))
         }
     }
     // ------------------------------------------------------------------------
@@ -85,14 +87,16 @@ pub fn fire() {
     })
     .expect("MineElicit::with X");
 
-    let y = MineY::new(2);
-    // y.evil();
+    let y = MineY::new(1);
+
+    // eprintln!("{:?}", y.evil());
 
     e = MineElicit::new(y);
+
     e.try_with_mut(|m| {
         println!("{:?}", m);
 
-        assert!(m.action() == 2);
+        assert!(m.action() == 1);
 
         Ok::<(), Error>(())
     })

@@ -14,7 +14,7 @@ pub mod mine {
     use elicit::{melicit_define, Melicit};
     // ========================================================================
     #[melicit_define(mine_melicit)]
-    pub trait Mine {
+    pub trait Mine: Send {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
@@ -23,10 +23,7 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    #[melicit_from_self_field(_eefsf)]
-    pub struct MineX {
-        _eefsf: mine_melicit::author::MelicitFromSelfField,
-    }
+    pub struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -36,13 +33,18 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
+    #[melicit_from_self_field(_fsf)]
     pub struct MineY {
+        _fsf: mine_melicit::author::MelicitFromSelfField,
         pub i: i32,
     }
     // ------------------------------------------------------------------------
     impl MineY {
         pub fn new(a: i32) -> Self {
-            MineY { i: a }
+            MineY {
+                _fsf: Default::default(),
+                i: a,
+            }
         }
 
         ///
@@ -52,12 +54,12 @@ pub mod mine {
         /// the same module.
         ///
         #[allow(dead_code)]
-        pub fn evil(&mut self) {
+        pub fn evil(&mut self) -> elicit::Result<()> {
             use mine_melicit::author::*;
             use std::sync::{Arc, Mutex};
             self._weak_assign(Arc::<Mutex<Box<dyn MelicitBase>>>::downgrade(
                 &Arc::new(Mutex::new(Box::<MineX>::default())),
-            ));
+            ))
         }
     }
     // ------------------------------------------------------------------------
@@ -88,7 +90,7 @@ pub fn fire() {
     }
 
     let y = MineY::new(3);
-    // y.evil();
+    // eprintln!("{:?}", y.evil());
 
     e = MineMelicit::new(y);
     {

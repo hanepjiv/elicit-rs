@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -199,7 +199,7 @@
 // mod  =======================================================================
 mod error;
 // use  =======================================================================
-pub use self::error::Error;
+pub use self::error::{Error, Result};
 pub use elicit_macro::{
     aelicit_define, elicit_define, melicit_define, Aelicit, Elicit, Melicit,
 };

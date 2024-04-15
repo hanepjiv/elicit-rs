@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Error, Melicit, MelicitBase, MelicitFromSelf,
+                    Melicit, MelicitBase, MelicitFromSelf,
                 };
             }
 
@@ -65,11 +65,11 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fmt::Debug,
             result::Result as StdResult,
             sync::{
-                Arc, LockResult, Mutex, MutexGuard,
+                OnceLock, Arc, LockResult, Mutex, MutexGuard,
                 TryLockError, TryLockResult, Weak, PoisonError
             },
         };
-        pub use elicit::Error;
+        pub use elicit::{ Result as ElicitResult, Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait MelicitBase:
@@ -117,7 +117,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<Mutex<Box<dyn MelicitBase>>>,
-            );
+            ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////
         // ================================================================
@@ -125,13 +125,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct MelicitFromSelfField {
             /// _weak
-            _weak: Weak<Mutex<Box<dyn MelicitBase>>>,
+            _weak: OnceLock<Weak<Mutex<Box<dyn MelicitBase>>>>,
         }
         // ================================================================
         impl MelicitFromSelf for MelicitFromSelfField {
             /// melicit_from_self
             fn melicit_from_self(&self) -> Option<Melicit> {
-                self._weak.upgrade().map(Melicit)
+                self._weak.get()?.upgrade().map(Melicit)
             }
         }
         // ================================================================
@@ -140,8 +140,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<Mutex<Box<dyn MelicitBase>>>,
-            ) {
-                self._weak = weak
+            ) -> ElicitResult<()> {
+                self._weak.set(weak).map_err(
+                    |_| ElicitError::WeakAlreadyExists)
             }
         }
         // ////////////////////////////////////////////////////////////////
@@ -158,8 +159,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                     Box::new(val) as Box<dyn MelicitBase>
                 ));
                 arc.lock()
-                    .expect("Melicit::new")
-                    ._weak_assign(Arc::downgrade(&arc));
+                    .expect("Melicit::new: Mutex poisoned.")
+                    ._weak_assign(Arc::downgrade(&arc))
+                    .expect("Melicit::new: _weak already exists.");
                 Melicit(arc)
             }
             // ============================================================
@@ -192,10 +194,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
-                self.lock().map_or_else(|_| Err(E::from(Error::Poisoned)),
-                                        |x| f((*x).as_ref()))
+                self.lock().map_or_else(
+                    |_| Err(E::from(ElicitError::Poisoned)),
+                    |x| f((*x).as_ref())
+                )
             }
             // ============================================================
             /// try_with
@@ -204,15 +208,15 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.try_lock().map_or_else(
                     |x| match x {
                         TryLockError::Poisoned(_) => {
-                            Err(E::from(Error::Poisoned))
+                            Err(E::from(ElicitError::Poisoned))
                         }
                         TryLockError::WouldBlock => {
-                            Err(E::from(Error::WouldBlock))
+                            Err(E::from(ElicitError::WouldBlock))
                         }
                     },
                     |x| f((*x).as_ref())
@@ -225,10 +229,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.lock().map_or_else(
-                    |_| Err(E::from(Error::Poisoned)),
+                    |_| Err(E::from(ElicitError::Poisoned)),
                     |mut x| f((*x).as_mut())
                 )
             }
@@ -239,15 +243,15 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.try_lock().map_or_else(
                     |x| match x {
                         TryLockError::Poisoned(_) => {
-                            Err(E::from(Error::Poisoned))
+                            Err(E::from(ElicitError::Poisoned))
                         }
                         TryLockError::WouldBlock => {
-                            Err(E::from(Error::WouldBlock))
+                            Err(E::from(ElicitError::WouldBlock))
                         }
                     },
                     |mut x| f((*x).as_mut())

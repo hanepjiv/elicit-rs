@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -55,12 +55,12 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
 
     let ident = ast.ident;
     let melicit_impl = match melicit_from_self_field {
-        Some(ref x) => quote! {self.#x.melicit_from_self()},
+        Some(ref x) => quote! { self.#x.melicit_from_self() },
         None => quote! { None },
     };
     let _weak_assign_impl = match melicit_from_self_field {
-        Some(ref x) => quote! {self.#x._weak_assign(_weak)},
-        None => quote! {},
+        Some(ref x) => quote! { self.#x._weak_assign(_weak) },
+        None => quote! { Ok(()) },
     };
 
     Ok(quote! {
@@ -78,7 +78,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
                 &mut self,
                 _weak: std::sync::Weak<std::sync::Mutex<Box<(
                     dyn #melicit_mod_author :: MelicitBase)>>>,
-            ) {
+            ) -> elicit::Result<()> {
                 #_weak_assign_impl
             }
         }

@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Error, Aelicit, AelicitBase, AelicitFromSelf,
+                    Aelicit, AelicitBase, AelicitFromSelf,
                 };
             }
 
@@ -65,11 +65,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fmt::Debug,
             result::Result as StdResult,
             sync::{
-                Arc, LockResult, RwLock, RwLockReadGuard, RwLockWriteGuard,
+                OnceLock, Arc, LockResult,
+                RwLock, RwLockReadGuard, RwLockWriteGuard,
                 TryLockError, TryLockResult, Weak,
             },
         };
-        pub use elicit::Error;
+        pub use elicit::{ Result as ElicitResult, Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait AelicitBase:
@@ -117,7 +118,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<RwLock<Box<dyn AelicitBase>>>,
-            );
+            ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////
         // ================================================================
@@ -125,13 +126,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct AelicitFromSelfField {
             /// _weak
-            _weak: Weak<RwLock<Box<dyn AelicitBase>>>,
+            _weak: OnceLock<Weak<RwLock<Box<dyn AelicitBase>>>>,
         }
         // ================================================================
         impl AelicitFromSelf for AelicitFromSelfField {
             /// aelicit_from_self
             fn aelicit_from_self(&self) -> Option<Aelicit> {
-                self._weak.upgrade().map(Aelicit)
+                self._weak.get()?.upgrade().map(Aelicit)
             }
         }
         // ================================================================
@@ -140,8 +141,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<RwLock<Box<dyn AelicitBase>>>,
-            ) {
-                self._weak = weak
+            ) -> ElicitResult<()> {
+                self._weak.set(weak).map_err(
+                    |_| ElicitError::WeakAlreadyExists)
             }
         }
         // ////////////////////////////////////////////////////////////////
@@ -158,8 +160,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                     Box::new(val) as Box<dyn AelicitBase>
                 ));
                 arc.write()
-                    .expect("Aelicit::new")
-                    ._weak_assign(Arc::downgrade(&arc));
+                    .expect("Aelicit::new: RwLock poisoned.")
+                    ._weak_assign(Arc::downgrade(&arc))
+                    .expect("Aelicit::new: _weak already exists.");
                 Aelicit(arc)
             }
             // ============================================================
@@ -208,10 +211,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&dyn AelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
-                self.read().map_or_else(|_| Err(E::from(Error::Poisoned)),
-                                        |x| f(x.as_ref()))
+                self.read().map_or_else(
+                    |_| Err(E::from(ElicitError::Poisoned)),
+                    |x| f(x.as_ref())
+                )
             }
             // ============================================================
             /// try_with
@@ -220,15 +225,15 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&dyn AelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.try_read().map_or_else(
                     |x| match x {
                         TryLockError::Poisoned(_) => {
-                            Err(E::from(Error::Poisoned))
+                            Err(E::from(ElicitError::Poisoned))
                         }
                         TryLockError::WouldBlock => {
-                            Err(E::from(Error::WouldBlock))
+                            Err(E::from(ElicitError::WouldBlock))
                         }
                     },
                     |x| f(x.as_ref())
@@ -241,10 +246,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn AelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.write().map_or_else(
-                    |_| Err(E::from(Error::Poisoned)),
+                    |_| Err(E::from(ElicitError::Poisoned)),
                     |mut x| f(x.as_mut())
                 )
             }
@@ -255,15 +260,15 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn AelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>,
+                E: From<ElicitError>,
             {
                 self.try_write().map_or_else(
                     |x| match x {
                         TryLockError::Poisoned(_) => {
-                            Err(E::from(Error::Poisoned))
+                            Err(E::from(ElicitError::Poisoned))
                         }
                         TryLockError::WouldBlock => {
-                            Err(E::from(Error::WouldBlock))
+                            Err(E::from(ElicitError::WouldBlock))
                         }
                     },
                     |mut x| f(x.as_mut())

@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                    Error, Elicit, ElicitBase, ElicitFromSelf,
+                    Elicit, ElicitBase, ElicitFromSelf,
                 };
             }
 
@@ -61,17 +61,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         use std::{
-            cell::RefCell,
+            cell::{OnceCell, RefCell},
             convert::From,
             fmt::Debug,
             rc::{Rc, Weak},
             result::Result as StdResult,
         };
-        pub use elicit::Error;
+        pub use elicit::{ Result as ElicitResult,  Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         pub trait ElicitBase:
-        'static + Debug + #orig + ElicitFromSelf + WeakAssign
+            'static + Debug + #orig + ElicitFromSelf + WeakAssign
         {
         }
         impl<T: 'static + Debug + #orig + ElicitFromSelf + WeakAssign>
@@ -115,7 +115,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<RefCell<Box<dyn ElicitBase>>>,
-            );
+            ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////
         // ================================================================
@@ -123,13 +123,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct ElicitFromSelfField {
             /// _weak
-            _weak: Weak<RefCell<Box<dyn ElicitBase>>>,
+            _weak: OnceCell<Weak<RefCell<Box<dyn ElicitBase>>>>,
         }
         // ================================================================
         impl ElicitFromSelf for ElicitFromSelfField {
             /// elicit_from_self
             fn elicit_from_self(&self) -> Option<Elicit> {
-                self._weak.upgrade().map(Elicit)
+                self._weak.get()?.upgrade().map(Elicit)
             }
         }
         // ================================================================
@@ -138,8 +138,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             fn _weak_assign(
                 &mut self,
                 weak: Weak<RefCell<Box<dyn ElicitBase>>>,
-            ) {
-                self._weak = weak
+            ) -> ElicitResult<()> {
+                self._weak.set(weak).map_err(
+                    |_| ElicitError::WeakAlreadyExists)
             }
         }
         // ////////////////////////////////////////////////////////////////
@@ -155,7 +156,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 let rc = Rc::new(RefCell::new(
                     Box::new(val) as Box<dyn ElicitBase>
                 ));
-                rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc));
+                rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc))
+                    .expect("Elicit::new: weak already exists.");
                 Elicit(rc)
             }
             // ============================================================
@@ -188,9 +190,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>
+                E: From<ElicitError>
             {
-                f(&(*(*(self.0.as_ref().try_borrow().map_err(Error::from)?))))
+                f(&(*(*(self.0.as_ref().try_borrow()
+                        .map_err(ElicitError::from)?))))
             }
             // ============================================================
             /// try_with_mut
@@ -199,9 +202,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<Error>
+                E: From<ElicitError>
             {
-                f(&mut (*(*(self.0.as_ref().try_borrow_mut().map_err(Error::from)?))))
+                f(&mut (*(*(self.0.as_ref().try_borrow_mut()
+                            .map_err(ElicitError::from)?))))
             }
         }
     })

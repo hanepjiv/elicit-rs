@@ -11,9 +11,9 @@
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 pub mod mine {
-    use elicit::{aelicit_define, Aelicit};
+    use elicit::{aelicit_define, Aelicit, Result};
     #[aelicit_define(mine_aelicit)]
-    pub trait Mine: Sync + Send {
+    pub trait Mine: Send + Sync {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
@@ -22,10 +22,7 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
-    #[aelicit_from_self_field(_eefsf)]
-    pub struct MineX {
-        _eefsf: mine_aelicit::author::AelicitFromSelfField,
-    }
+    pub struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -35,13 +32,18 @@ pub mod mine {
     // ========================================================================
     #[derive(Debug, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
+    #[aelicit_from_self_field(_fsf)]
     pub struct MineY {
+        _fsf: mine_aelicit::author::AelicitFromSelfField,
         pub i: i32,
     }
     // ------------------------------------------------------------------------
     impl MineY {
         pub fn new(a: i32) -> Self {
-            MineY { i: a }
+            MineY {
+                _fsf: Default::default(),
+                i: a,
+            }
         }
 
         ///
@@ -51,12 +53,12 @@ pub mod mine {
         /// the same module.
         ///
         #[allow(dead_code)]
-        pub fn evil(&mut self) {
+        pub fn evil(&mut self) -> Result<()> {
             use mine_aelicit::author::*;
             use std::sync::{Arc, RwLock};
             self._weak_assign(Arc::<RwLock<Box<dyn AelicitBase>>>::downgrade(
                 &Arc::new(RwLock::new(Box::<MineX>::default())),
-            ));
+            ))
         }
     }
     // ------------------------------------------------------------------------
@@ -68,7 +70,7 @@ pub mod mine {
 }
 // ////////////////////////////////////////////////////////////////////////////
 pub fn fire() {
-    use mine::aelicit_user::Error;
+    use elicit::Error;
     use mine::aelicit_user::Aelicit as MineAelicit;
     use mine::{MineX, MineY};
 
@@ -84,14 +86,14 @@ pub fn fire() {
     })
     .expect("MineAelicit::with X");
 
-    let y = MineY::new(1);
-    // y.evil();
+    let y = MineY::new(2);
+    // eprintln!("{:?}", y.evil());
 
     e = MineAelicit::new(y);
     e.with(|m| {
         println!("{:?}", m);
 
-        assert!(m.action() == 1);
+        assert!(m.action() == 2);
 
         Ok::<(), Error>(())
     })

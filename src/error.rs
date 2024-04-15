@@ -21,6 +21,8 @@ pub enum Error {
     Poisoned,
     /// WouldBlock
     WouldBlock,
+    /// WeakAlreadyExists
+    WeakAlreadyExists,
     /// Borrow
     Borrow(std::cell::BorrowError),
     /// BorrowMut
@@ -52,11 +54,15 @@ impl StdError for Error {
         match *self {
             Error::Poisoned => None,
             Error::WouldBlock => None,
+            Error::WeakAlreadyExists => None,
             Error::Borrow(ref e) => Some(e),
             Error::BorrowMut(ref e) => Some(e),
         }
     }
 }
+// ////////////////////////////////////////////////////////////////////////////
+/// type Result<T>
+pub type Result<T> = std::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]

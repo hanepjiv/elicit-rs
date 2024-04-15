@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/14
+//  @date 2024/04/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -60,7 +60,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     };
     let _weak_assign_impl = match aelicit_from_self_field {
         Some(ref x) => quote! {self.#x._weak_assign(_weak)},
-        None => quote! {},
+        None => quote! { Ok(()) },
     };
 
     Ok(quote! {
@@ -78,7 +78,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
                 &mut self,
                 _weak: std::sync::Weak<std::sync::RwLock<Box<(
                     dyn #aelicit_mod_author :: AelicitBase)>>>,
-            ) {
+            ) -> elicit::Result<()> {
                 #_weak_assign_impl
             }
         }
