@@ -79,10 +79,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         'static + Debug + #orig + MelicitFromSelf + WeakAssign
         {
         }
+        // ===============================================================
         impl<T: 'static + Debug + #orig + MelicitFromSelf + WeakAssign>
             MelicitBase for T
         {
         }
+        // ////////////////////////////////////////////////////////////////
         // ================================================================
         /// struct Melicit
         #[derive(Debug, Clone)]
@@ -152,18 +154,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             // ============================================================
             /// new
             #[allow(trivial_casts)]
-            pub fn new<T>(val: T) -> Self
+            pub fn new<T>(val: T) -> ElicitResult<Self>
             where
                 T: MelicitBase,
             {
-                let arc = Arc::new(Mutex::new(
+                let r = Arc::new(Mutex::new(
                     Box::new(val) as Box<dyn MelicitBase>
                 ));
-                arc.lock()
-                    .expect("Melicit::new: Mutex poisoned.")
-                    ._weak_assign(Arc::downgrade(&arc))
-                    .expect("Melicit::new: _weak already exists.");
-                Melicit(arc)
+                let weak = Arc::<_>::downgrade(&r);
+                let ret = Melicit(r);
+                let _ = ret.with_mut(|x| x._weak_assign(weak))?;
+                Ok(ret)
             }
             // ============================================================
             /// weak

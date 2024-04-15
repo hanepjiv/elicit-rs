@@ -77,10 +77,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             'static + Debug + #orig + ElicitFromSelf + WeakAssign
         {
         }
+        // ================================================================
         impl<T: 'static + Debug + #orig + ElicitFromSelf + WeakAssign>
             ElicitBase for T
         {
         }
+        // ////////////////////////////////////////////////////////////////
         // ================================================================
         /// struct Elicit
         #[derive(Debug, Clone)]
@@ -150,16 +152,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             // ============================================================
             /// new
             #[allow(trivial_casts)]
-            pub fn new<T>(val: T) -> Self
+            pub fn new<T>(val: T) -> ElicitResult<Self>
             where
                 T: ElicitBase,
             {
-                let rc = Rc::new(RefCell::new(
+                let r = Rc::new(RefCell::new(
                     Box::new(val) as Box<dyn ElicitBase>
                 ));
-                rc.as_ref().borrow_mut()._weak_assign(Rc::downgrade(&rc))
-                    .expect("Elicit::new: weak already exists.");
-                Elicit(rc)
+                let weak = Rc::<_>::downgrade(&r);
+                let ret = Elicit(r);
+                let _ = ret.with_mut(|x| x._weak_assign(weak))?;
+                Ok(ret)
             }
             // ============================================================
             /// weak

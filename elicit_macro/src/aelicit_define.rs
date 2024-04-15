@@ -80,10 +80,12 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             'static + Debug + #orig + AelicitFromSelf + WeakAssign
         {
         }
+        // ===============================================================
         impl<T: 'static + Debug + #orig + AelicitFromSelf + WeakAssign>
             AelicitBase for T
         {
         }
+        // ////////////////////////////////////////////////////////////////
         // ================================================================
         /// struct Aelicit
         #[derive(Debug, Clone)]
@@ -153,18 +155,18 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             // ============================================================
             /// new
             #[allow(trivial_casts)]
-            pub fn new<T>(val: T) -> Self
+            pub fn new<T>(val: T) -> ElicitResult<Self>
             where
                 T: AelicitBase,
             {
-                let arc = Arc::new(RwLock::new(
+                let r = Arc::new(RwLock::new(
                     Box::new(val) as Box<dyn AelicitBase>
                 ));
-                arc.write()
-                    .expect("Aelicit::new: RwLock poisoned.")
-                    ._weak_assign(Arc::downgrade(&arc))
-                    .expect("Aelicit::new: _weak already exists.");
-                Aelicit(arc)
+                let weak = Arc::<_>::downgrade(&r);
+                let ret = Aelicit(r);
+                let _ = ret.with_mut(|x| x._weak_assign(weak))?;
+                Ok(ret)
+
             }
             // ============================================================
             /// weak
