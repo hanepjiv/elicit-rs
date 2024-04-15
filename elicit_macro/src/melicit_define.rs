@@ -34,7 +34,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
             mod _common {
                 pub use super::_inner::{
-                     Error, Melicit, MelicitBase, MelicitFromSelf,
+                    Error, Melicit, MelicitBase, MelicitFromSelf,
                 };
             }
 
@@ -125,16 +125,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct MelicitFromSelfField {
             /// _weak
-            _weak: Option<Weak<Mutex<Box<dyn MelicitBase>>>>,
+            _weak: Weak<Mutex<Box<dyn MelicitBase>>>,
         }
         // ================================================================
         impl MelicitFromSelf for MelicitFromSelfField {
             /// melicit_from_self
             fn melicit_from_self(&self) -> Option<Melicit> {
-                match self._weak {
-                    Some(ref x) => x.upgrade().map(Melicit),
-                    None => None,
-                }
+                self._weak.upgrade().map(Melicit)
             }
         }
         // ================================================================
@@ -144,7 +141,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 &mut self,
                 weak: Weak<Mutex<Box<dyn MelicitBase>>>,
             ) {
-                self._weak = Some(weak)
+                self._weak = weak
             }
         }
         // ////////////////////////////////////////////////////////////////

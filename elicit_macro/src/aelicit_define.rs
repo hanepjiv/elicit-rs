@@ -125,16 +125,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct AelicitFromSelfField {
             /// _weak
-            _weak: Option<Weak<RwLock<Box<dyn AelicitBase>>>>,
+            _weak: Weak<RwLock<Box<dyn AelicitBase>>>,
         }
         // ================================================================
         impl AelicitFromSelf for AelicitFromSelfField {
             /// aelicit_from_self
             fn aelicit_from_self(&self) -> Option<Aelicit> {
-                match self._weak {
-                    Some(ref x) => x.upgrade().map(Aelicit),
-                    None => None,
-                }
+                self._weak.upgrade().map(Aelicit)
             }
         }
         // ================================================================
@@ -144,7 +141,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 &mut self,
                 weak: Weak<RwLock<Box<dyn AelicitBase>>>,
             ) {
-                self._weak = Some(weak)
+                self._weak = weak
             }
         }
         // ////////////////////////////////////////////////////////////////
