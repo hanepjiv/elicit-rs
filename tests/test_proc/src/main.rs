@@ -198,8 +198,9 @@ mod do_aelicit;
 mod do_elicit;
 mod do_melicit;
 // ============================================================================
-fn main() {
-    do_elicit::fire();
-    do_aelicit::fire();
-    do_melicit::fire();
+fn main() -> elicit::Result<()> {
+    do_elicit::fire()?;
+    do_aelicit::fire()?;
+    do_melicit::fire()?;
+    Ok(())
 }

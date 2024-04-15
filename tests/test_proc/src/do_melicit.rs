@@ -70,42 +70,30 @@ pub(crate) mod mine {
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
-pub(crate) fn fire() {
+pub(crate) fn fire() -> elicit::Result<()> {
     use mine::melicit_user::Melicit as MineMelicit;
     use mine::{MineX, MineY};
 
     let mut e: MineMelicit;
 
-    e = MineMelicit::new(MineX::default());
+    e = MineMelicit::new(MineX::default())?;
 
-    #[allow(box_pointers)]
-    {
-        match e.lock() {
-            Err(x) => {
-                panic!("MineX: {x:?}");
-            }
-            Ok(x) => {
-                println!("{:?}", x);
-                assert!(x.action() == 0);
-            }
-        };
-    }
+    e.with(|x| {
+        println!("{:?}", x);
+        assert!(x.action() == 0);
+        Ok::<(), elicit::Error>(())
+    })?;
 
     let y = MineY::new(3);
     // eprintln!("{:?}", y.evil());
 
-    e = MineMelicit::new(y);
+    e = MineMelicit::new(y)?;
 
-    #[allow(box_pointers)]
-    {
-        match e.lock() {
-            Err(x) => {
-                panic!("MineY: {x:?}");
-            }
-            Ok(x) => {
-                println!("{:?}", x);
-                assert!(x.action() == 3);
-            }
-        };
-    }
+    e.with(|x| {
+        println!("{:?}", x);
+        assert!(x.action() == 3);
+        Ok::<(), elicit::Error>(())
+    })?;
+
+    Ok(())
 }

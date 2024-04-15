@@ -70,28 +70,27 @@ pub(crate) mod mine {
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
-pub(crate) fn fire() {
+pub(crate) fn fire() -> elicit::Result<()> {
     use elicit::Error;
     use mine::elicit_user::Elicit as MineElicit;
     use mine::{MineX, MineY};
 
     let mut e: MineElicit;
 
-    e = MineElicit::new(MineX::default());
+    e = MineElicit::new(MineX::default())?;
     e.try_with(|m| {
         println!("{:?}", m);
 
         assert!(m.action() == 0);
 
         Ok::<(), Error>(())
-    })
-    .expect("MineElicit::with X");
+    })?;
 
     let y = MineY::new(1);
 
     // eprintln!("{:?}", y.evil());
 
-    e = MineElicit::new(y);
+    e = MineElicit::new(y)?;
 
     e.try_with_mut(|m| {
         println!("{:?}", m);
@@ -99,6 +98,7 @@ pub(crate) fn fire() {
         assert!(m.action() == 1);
 
         Ok::<(), Error>(())
-    })
-    .expect("MineElicit::with Y");
+    })?;
+
+    Ok(())
 }
