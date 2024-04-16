@@ -20,10 +20,15 @@ include                 = [ "Cargo.toml",
 publish                 = true
 # =============================================================================
 [workspace]
-members                 = [ "elicit_macro",
-                            ]
+#members                 = [ "elicit_macro",
+#                            ]
 exclude                 = [ "tests/test_proc",
                             ]
 # =============================================================================
 [dependencies]
-elicit_macro            = { default-features=false, path="elicit_macro" }
+
+# -----------------------------------------------------------------------------
+[dependencies.elicit_macro]
+default-features        = false
+version                 = "0.1"
+#path                    = "./elicit_macro"
