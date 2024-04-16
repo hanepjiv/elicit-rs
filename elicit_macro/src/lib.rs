@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/14
+//  @date 2024/04/17
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -228,8 +228,10 @@ mod elicit_define;
 mod elicit_derive;
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[elicit_define(MODULE)]
 /// trait Base {..}
+/// ```
 ///
 #[proc_macro_attribute]
 pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -240,10 +242,12 @@ pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[derive(Debug, Elicit(BASE))]
 /// #[elicit_mod_author(MODULE)]        // required
 /// #[elicit_from_self_field(FIELD)]    // option
 /// struct Derived {..}
+/// ```
 ///
 #[proc_macro_derive(
     Elicit,
@@ -257,8 +261,10 @@ mod aelicit_define;
 mod aelicit_derive;
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[aelicit_define(MODULE)]
 /// trait Base {..}
+/// ```
 ///
 #[proc_macro_attribute]
 pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -269,10 +275,12 @@ pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[derive(Debug, Aelicit(BASE))]
 /// #[aelicit_mod_author(MODULE)]       // required
 /// #[aelicit_from_self_field(FIELD)]   // option
 /// struct Derived {..}
+/// ```
 ///
 #[proc_macro_derive(
     Aelicit,
@@ -288,8 +296,10 @@ mod melicit_define;
 mod melicit_derive;
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[melicit_define(MODULE)]
 /// trait Base {..}
+/// ```
 ///
 #[proc_macro_attribute]
 pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -300,10 +310,12 @@ pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 // ============================================================================
 ///
+/// ```compile_fail
 /// #[derive(Debug, Melicit(BASE))]
 /// #[melicit_mod_author(MODULE)]       // required
 /// #[melicit_from_self_field(FIELD)]   // option
 /// struct Derived {..}
+/// ```
 ///
 #[proc_macro_derive(
     Melicit,
