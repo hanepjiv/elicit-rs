@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.9.0"
+version                 = "0.9.1-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
@@ -17,12 +17,12 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = true
+publish                 = false
 # =============================================================================
 [workspace]
-#members                 = [ "elicit_macro",
-#                            ]
-exclude                 = [ "tests/test_proc",
+exclude                 = [ "examples/",
+                            ]
+members                 = [ "elicit_macro",
                             ]
 # =============================================================================
 [dependencies]
@@ -30,5 +30,5 @@ exclude                 = [ "tests/test_proc",
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "0.1"
-#path                    = "./elicit_macro"
+#version                 = "0.1"
+path                    = "./elicit_macro"
