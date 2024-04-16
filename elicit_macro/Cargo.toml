@@ -1,0 +1,56 @@
+# -*- mode:toml; coding:utf-8-unix; -*-
+# =============================================================================
+[package]
+edition                 = "2021"
+name                    = "elicit_macro"
+version                 = "0.1.0"
+authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
+license                 = "MIT OR Apache-2.0"
+keywords                = ["utility"]
+description             = "SmartPointer-like structure for polymorphism."
+readme                  = "README.md"
+documentation           = "https://docs.rs/elicit/"
+repository              = "https://github.com/hanepjiv/elicit-rs.git"
+include                 = [ "Cargo.toml",
+                            "src/**/*.rs",
+                            "README.md",
+                            "LICENSE-APACHE-2.0",
+                            "LICENSE-MIT"
+                            ]
+publish                 = false
+# =============================================================================
+[lib]
+proc-macro              = true
+# =============================================================================
+[dependencies]
+
+# -----------------------------------------------------------------------------
+[dependencies.proc-macro2]
+default-features        = false
+version                 = "1"
+features                = [ "proc-macro",
+                            #"nightly",
+                            #"span-locations"
+                            ]
+# -----------------------------------------------------------------------------
+[dependencies.quote]
+default-features        = false
+version                 = "1"
+features                = [ "proc-macro",
+                            ]
+# -----------------------------------------------------------------------------
+[dependencies.syn]
+default-features        = false
+version                 = "2"
+features                = [ #"clone-impls",
+                            "derive",
+                            "parsing",
+                            "printing",
+                            "proc-macro",
+                            "extra-traits",
+                            #"fold",
+                            "full",
+                            #"test",
+                            #"visit",
+                            #"visit-mut",
+                            ]

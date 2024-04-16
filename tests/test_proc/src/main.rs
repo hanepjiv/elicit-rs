@@ -1,15 +1,15 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! lib.rs
+//! do_elicit.rs
 
-//  Copyright 2016 hanepjiv
+//  Copyright 2017 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
-//  @since 2016/03/08
-//  @date 2024/04/15
+//  @since 2024/04/13
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
-// attribute  =================================================================
+// attributes  ================================================================
 // rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
@@ -190,16 +190,17 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    clippy::all,
-    box_pointers,
-    dead_code,
-    trivial_casts,
     unreachable_pub
 )]
+#![deny(clippy::all, box_pointers, trivial_casts, dead_code)]
 // mod  =======================================================================
-mod error;
-// use  =======================================================================
-pub use self::error::{Error, Result};
-pub use elicit_macro::{
-    aelicit_define, elicit_define, melicit_define, Aelicit, Elicit, Melicit,
-};
+mod do_aelicit;
+mod do_elicit;
+mod do_melicit;
+// ============================================================================
+fn main() -> elicit::Result<()> {
+    do_elicit::fire()?;
+    do_aelicit::fire()?;
+    do_melicit::fire()?;
+    Ok(())
+}

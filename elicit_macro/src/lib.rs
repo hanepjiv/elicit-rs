@@ -2,11 +2,11 @@
 
 //! lib.rs
 
-//  Copyright 2016 hanepjiv
+//  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
-//  @since 2016/03/08
-//  @date 2024/04/15
+//  @since 2024/04/10
+//  @date 2024/04/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -61,7 +61,6 @@
     const_evaluatable_unchecked,
     const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
-    deprecated,
     deprecated_where_clause_location,
     deref_into_dyn_supertrait,
     deref_nullptr,
@@ -190,16 +189,128 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    clippy::all,
     box_pointers,
     dead_code,
     trivial_casts,
     unreachable_pub
 )]
+#![deny(clippy::all, deprecated)]
 // mod  =======================================================================
-mod error;
+///
+/// mod include
+///
+/// proc_macro::TokenStream is not included in crate::include to suppress
+/// "procedural macro API is used outside of a procedural macro".
+///
+pub(crate) mod include {
+    // common  ----------------------------------------------------------------
+    pub(crate) use proc_macro2::{Span, TokenStream as TokenStream2};
+    pub(crate) use quote::{quote, ToTokens};
+    pub(crate) use syn::{parse_macro_input, Error};
+
+    pub(crate) type Result<T> = std::result::Result<T, Error>;
+
+    #[inline]
+    pub(crate) fn into_tokens(
+        res: Result<TokenStream2>,
+    ) -> proc_macro::TokenStream {
+        res.unwrap_or_else(Error::into_compile_error).into()
+    }
+
+    // for elicit_macro  ------------------------------------------------------
+    pub(crate) use syn::{DeriveInput, Ident, ItemTrait};
+}
 // use  =======================================================================
-pub use self::error::{Error, Result};
-pub use elicit_macro::{
-    aelicit_define, elicit_define, melicit_define, Aelicit, Elicit, Melicit,
-};
+use crate::include::*;
+use proc_macro::TokenStream;
+// ////////////////////////////////////////////////////////////////////////////
+mod elicit_define;
+mod elicit_derive;
+// ============================================================================
+///
+/// #[elicit_define(MODULE)]
+/// trait Base {..}
+///
+#[proc_macro_attribute]
+pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
+    into_tokens(elicit_define::expand(
+        parse_macro_input!(attr as Ident),
+        parse_macro_input!(item as ItemTrait),
+    ))
+}
+// ============================================================================
+///
+/// #[derive(Debug, Elicit(BASE))]
+/// #[elicit_mod_author(MODULE)]        // required
+/// #[elicit_from_self_field(FIELD)]    // option
+/// struct Derived {..}
+///
+#[proc_macro_derive(
+    Elicit,
+    attributes(elicit_mod_author, elicit_from_self_field)
+)]
+pub fn on_elicit_derive(ts: TokenStream) -> TokenStream {
+    into_tokens(elicit_derive::expand(parse_macro_input!(ts as DeriveInput)))
+}
+// ////////////////////////////////////////////////////////////////////////////
+mod aelicit_define;
+mod aelicit_derive;
+// ============================================================================
+///
+/// #[aelicit_define(MODULE)]
+/// trait Base {..}
+///
+#[proc_macro_attribute]
+pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
+    into_tokens(aelicit_define::expand(
+        parse_macro_input!(attr as Ident),
+        parse_macro_input!(item as ItemTrait),
+    ))
+}
+// ============================================================================
+///
+/// #[derive(Debug, Aelicit(BASE))]
+/// #[aelicit_mod_author(MODULE)]       // required
+/// #[aelicit_from_self_field(FIELD)]   // option
+/// struct Derived {..}
+///
+#[proc_macro_derive(
+    Aelicit,
+    attributes(aelicit_mod_author, aelicit_from_self_field)
+)]
+pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
+    into_tokens(aelicit_derive::expand(parse_macro_input!(
+        ts as DeriveInput
+    )))
+}
+// ////////////////////////////////////////////////////////////////////////////
+mod melicit_define;
+mod melicit_derive;
+// ============================================================================
+///
+/// #[melicit_define(MODULE)]
+/// trait Base {..}
+///
+#[proc_macro_attribute]
+pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
+    into_tokens(melicit_define::expand(
+        parse_macro_input!(attr as Ident),
+        parse_macro_input!(item as ItemTrait),
+    ))
+}
+// ============================================================================
+///
+/// #[derive(Debug, Melicit(BASE))]
+/// #[melicit_mod_author(MODULE)]       // required
+/// #[melicit_from_self_field(FIELD)]   // option
+/// struct Derived {..}
+///
+#[proc_macro_derive(
+    Melicit,
+    attributes(melicit_mod_author, melicit_from_self_field)
+)]
+pub fn on_melicit_derive(ts: TokenStream) -> TokenStream {
+    into_tokens(melicit_derive::expand(parse_macro_input!(
+        ts as DeriveInput
+    )))
+}

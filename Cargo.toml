@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.8.1"
+version                 = "0.9.0-alpha.7"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
@@ -12,13 +12,18 @@ readme                  = "README.md"
 documentation           = "https://docs.rs/elicit/"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 include                 = [ "Cargo.toml",
-                            "build.rs",
                             "src/**/*.rs",
-                            "crates-io.md",
                             "README.md",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = true
+publish                 = false
+# =============================================================================
+[workspace]
+members                 = [ "elicit_macro",
+                            ]
+exclude                 = [ "tests/test_proc",
+                            ]
 # =============================================================================
 [dependencies]
+elicit_macro            = { default-features=false, path="elicit_macro" }
