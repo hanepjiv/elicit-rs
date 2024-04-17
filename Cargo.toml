@@ -19,6 +19,12 @@ include                 = [ "Cargo.toml",
                             ]
 publish                 = false
 # =============================================================================
+[workspace.package]
+authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
+license                 = "MIT OR Apache-2.0"
+documentation           = "https://docs.rs/elicit/"
+repository              = "https://github.com/hanepjiv/elicit-rs.git"
+# -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "examples/",
                             ]
@@ -30,5 +36,5 @@ members                 = [ "elicit_macro",
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-#version                 = "0.1"
+version                 = "^0.1"
 path                    = "./elicit_macro"

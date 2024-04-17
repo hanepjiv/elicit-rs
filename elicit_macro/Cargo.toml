@@ -3,14 +3,14 @@
 [package]
 edition                 = "2021"
 name                    = "elicit_macro"
-version                 = "0.1.1-alpha.0"
-authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
-license                 = "MIT OR Apache-2.0"
+version                 = "0.1.1"
+authors.workspace       = true
+license.workspace       = true
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
-documentation           = "https://docs.rs/elicit/"
-repository              = "https://github.com/hanepjiv/elicit-rs.git"
+documentation.workspace = true
+repository.workspace    = true
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
                             "README.md",
