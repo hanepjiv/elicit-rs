@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/16
+//  @date 2024/04/17
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -33,8 +33,9 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    #[melicit_from_self_field(_fsf)]
+    // #[melicit_from_self_field(_fsf)] here
     pub(crate) struct MineY {
+        #[melicit_from_self_field] // or here
         _fsf: mine_melicit::author::MelicitFromSelfField,
         i: i32,
     }

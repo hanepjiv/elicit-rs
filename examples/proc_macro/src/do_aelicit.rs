@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/16
+//  @date 2024/04/17
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 pub(crate) mod mine {
-    use elicit::{aelicit_define, Aelicit, Result};
+    use elicit::{aelicit_define, Aelicit};
     #[aelicit_define(mine_aelicit)]
     pub(crate) trait Mine: Send + Sync {
         fn action(&self) -> i32;
@@ -32,8 +32,9 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
-    #[aelicit_from_self_field(_fsf)]
+    //#[aelicit_from_self_field(_fsf)] // here
     pub(crate) struct MineY {
+        #[aelicit_from_self_field] // or here
         _fsf: mine_aelicit::author::AelicitFromSelfField,
         i: i32,
     }
@@ -53,7 +54,7 @@ pub(crate) mod mine {
         /// the same module.
         ///
         #[allow(box_pointers, dead_code)]
-        pub(crate) fn evil(&mut self) -> Result<()> {
+        pub(crate) fn evil(&mut self) -> ::elicit::Result<()> {
             use mine_aelicit::author::*;
             use std::sync::{Arc, RwLock};
             self._weak_assign(Arc::<RwLock<Box<dyn AelicitBase>>>::downgrade(

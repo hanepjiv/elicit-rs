@@ -6,11 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/15
+//  @date 2024/04/17
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::*;
+// ---------------------------------------------------------------------------
+use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
@@ -39,6 +41,9 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
             _ => {}
         }
     }
+
+    find_field_attr(&ast.data,
+                   "elicit_from_self_field", &mut elicit_from_self_field)?;
 
     if elicit_mod_author.is_none() {
         return Err(Error::new(
@@ -94,51 +99,51 @@ mod tests {
     fn test_00() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-            #[elicit_mod_author(ident_mod)]
-            #[elicit_from_self_field(ident_field)]
-            struct Orig {}
+                #[elicit_mod_author(ident_mod)]
+                #[elicit_from_self_field(ident_field)]
+                struct Orig {}
             })
-            .expect("parse")
+                .expect("parse")
         )
-        .is_ok());
+                .is_ok());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_01() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-            // #[elicit_mod_author(ident_mod)]
-            #[elicit_from_self_field(ident_field)]
-            struct Orig {}
+                // #[elicit_mod_author(ident_mod)]
+                #[elicit_from_self_field(ident_field)]
+                struct Orig {}
             })
-            .expect("parse")
+                .expect("parse")
         )
-        .is_err());
+                .is_err());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_02() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-            #[elicit_mod_author(ident_mod)]
-            // #[elicit_from_self_field(ident_field)]
-            struct Orig {}
+                #[elicit_mod_author(ident_mod)]
+                // #[elicit_from_self_field(ident_field)]
+                struct Orig {}
             })
-            .expect("parse")
+                .expect("parse")
         )
-        .is_ok());
+                .is_ok());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_03() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-            // #[elicit_mod_author(ident_mod)]
-            // #[elicit_from_self_field(ident_field)]
-            struct Orig {}
+                // #[elicit_mod_author(ident_mod)]
+                // #[elicit_from_self_field(ident_field)]
+                struct Orig {}
             })
-            .expect("parse")
+                .expect("parse")
         )
-        .is_err());
+                .is_err());
     }
 }
