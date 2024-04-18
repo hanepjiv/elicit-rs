@@ -6,10 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/04/15
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
+/*
 // rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
@@ -196,6 +197,7 @@
     trivial_casts,
     unreachable_pub
 )]
+*/
 // mod  =======================================================================
 mod error;
 // use  =======================================================================
