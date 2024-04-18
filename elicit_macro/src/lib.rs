@@ -247,10 +247,13 @@ pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 // ============================================================================
 ///
 /// ```compile_fail
-/// #[derive(Debug, Elicit(BASE))]
+/// #[derive(Debug, Elicit)]
 /// #[elicit_mod_author(MODULE)]        // required
-/// #[elicit_from_self_field(FIELD)]    // option
-/// struct Derived {..}
+/// #[elicit_from_self_field(_fsf)]     // option here
+/// struct Derived {
+///   #[elicit_from_self_field]         // or here
+///   _fsf: ElicitFromSelfField,
+/// }
 /// ```
 ///
 #[proc_macro_derive(
@@ -280,10 +283,13 @@ pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 // ============================================================================
 ///
 /// ```compile_fail
-/// #[derive(Debug, Aelicit(BASE))]
-/// #[aelicit_mod_author(MODULE)]       // required
-/// #[aelicit_from_self_field(FIELD)]   // option
-/// struct Derived {..}
+/// #[derive(Debug, Aelicit)]
+/// #[aelicit_mod_author(MODULE)]        // required
+/// #[aelicit_from_self_field(_fsf)]     // option here
+/// struct Derived {
+///   #[aelicit_from_self_field]         // or here
+///   _fsf: AelicitFromSelfField,
+/// }
 /// ```
 ///
 #[proc_macro_derive(
@@ -315,10 +321,13 @@ pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 // ============================================================================
 ///
 /// ```compile_fail
-/// #[derive(Debug, Melicit(BASE))]
-/// #[melicit_mod_author(MODULE)]       // required
-/// #[melicit_from_self_field(FIELD)]   // option
-/// struct Derived {..}
+/// #[derive(Debug, Melicit)]
+/// #[melicit_mod_author(MODULE)]        // required
+/// #[melicit_from_self_field(_fsf)]     // option here
+/// struct Derived {
+///   #[melicit_from_self_field]         // or here
+///   _fsf: MelicitFromSelfField,
+/// }
 /// ```
 ///
 #[proc_macro_derive(
