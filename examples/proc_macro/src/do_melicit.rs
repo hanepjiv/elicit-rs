@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/18
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -74,19 +74,17 @@ pub(crate) mod mine {
 // ============================================================================
 #[allow(box_pointers)]
 pub(crate) fn fire() -> elicit::Result<()> {
-    use mine::melicit_user::{
-        Guard, LockError, Melicit as MineMelicit, TryLockError,
-    };
+    use mine::melicit_user::Melicit as MineMelicit;
     use mine::{MineX, MineY};
 
     let mut e: MineMelicit;
 
     e = MineMelicit::new(MineX::default())?;
 
-    if let Err(x) = e.with(|m| {
+    if let Err(x) = e.with(|m| -> super::Result<'_, ()> {
         println!("{:?}", m);
         assert!(m.action() == 0);
-        Ok::<(), LockError<Guard<'_>>>(())
+        Ok(())
     }) {
         eprintln!("{x:?}");
     }
@@ -96,10 +94,10 @@ pub(crate) fn fire() -> elicit::Result<()> {
 
     e = MineMelicit::new(y)?;
 
-    if let Err(x) = e.try_with(|m| {
+    if let Err(x) = e.try_with(|m| -> super::Result<'_, ()> {
         println!("{:?}", m);
         assert!(m.action() == 3);
-        Ok::<(), TryLockError<Guard<'_>>>(())
+        Ok(())
     }) {
         eprintln!("{x:?}");
     }

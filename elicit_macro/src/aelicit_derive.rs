@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/17
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -42,20 +42,19 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
         }
     }
 
-    find_field_attr(&ast.data,
-                   "aelicit_from_self_field",
-                   &mut aelicit_from_self_field)?;
+    find_field_attr(
+        &ast.data,
+        "aelicit_from_self_field",
+        &mut aelicit_from_self_field,
+    )?;
 
     if aelicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            format!(
-                r###"Requires the following attributes.
-#[derive(Aelicit)]
-#[aelicit_mod_author(..)]              // {:?}
+            r###"#[derive(Debug, Aelicit)]
+#[aelicit_mod_author(AELICIT_MOD_AUTHOR)] // This attribute is necessary.
+struct Derived {}
 "###,
-                aelicit_mod_author.map(|x| x.to_string()),
-            ),
         ));
     }
 

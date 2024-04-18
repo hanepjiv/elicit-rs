@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/18
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -91,8 +91,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         }
         // ////////////////////////////////////////////////////////////////
         // ================================================================
+        /// type ReadGuard
         pub type ReadGuard<'a> =
             std::sync::RwLockReadGuard<'a, Box<dyn AelicitBase>>;
+        /// type WriteGuard
         pub type WriteGuard<'a> =
             std::sync::RwLockWriteGuard<'a, Box<dyn AelicitBase>>;
         // ////////////////////////////////////////////////////////////////

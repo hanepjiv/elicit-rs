@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/17
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -43,18 +43,15 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     }
 
     find_field_attr(&ast.data,
-                   "elicit_from_self_field", &mut elicit_from_self_field)?;
+                    "elicit_from_self_field", &mut elicit_from_self_field)?;
 
     if elicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            format!(
-                r###"Requires the following attributes.
-#[derive(Elicit)]
-#[elicit_mod_author(..)]               // {:?}
+            r###"#[derive(Debug, Elicit)]
+#[elicit_mod_author(ELICIT_MOD_AUTHOR)] // This attribute is necessary.
+struct Derived{}
 "###,
-                elicit_mod_author.map(|x| x.to_string()),
-            ),
         ));
     }
 

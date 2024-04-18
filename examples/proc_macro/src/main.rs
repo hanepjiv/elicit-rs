@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/17
+//  @date 2024/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -197,6 +197,9 @@
 mod do_aelicit;
 mod do_elicit;
 mod do_melicit;
+mod error;
+// ============================================================================
+use error::Result;
 // ============================================================================
 fn main() -> elicit::Result<()> {
     do_elicit::fire()?;
