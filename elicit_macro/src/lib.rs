@@ -6,11 +6,10 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/19
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-/*
 // rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
@@ -196,7 +195,7 @@
     unreachable_pub
 )]
 #![deny(clippy::all, deprecated)]
-*/
+// ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod find_field_attr;
 // ============================================================================
@@ -224,12 +223,28 @@ pub(crate) mod include {
     // for elicit_macro  ------------------------------------------------------
     pub(crate) use syn::{DeriveInput, Ident, ItemTrait};
 }
+// ============================================================================
+mod elicit_define;
+mod elicit_derive;
+// ============================================================================
+#[cfg(feature = "parking_lot")]
+mod feature_parking_lot;
+#[cfg(feature = "parking_lot")]
+use feature_parking_lot::{
+    aelicit_define, aelicit_derive, melicit_define, melicit_derive,
+};
+// ----------------------------------------------------------------------------
+#[cfg(not(any(feature = "parking_lot",)))]
+mod default_std;
+#[cfg(not(any(feature = "parking_lot",)))]
+use default_std::{
+    aelicit_define, aelicit_derive, melicit_define, melicit_derive,
+};
+// ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::*;
 use proc_macro::TokenStream;
 // ////////////////////////////////////////////////////////////////////////////
-mod elicit_define;
-mod elicit_derive;
 // ============================================================================
 ///
 /// ```compile_fail
@@ -264,8 +279,6 @@ pub fn on_elicit_derive(ts: TokenStream) -> TokenStream {
     into_tokens(elicit_derive::expand(parse_macro_input!(ts as DeriveInput)))
 }
 // ////////////////////////////////////////////////////////////////////////////
-mod aelicit_define;
-mod aelicit_derive;
 // ============================================================================
 ///
 /// ```compile_fail
@@ -302,8 +315,6 @@ pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
     )))
 }
 // ////////////////////////////////////////////////////////////////////////////
-mod melicit_define;
-mod melicit_derive;
 // ============================================================================
 ///
 /// ```compile_fail

@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit_macro"
-version                 = "0.2.0"
+version                 = "0.2.1"
 authors.workspace       = true
 license.workspace       = true
 keywords                = ["utility"]
@@ -17,10 +17,14 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = true
+publish                 = false
 # =============================================================================
 [lib]
 proc-macro              = true
+# =============================================================================
+[features]
+default                 = []
+parking_lot             = []
 # =============================================================================
 [dependencies]
 

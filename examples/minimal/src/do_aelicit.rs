@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/19
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -55,8 +55,9 @@ pub(crate) mod mine {
         ///
         #[allow(box_pointers, dead_code)]
         pub(crate) fn evil(&mut self) -> ::elicit::Result<()> {
+            use elicit::RwLock;
             use mine_aelicit::author::*;
-            use std::sync::{Arc, RwLock};
+            use std::sync::Arc;
             self._weak_assign(Arc::<RwLock<Box<dyn AelicitBase>>>::downgrade(
                 &Arc::new(RwLock::new(Box::<MineX>::default())),
             ))
@@ -92,12 +93,12 @@ pub(crate) fn fire() -> elicit::Result<()> {
 
     e = MineAelicit::new(y)?;
 
-    if let Err(x) = e.try_with(|m| -> super::Result<'_, ()> {
+    if let Err(e) = e.try_with(|m| -> super::Result<'_, ()> {
         println!("{:?}", m);
         assert!(m.action() == 2);
         Ok(())
     }) {
-        eprintln!("{x:?}");
+        eprintln!("{e:?}");
     }
 
     Ok(())

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2024/04/19
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,6 +16,8 @@ use std::{error::Error as StdError, fmt::Display};
 /// enum Error
 #[derive(Debug)]
 pub enum Error {
+    /// WouldBlock,
+    WouldBlock,
     /// WeakAlreadyExists
     WeakAlreadyExists,
     /// Borrow
@@ -47,6 +49,7 @@ impl StdError for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
+            Error::WouldBlock => None,
             Error::WeakAlreadyExists => None,
             Error::Borrow(ref e) => Some(e),
             Error::BorrowMut(ref e) => Some(e),

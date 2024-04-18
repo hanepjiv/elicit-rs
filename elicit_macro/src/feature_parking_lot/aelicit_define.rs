@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/19
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -52,8 +52,6 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 pub use super::_common::*;
                 pub use super::_inner::{
                     WeakAelicit,
-                    LockError, LockResult,
-                    TryLockError, TryLockResult,
                     ReadGuard, WriteGuard
                 };
             }
@@ -71,11 +69,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             convert::From,
             fmt::Debug,
             result::Result as StdResult,
-            sync::{ OnceLock, Arc, Weak, RwLock, },
+            sync::{ OnceLock, Arc, Weak, },
         };
-        pub use std::sync::{
-            LockResult, PoisonError as LockError,TryLockResult, TryLockError,
-        };
+        use elicit::RwLock;
+        // --------------------------------------------------------------------
         pub use elicit::{ Result as ElicitResult, Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
         // ================================================================
@@ -93,10 +90,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ================================================================
         /// type ReadGuard
         pub type ReadGuard<'a> =
-            std::sync::RwLockReadGuard<'a, Box<dyn AelicitBase>>;
+            elicit::RwLockReadGuard<'a, Box<dyn AelicitBase>>;
         /// type WriteGuard
         pub type WriteGuard<'a> =
-            std::sync::RwLockWriteGuard<'a, Box<dyn AelicitBase>>;
+            elicit::RwLockWriteGuard<'a, Box<dyn AelicitBase>>;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         /// struct Aelicit
@@ -175,8 +172,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 let r = Arc::new(RwLock::new(
                     Box::new(val) as Box<dyn AelicitBase>
                 ));
-                r.write().expect("Aelicit::new").as_mut()
-                    ._weak_assign(Arc::<_>::downgrade(&r))?;
+                r.write().as_mut()._weak_assign(Arc::<_>::downgrade(&r))?;
                 Ok(Aelicit(r))
             }
             // ============================================================
@@ -186,22 +182,22 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             }
             // ============================================================
             /// read
-            pub fn read(&self) -> LockResult<ReadGuard<'_>> {
+            pub fn read(&self) -> ReadGuard<'_> {
                 self.0.read()
             }
             // ============================================================
             /// try_read
-            pub fn try_read(&self) -> TryLockResult<ReadGuard<'_>> {
+            pub fn try_read(&self) -> Option<ReadGuard<'_>> {
                 self.0.try_read()
             }
             // ============================================================
             /// write
-            pub fn write(&self) -> LockResult<WriteGuard<'_>> {
+            pub fn write(&self) -> WriteGuard<'_> {
                 self.0.write()
             }
             // ============================================================
             /// try_write
-            pub fn try_write(&self) -> TryLockResult<WriteGuard<'_>> {
+            pub fn try_write(&self) -> Option<WriteGuard<'_>> {
                 self.0.try_write()
             }
             // ============================================================
@@ -212,9 +208,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             ) -> StdResult<T, E>
             where
                 's: 'a,
-                E: From<LockError<ReadGuard<'a>>>,
             {
-                f(self.read()?.as_ref())
+                f(self.read().as_ref())
             }
             // ============================================================
             /// try_with
@@ -224,9 +219,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             ) -> StdResult<T, E>
             where
                 's: 'a,
-                E: From<TryLockError<ReadGuard<'a>>>,
+                E: From<ElicitError>,
             {
-                f(self.try_read()?.as_ref())
+                if let Some(x) = self.try_read() {
+                    f(x.as_ref())
+                } else {
+                    Err(ElicitError::WouldBlock.into())
+                }
             }
             // ============================================================
             /// with_mut
@@ -236,9 +235,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             ) -> StdResult<T, E>
             where
                 's: 'a,
-                E: From<LockError<WriteGuard<'a>>>,
             {
-                f(self.write()?.as_mut())
+                f(self.write().as_mut())
             }
             // ============================================================
             /// try_with_mut
@@ -248,9 +246,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             ) -> StdResult<T, E>
             where
                 's: 'a,
-                E: From<TryLockError<WriteGuard<'a>>>,
+                E: From<ElicitError>,
             {
-                f(self.try_write()?.as_mut())
+                if let Some(mut x) = self.try_write() {
+                    f(x.as_mut())
+                } else {
+                    Err(ElicitError::WouldBlock.into())
+                }
             }
         }
     })

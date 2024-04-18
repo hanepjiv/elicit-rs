@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/19
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -56,8 +56,9 @@ pub(crate) mod mine {
         ///
         #[allow(box_pointers, dead_code)]
         pub(crate) fn evil(&mut self) -> elicit::Result<()> {
+            use elicit::Mutex;
             use mine_melicit::author::*;
-            use std::sync::{Arc, Mutex};
+            use std::sync::Arc;
             self._weak_assign(Arc::<Mutex<Box<dyn MelicitBase>>>::downgrade(
                 &Arc::new(Mutex::new(Box::<MineX>::default())),
             ))

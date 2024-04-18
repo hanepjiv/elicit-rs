@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.10.0"
+version                 = "0.10.1-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
@@ -17,7 +17,7 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = true
+publish                 = false
 # =============================================================================
 [workspace.package]
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
@@ -31,6 +31,10 @@ exclude                 = [ "examples/",
 members                 = [ "elicit_macro",
                             ]
 # =============================================================================
+[features]
+default                 = []
+parking_lot             = [ "elicit_macro/parking_lot", "dep:parking_lot" ]
+# =============================================================================
 [dependencies]
 
 # -----------------------------------------------------------------------------
@@ -38,3 +42,9 @@ members                 = [ "elicit_macro",
 default-features        = false
 version                 = "^0.2"
 path                    = "./elicit_macro"
+# -----------------------------------------------------------------------------
+[dependencies.parking_lot]
+optional                = true
+
+default-features        = false
+version                 = "^0.12"

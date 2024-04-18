@@ -1,12 +1,12 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! do_elicit.rs
+//! main.rs
 
 //  Copyright 2017 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/19
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -197,9 +197,16 @@
 mod do_aelicit;
 mod do_elicit;
 mod do_melicit;
-mod error;
 // ============================================================================
-use error::Result;
+#[cfg(feature = "parking_lot")]
+mod error_parking_lot;
+#[cfg(feature = "parking_lot")]
+use error_parking_lot::Result;
+// ----------------------------------------------------------------------------
+#[cfg(not(any(feature = "parking_lot",)))]
+mod error_std;
+#[cfg(not(any(feature = "parking_lot",)))]
+use error_std::Result;
 // ============================================================================
 fn main() -> elicit::Result<()> {
     do_elicit::fire()?;
