@@ -40,7 +40,7 @@ pub(crate) enum Error<'a> {
 
     /// MelicitLock
     MelicitLock(MelicitLockError<MelicitGuard<'a>>),
-    /// MelicitTryLockRead
+    /// MelicitTryLock
     MelicitTryLock(MelicitTryLockError<MelicitGuard<'a>>),
 }
 // ============================================================================
