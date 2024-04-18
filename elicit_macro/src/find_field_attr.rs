@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2024/04/17
+//  @date 2024/04/18
 
 // ////////////////////////////////////////////////////////////////////////////
 use crate::include::*;
@@ -17,15 +17,13 @@ pub(crate) fn find_field_attr<T>(
     ret: &mut Option<TokenStream2>,
 ) -> Result<()>
 where
-    T: AsRef<str>,
+    Ident: PartialEq<T>,
 {
     if let syn::Data::Struct(x) = data {
         if let syn::Fields::Named(n) = &x.fields {
             for f in &n.named {
                 for a in &f.attrs {
-                    if ident.as_ref()
-                        == a.meta.path().require_ident()?.to_string().as_str()
-                    {
+                    if a.meta.path().is_ident(&ident) {
                         if let Some(ref i) = f.ident {
                             if ret.is_some() {
                                 return Err(Error::new(
