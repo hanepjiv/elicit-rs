@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/16
+//  @date 2024/04/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -50,7 +50,12 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
             /// mod user
             pub mod user {
                 pub use super::_common::*;
-                pub use super::_inner::WeakMelicit;
+                pub use super::_inner::{
+                    WeakMelicit,
+                    LockError, LockResult,
+                    TryLockError, TryLockResult,
+                    Guard,
+                };
             }
         }
     })
@@ -66,10 +71,11 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             convert::From,
             fmt::Debug,
             result::Result as StdResult,
-            sync::{
-                OnceLock, Arc, LockResult, Mutex, MutexGuard,
-                TryLockError, TryLockResult, Weak, PoisonError
-            },
+            sync::{ OnceLock, Arc, Mutex, Weak },
+        };
+        pub use std::sync::{
+            LockResult, PoisonError as LockError,
+            TryLockResult, TryLockError,
         };
         pub use elicit::{ Result as ElicitResult, Error as ElicitError };
         // ////////////////////////////////////////////////////////////////
@@ -84,6 +90,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             MelicitBase for T
         {
         }
+        // ////////////////////////////////////////////////////////////////
+        // ================================================================
+        pub type Guard<'a> =
+            std::sync::MutexGuard<'a, Box<dyn MelicitBase>>;
         // ////////////////////////////////////////////////////////////////
         // ================================================================
         /// struct Melicit
@@ -115,6 +125,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// melicit_from_self
             fn melicit_from_self(&self) -> Option<Melicit>;
         }
+        // ////////////////////////////////////////////////////////////////////
         // ================================================================
         /// trait WeakAssign
         pub trait WeakAssign {
@@ -161,10 +172,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 let r = Arc::new(Mutex::new(
                     Box::new(val) as Box<dyn MelicitBase>
                 ));
-                let weak = Arc::<_>::downgrade(&r);
-                let ret = Melicit(r);
-                let _ = ret.with_mut(|x| x._weak_assign(weak))?;
-                Ok(ret)
+                r.lock().expect("Melicit::new").as_mut()
+                    ._weak_assign(Arc::<_>::downgrade(&r))?;
+                Ok(Melicit(r))
             }
             // ============================================================
             /// weak
@@ -173,91 +183,62 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             }
             // ============================================================
             /// lock
-            pub fn lock(
-                &self,
-            ) -> LockResult<MutexGuard<'_, Box<dyn MelicitBase>>>
+            pub fn lock(&self) -> LockResult<Guard<'_>>
             {
                 self.0.lock()
             }
             // ============================================================
             /// try_lock
-            pub fn try_lock(
-                &self,
-            ) -> TryLockResult<MutexGuard<'_, Box<dyn MelicitBase>>>
-            where
-                dyn MelicitBase: Debug + MelicitFromSelf,
-            {
+            pub fn try_lock(&self) -> TryLockResult<Guard<'_>> {
                 self.0.try_lock()
             }
             // ============================================================
             /// with
-            pub fn with<T, E>(
-                &self,
+            pub fn with<'s, 'a, T, E>(
+                &'s self,
                 f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<ElicitError>,
+                's: 'a,
+                E: From<LockError<Guard<'a>>>,
             {
-                self.lock().map_or_else(
-                    |_| Err(E::from(ElicitError::Poisoned)),
-                    |x| f((*x).as_ref())
-                )
+                f(self.lock()?.as_ref())
             }
             // ============================================================
             /// try_with
-            pub fn try_with<T, E>(
-                &self,
+            pub fn try_with<'s, 'a, T, E>(
+                &'s self,
                 f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<ElicitError>,
+                's: 'a,
+                E: From<TryLockError<Guard<'a>>>,
             {
-                self.try_lock().map_or_else(
-                    |x| match x {
-                        TryLockError::Poisoned(_) => {
-                            Err(E::from(ElicitError::Poisoned))
-                        }
-                        TryLockError::WouldBlock => {
-                            Err(E::from(ElicitError::WouldBlock))
-                        }
-                    },
-                    |x| f((*x).as_ref())
-                )
+                f(self.try_lock()?.as_ref())
             }
             // ============================================================
             /// with_mut
-            pub fn with_mut<T, E>(
-                &self,
+            pub fn with_mut<'s, 'a, T, E>(
+                &'s self,
                 f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<ElicitError>,
+                's: 'a,
+                E: From<LockError<Guard<'a>>>,
             {
-                self.lock().map_or_else(
-                    |_| Err(E::from(ElicitError::Poisoned)),
-                    |mut x| f((*x).as_mut())
-                )
+                f(self.lock()?.as_mut())
             }
             // ============================================================
             /// try_with_mut
-            pub fn try_with_mut<T, E>(
-                &self,
+            pub fn try_with_mut<'s, 'a, T, E>(
+                &'s self,
                 f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<ElicitError>,
+                's: 'a,
+                E: From<TryLockError<Guard<'a>>>,
             {
-                self.try_lock().map_or_else(
-                    |x| match x {
-                        TryLockError::Poisoned(_) => {
-                            Err(E::from(ElicitError::Poisoned))
-                        }
-                        TryLockError::WouldBlock => {
-                            Err(E::from(ElicitError::WouldBlock))
-                        }
-                    },
-                    |mut x| f((*x).as_mut())
-                )
+                f(self.try_lock()?.as_mut())
             }
         }
     })

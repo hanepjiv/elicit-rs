@@ -6,12 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2024/04/15
+//  @date 2024/04/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::error::Error as StdError;
-use std::fmt::Display;
+use std::{error::Error as StdError, fmt::Display};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error

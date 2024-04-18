@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2024/04/17
+//  @date 2024/04/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -74,7 +74,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ================================================================
         /// trait ElicitBase
         pub trait ElicitBase:
-            'static + Debug + #orig + ElicitFromSelf + WeakAssign
+        'static + Debug + #orig + ElicitFromSelf + WeakAssign
         {
         }
         // ================================================================
@@ -159,10 +159,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 let r = Rc::new(RefCell::new(
                     Box::new(val) as Box<dyn ElicitBase>
                 ));
-                let weak = Rc::<_>::downgrade(&r);
-                let ret = Elicit(r);
-                let _ = ret.with_mut(|x| x._weak_assign(weak))?;
-                Ok(ret)
+                r.borrow_mut().as_mut()
+                    ._weak_assign(Rc::<_>::downgrade(&r))?;
+                Ok(Elicit(r))
             }
             // ============================================================
             /// weak

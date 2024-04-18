@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "elicit"
-version                 = "0.9.2"
+version                 = "0.10.0-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["utility"]
@@ -36,5 +36,5 @@ members                 = [ "elicit_macro",
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "^0.1"
+version                 = "^0.2"
 path                    = "./elicit_macro"

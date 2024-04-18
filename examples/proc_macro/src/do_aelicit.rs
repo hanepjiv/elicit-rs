@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/17
+//  @date 2024/04/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -70,33 +70,36 @@ pub(crate) mod mine {
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
+#[allow(box_pointers)]
 pub(crate) fn fire() -> elicit::Result<()> {
-    use elicit::Error;
-    use mine::aelicit_user::Aelicit as MineAelicit;
+    use mine::aelicit_user::{
+        Aelicit as MineAelicit, LockError as MineLockError,
+        ReadGuard as MineReadGuard,
+    };
     use mine::{MineX, MineY};
 
     let mut e: MineAelicit;
 
     e = MineAelicit::new(MineX::default())?;
-    e.with(|m| {
+    if let Err(x) = e.with(|m| {
         println!("{:?}", m);
-
         assert!(m.action() == 0);
-
-        Ok::<(), Error>(())
-    })?;
+        Ok::<(), MineLockError<MineReadGuard<'_>>>(())
+    }) {
+        eprintln!("{x:?}");
+    }
 
     let y = MineY::new(2);
     // eprintln!("{:?}", y.evil());
 
     e = MineAelicit::new(y)?;
-    e.with(|m| {
+    if let Err(x) = e.with(|m| {
         println!("{:?}", m);
-
         assert!(m.action() == 2);
-
-        Ok::<(), Error>(())
-    })?;
+        Ok::<(), MineLockError<MineReadGuard<'_>>>(())
+    }) {
+        eprintln!("{x:?}");
+    }
 
     Ok(())
 }
