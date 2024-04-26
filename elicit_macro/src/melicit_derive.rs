@@ -1,12 +1,12 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! aelicit_derive.rs
+//! melicit_derive.rs
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/25
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -17,21 +17,21 @@ use crate::find_field_attr::find_field_attr;
 // ============================================================================
 /// fn expand
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
-    let mut aelicit_mod_author = Option::<TokenStream2>::default();
-    let mut aelicit_from_self_field = Option::<TokenStream2>::default();
+    let mut melicit_mod_author = Option::<TokenStream2>::default();
+    let mut melicit_from_self_field = Option::<TokenStream2>::default();
 
     for attr in ast.attrs {
         match attr.meta.path().require_ident()?.to_string().as_str() {
-            "aelicit_mod_author" => {
-                aelicit_mod_author = Some(
+            "melicit_mod_author" => {
+                melicit_mod_author = Some(
                     attr.meta
                         .require_list()?
                         .parse_args::<syn::Path>()?
                         .into_token_stream(),
                 );
             }
-            "aelicit_from_self_field" => {
-                aelicit_from_self_field = Some(
+            "melicit_from_self_field" => {
+                melicit_from_self_field = Some(
                     attr.meta
                         .require_list()?
                         .parse_args::<Ident>()?
@@ -42,47 +42,44 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
         }
     }
 
-    find_field_attr(
-        &ast.data,
-        "aelicit_from_self_field",
-        &mut aelicit_from_self_field,
-    )?;
+    find_field_attr(&ast.data,
+                    "melicit_from_self_field", &mut melicit_from_self_field)?;
 
-    if aelicit_mod_author.is_none() {
+    if melicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            r###"#[derive(Debug, Aelicit)]
-#[aelicit_mod_author(AELICIT_MOD_AUTHOR)] // This attribute is necessary.
-struct Derived {}
+            r###"#[derive(Debug, Melicit)]
+#[melicit_mod_author(MELICIT_MOD_AUTHO)] // This attribute is necessary.
+struct Derived{}
 "###,
         ));
     }
 
     let ident = ast.ident;
-    let aelicit_impl = match aelicit_from_self_field {
-        Some(ref x) => quote! {self.#x.aelicit_from_self()},
+    let melicit_impl = match melicit_from_self_field {
+        Some(ref x) => quote! { self.#x.melicit_from_self() },
         None => quote! { None },
     };
-    let _weak_assign_impl = match aelicit_from_self_field {
-        Some(ref x) => quote! {self.#x._weak_assign(_weak)},
+    let _weak_assign_impl = match melicit_from_self_field {
+        Some(ref x) => quote! { self.#x._weak_assign(_weak) },
         None => quote! { Ok(()) },
     };
 
     Ok(quote! {
         #[automatically_derived]
-        impl #aelicit_mod_author :: AelicitFromSelf for #ident {
-            fn aelicit_from_self(&self) ->
-                Option<#aelicit_mod_author :: Aelicit> {
-                    #aelicit_impl
+        impl #melicit_mod_author :: MelicitFromSelf for #ident {
+            fn melicit_from_self(&self) ->
+                Option<#melicit_mod_author :: Melicit> {
+                    #melicit_impl
                 }
         }
 
         #[automatically_derived]
-        impl #aelicit_mod_author :: WeakAssign for #ident {
+        impl #melicit_mod_author :: WeakAssign for #ident {
             fn _weak_assign(
                 &mut self,
-                _weak: std::sync::Weak<elicit::RwLock<Box<(
-                    dyn #aelicit_mod_author :: AelicitBase)>>>,
+                _weak: std::sync::Weak<elicit::Mutex<Box<(
+                    dyn #melicit_mod_author :: MelicitBase)>>>,
             ) -> elicit::Result<()> {
                 #_weak_assign_impl
             }
@@ -99,8 +96,8 @@ mod tests {
     fn test_00() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                #[aelicit_mod_author(ident_mod)]
-                #[aelicit_from_self_field(ident_field)]
+                #[melicit_mod_author(ident_mod)]
+                #[melicit_from_self_field(ident_field)]
                 struct Orig {}
             })
                 .expect("parse")
@@ -112,8 +109,8 @@ mod tests {
     fn test_01() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                // #[aelicit_mod_author(ident_mod)]
-                #[aelicit_from_self_field(ident_field)]
+                // #[melicit_mod_author(ident_mod)]
+                #[melicit_from_self_field(ident_field)]
                 struct Orig {}
             })
                 .expect("parse")
@@ -125,8 +122,8 @@ mod tests {
     fn test_02() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                #[aelicit_mod_author(ident_mod)]
-                // #[aelicit_from_self_field(ident_field)]
+                #[melicit_mod_author(ident_mod)]
+                // #[melicit_from_self_field(ident_field)]
                 struct Orig {}
             })
                 .expect("parse")
@@ -138,8 +135,8 @@ mod tests {
     fn test_03() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                // #[aelicit_mod_author(ident_mod)]
-                // #[aelicit_from_self_field(ident_field)]
+                // #[melicit_mod_author(ident_mod)]
+                // #[melicit_from_self_field(ident_field)]
                 struct Orig {}
             })
                 .expect("parse")

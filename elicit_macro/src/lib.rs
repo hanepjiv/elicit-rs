@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/25
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -224,22 +224,20 @@ pub(crate) mod include {
     pub(crate) use syn::{DeriveInput, Ident, ItemTrait};
 }
 // ============================================================================
+mod aelicit_derive;
 mod elicit_define;
 mod elicit_derive;
+mod melicit_derive;
 // ============================================================================
 #[cfg(feature = "parking_lot")]
 mod feature_parking_lot;
 #[cfg(feature = "parking_lot")]
-use feature_parking_lot::{
-    aelicit_define, aelicit_derive, melicit_define, melicit_derive,
-};
+use feature_parking_lot::{aelicit_define, melicit_define};
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
-mod default_std;
+mod feature_default;
 #[cfg(not(any(feature = "parking_lot",)))]
-use default_std::{
-    aelicit_define, aelicit_derive, melicit_define, melicit_derive,
-};
+use feature_default::{aelicit_define, melicit_define};
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::*;
