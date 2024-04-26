@@ -26,7 +26,8 @@ documentation           = "https://docs.rs/elicit/"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace]
-exclude                 = [ "examples/",
+exclude                 = [ "target/",
+                            "examples/",
                             ]
 members                 = [ "elicit_macro",
                             ]
