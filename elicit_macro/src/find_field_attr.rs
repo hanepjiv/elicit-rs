@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2024/04/18
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 use crate::include::*;
@@ -19,35 +19,42 @@ pub(crate) fn find_field_attr<T>(
 where
     Ident: PartialEq<T>,
 {
-    if let syn::Data::Struct(x) = data {
-        if let syn::Fields::Named(n) = &x.fields {
-            for f in &n.named {
-                for a in &f.attrs {
-                    if a.meta.path().is_ident(&ident) {
-                        if let Some(ref i) = f.ident {
-                            if ret.is_some() {
-                                return Err(Error::new(
-                                    Span::call_site(),
-                                    format!(
-                                        "from_self_field is already \
-                                             exists. already: {}, new: {}",
-                                        ret.as_ref().unwrap(),
-                                        i
-                                    ),
-                                ));
-                            } else {
-                                *ret = Some(i.to_token_stream());
-                            }
-                        } else {
-                            return Err(Error::new(
-                                Span::call_site(),
-                                "from_self_field: invalid ident.",
-                            ));
-                        }
-                    }
-                }
+    let syn::Data::Struct(x) = data else {
+        return Ok(());
+    };
+
+    let syn::Fields::Named(n) = &x.fields else {
+        return Ok(());
+    };
+
+    for f in &n.named {
+        for a in &f.attrs {
+            if !a.meta.path().is_ident(&ident) {
+                continue;
             }
+
+            let Some(ref i) = f.ident else {
+                return Err(Error::new(
+                    Span::call_site(),
+                    "from_self_field: invalid ident.",
+                ));
+            };
+
+            if ret.is_some() {
+                return Err(Error::new(
+                    Span::call_site(),
+                    format!(
+                        "from_self_field is already exists. \
+                         already: {}, new: {}",
+                        ret.as_ref().unwrap(),
+                        i
+                    ),
+                ));
+            }
+
+            *ret = Some(i.to_token_stream());
         }
     }
+
     Ok(())
 }
