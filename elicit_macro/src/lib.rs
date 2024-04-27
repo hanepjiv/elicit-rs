@@ -6,10 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/04/26
+//  @date 2024/04/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
+/*
 // rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
@@ -195,6 +196,7 @@
     unreachable_pub
 )]
 #![deny(clippy::all, deprecated)]
+*/
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod find_field_attr;

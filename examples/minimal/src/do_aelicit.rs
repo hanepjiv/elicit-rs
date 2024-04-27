@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/25
+//  @date 2024/04/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -54,7 +54,7 @@ pub(crate) mod mine {
         /// the same module.
         ///
         #[allow(box_pointers, dead_code)]
-        pub(crate) fn evil(&mut self) -> ::elicit::Result<()> {
+        pub(crate) fn evil(&mut self) -> elicit::Result<()> {
             use elicit::RwLock;
             use mine_aelicit::author::*;
             use std::sync::Arc;
