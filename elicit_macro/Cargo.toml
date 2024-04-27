@@ -17,7 +17,7 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = true
+publish                 = false
 # =============================================================================
 [lib]
 proc-macro              = true
