@@ -1,28 +1,34 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! do_melicit.rs
+//! elicit.rs
 
 //  Copyright 2017 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/25
+//  @date 2024/05/03
 
+// ////////////////////////////////////////////////////////////////////////////
+// use  =======================================================================
+use elicit_macro as _;
+// ----------------------------------------------------------------------------
+#[cfg(feature = "parking_lot")]
+use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 pub(crate) mod mine {
-    use elicit::{melicit_define, Melicit};
+    use elicit::{elicit_define, Elicit};
     // ========================================================================
-    #[melicit_define(mine_melicit)]
-    pub(crate) trait Mine: Send {
+    #[elicit_define(mine_elicit)]
+    pub(crate) trait Mine {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
-    // pub(crate) mine_melicit::author as melicit_author;
-    pub(crate) use mine_melicit::user as melicit_user;
+    // pub(crate) mine_elicit::author as elicit_author;
+    pub(crate) use mine_elicit::user as elicit_user;
     // ========================================================================
-    #[derive(Debug, Default, Clone, Melicit)]
-    #[melicit_mod_author(mine_melicit::author)]
+    #[derive(Debug, Default, Clone, Elicit)]
+    #[elicit_mod_author(mine_elicit::author)]
     pub(crate) struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
@@ -31,12 +37,12 @@ pub(crate) mod mine {
         }
     }
     // ========================================================================
-    #[derive(Debug, Clone, Melicit)]
-    #[melicit_mod_author(mine_melicit::author)]
-    // #[melicit_from_self_field(_fsf)] here
+    #[derive(Debug, Clone, Elicit)]
+    #[elicit_mod_author(mine_elicit::author)]
+    // #[elicit_from_self_field(_fsf)] // here
     pub(crate) struct MineY {
-        #[melicit_from_self_field] // or here
-        _fsf: mine_melicit::author::MelicitFromSelfField,
+        #[elicit_from_self_field] // or here
+        _fsf: mine_elicit::author::ElicitFromSelfField,
         i: i32,
     }
     // ------------------------------------------------------------------------
@@ -56,11 +62,10 @@ pub(crate) mod mine {
         ///
         #[allow(box_pointers, dead_code)]
         pub(crate) fn evil(&mut self) -> elicit::Result<()> {
-            use elicit::Mutex;
-            use mine_melicit::author::*;
-            use std::sync::Arc;
-            self._weak_assign(Arc::<Mutex<Box<dyn MelicitBase>>>::downgrade(
-                &Arc::new(Mutex::new(Box::<MineX>::default())),
+            use mine_elicit::author::*;
+            use std::{cell::RefCell, rc::Rc};
+            self._weak_assign(Rc::<RefCell<Box<dyn ElicitBase>>>::downgrade(
+                &Rc::new(RefCell::new(Box::<MineX>::default())),
             ))
         }
     }
@@ -74,34 +79,35 @@ pub(crate) mod mine {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[allow(box_pointers)]
-pub(crate) fn fire() -> elicit::Result<()> {
-    use mine::melicit_user::Melicit as MineMelicit;
+fn main() -> elicit::Result<()> {
+    use mine::elicit_user::Elicit as MineElicit;
     use mine::{MineX, MineY};
 
-    let mut e: MineMelicit;
+    let mut e: MineElicit;
 
-    e = MineMelicit::new(MineX::default())?;
+    e = MineElicit::new(MineX::default())?;
 
-    if let Err(x) = e.with(|m| -> super::Result<'_, ()> {
+    e.try_with(|m| -> elicit::Result<()> {
         println!("{:?}", m);
-        assert!(m.action() == 0);
-        Ok(())
-    }) {
-        eprintln!("{x:?}");
-    }
 
-    let y = MineY::new(3);
+        assert!(m.action() == 0);
+
+        Ok(())
+    })?;
+
+    let y = MineY::new(1);
+
     // eprintln!("{:?}", y.evil());
 
-    e = MineMelicit::new(y)?;
+    e = MineElicit::new(y)?;
 
-    if let Err(x) = e.try_with(|m| -> super::Result<'_, ()> {
+    e.try_with_mut(|m| -> elicit::Result<()> {
         println!("{:?}", m);
-        assert!(m.action() == 3);
+
+        assert!(m.action() == 1);
+
         Ok(())
-    }) {
-        eprintln!("{x:?}");
-    }
+    })?;
 
     Ok(())
 }
