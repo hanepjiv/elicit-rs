@@ -1,28 +1,31 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
-edition                 = "2021"
 name                    = "elicit"
 version                 = "0.11.1-alpha.0"
-authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
-license                 = "MIT OR Apache-2.0"
-keywords                = ["utility"]
+publish                 = false
+edition                 = "2021"
 description             = "SmartPointer-like structure for polymorphism."
+keywords                = ["utility"]
 readme                  = "README.md"
-documentation           = "https://docs.rs/elicit/"
-repository              = "https://github.com/hanepjiv/elicit-rs.git"
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
                             "README.md",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = false
+
+authors.workspace       = true
+license.workspace       = true
+documentation.workspace = true
+homepage.workspace      = true
+repository.workspace    = true
 # =============================================================================
 [workspace.package]
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
+homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace]

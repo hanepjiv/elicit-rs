@@ -1,12 +1,12 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! error.rs
+//! error_parking_lot.rs
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/18
-//  @date 2024/04/26
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================

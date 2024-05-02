@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/04/26
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -194,19 +194,14 @@
 )]
 #![deny(clippy::all, box_pointers, trivial_casts, dead_code)]
 // mod  =======================================================================
-mod do_aelicit;
-mod do_elicit;
-mod do_melicit;
-// ============================================================================
+mod inner;
+// use  =======================================================================
+use elicit_macro as _;
 #[cfg(feature = "parking_lot")]
-mod error_parking_lot;
-#[cfg(feature = "parking_lot")]
-use error_parking_lot::Result;
+use parking_lot as _;
 // ----------------------------------------------------------------------------
-#[cfg(not(any(feature = "parking_lot",)))]
-mod error_std;
-#[cfg(not(any(feature = "parking_lot",)))]
-use error_std::Result;
+use inner::{do_aelicit, do_elicit, do_melicit};
+// ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 fn main() -> elicit::Result<()> {
     do_elicit::fire()?;
