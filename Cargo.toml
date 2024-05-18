@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.11.1-alpha.0"
+version                 = "0.11.1-alpha.1"
 publish                 = false
 edition                 = "2021"
 description             = "SmartPointer-like structure for polymorphism."
@@ -14,7 +14,6 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-
 authors.workspace       = true
 license.workspace       = true
 documentation.workspace = true

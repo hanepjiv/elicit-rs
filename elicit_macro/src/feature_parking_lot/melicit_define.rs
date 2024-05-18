@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/04/30
+//  @date 2024/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -43,6 +43,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 pub use super::_common::*;
                 pub use super::_inner::{
                     WeakAssign,
+                    WeakMelicitInner,
                     MelicitFromSelfField
                 };
             }
@@ -88,19 +89,26 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        /// type Guard
-        pub type Guard<'a> =
-            elicit::MutexGuard<'a, Box<dyn MelicitBase>>;
+        type MutexInner = Box<dyn MelicitBase>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        /// type Guard
+        pub type Guard<'a> = elicit::MutexGuard<'a, MutexInner>;
+        // ////////////////////////////////////////////////////////////////////
+        // ====================================================================
+        type MelicitInner = Arc<Mutex<MutexInner>>;
+        // --------------------------------------------------------------------
         /// struct Melicit
         #[derive(Debug, Clone)]
-        pub struct Melicit(Arc<Mutex<Box<dyn MelicitBase>>>);
+        pub struct Melicit(MelicitInner);
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        /// type WeakMelicitInner
+        pub type WeakMelicitInner = Weak<Mutex<MutexInner>>;
+        // --------------------------------------------------------------------
         /// struct WeakMelicit
         #[derive(Debug, Clone)]
-        pub struct WeakMelicit(Weak<Mutex<Box<dyn MelicitBase>>>);
+        pub struct WeakMelicit(WeakMelicitInner);
         // ====================================================================
         impl WeakMelicit {
             // ================================================================
@@ -129,7 +137,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// _weak_assign
             fn _weak_assign(
                 &mut self,
-                weak: Weak<Mutex<Box<dyn MelicitBase>>>,
+                weak: WeakMelicitInner,
             ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////////
@@ -138,7 +146,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct MelicitFromSelfField {
             /// _weak
-            _weak: OnceLock<Weak<Mutex<Box<dyn MelicitBase>>>>,
+            _weak: OnceLock<WeakMelicitInner>,
         }
         // ====================================================================
         impl MelicitFromSelf for MelicitFromSelfField {
@@ -150,7 +158,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         impl WeakAssign for MelicitFromSelfField {
             fn _weak_assign(
                 &mut self,
-                weak: Weak<Mutex<Box<dyn MelicitBase>>>,
+                weak: WeakMelicitInner,
             ) -> ElicitResult<()> {
                 self._weak.set(weak).map_err(
                     |_| ElicitError::WeakAlreadyExists)
@@ -166,11 +174,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: MelicitBase,
             {
-                let r = Arc::new(Mutex::new(
-                    Box::new(val) as Box<dyn MelicitBase>
-                ));
-                r.lock().as_mut()
-                    ._weak_assign(Arc::<_>::downgrade(&r))?;
+                let r = Arc::new(Mutex::new(Box::new(val) as MutexInner));
+                r.lock().as_mut()._weak_assign(Arc::<_>::downgrade(&r))?;
                 Ok(Melicit(r))
             }
             // ================================================================

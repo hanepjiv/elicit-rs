@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/05/01
+//  @date 2024/05/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -78,8 +78,7 @@ struct Derived{}
         impl #melicit_mod_author :: WeakAssign for #ident {
             fn _weak_assign(
                 &mut self,
-                _weak: std::sync::Weak<elicit::Mutex<Box<(
-                    dyn #melicit_mod_author :: MelicitBase)>>>,
+                _weak:  #melicit_mod_author :: WeakMelicitInner,
             ) -> elicit::Result<()> {
                 #_weak_assign_impl
             }

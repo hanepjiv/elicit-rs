@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/05/01
+//  @date 2024/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -43,6 +43,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 pub use super::_common::*;
                 pub use super::_inner::{
                     WeakAssign,
+                    WeakAelicitInner,
                     AelicitFromSelfField
                 };
             }
@@ -88,22 +89,29 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        /// type ReadGuard
-        pub type ReadGuard<'a> =
-            elicit::RwLockReadGuard<'a, Box<dyn AelicitBase>>;
-        /// type WriteGuard
-        pub type WriteGuard<'a> =
-            elicit::RwLockWriteGuard<'a, Box<dyn AelicitBase>>;
+        type RwLockInner = Box<dyn AelicitBase>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        /// type ReadGuard
+        pub type ReadGuard<'a> = elicit::RwLockReadGuard<'a, RwLockInner>;
+        // --------------------------------------------------------------------
+        /// type WriteGuard
+        pub type WriteGuard<'a> = elicit::RwLockWriteGuard<'a, RwLockInner>;
+        // ////////////////////////////////////////////////////////////////////
+        // ====================================================================
+        type AelicitInner = Arc<RwLock<RwLockInner>>;
+        // --------------------------------------------------------------------
         /// struct Aelicit
         #[derive(Debug, Clone)]
-        pub struct Aelicit(Arc<RwLock<Box<dyn AelicitBase>>>);
+        pub struct Aelicit(AelicitInner);
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        /// type WeakAelicitInner
+        pub type WeakAelicitInner = Weak<RwLock<RwLockInner>>;
+        // --------------------------------------------------------------------
         /// struct WeakAelicit
         #[derive(Debug, Clone)]
-        pub struct WeakAelicit(Weak<RwLock<Box<dyn AelicitBase>>>);
+        pub struct WeakAelicit(WeakAelicitInner);
         // ====================================================================
         impl WeakAelicit {
             // ================================================================
@@ -132,7 +140,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// _weak_assign
             fn _weak_assign(
                 &mut self,
-                weak: Weak<RwLock<Box<dyn AelicitBase>>>,
+                weak: WeakAelicitInner,
             ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////////
@@ -141,7 +149,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct AelicitFromSelfField {
             /// _weak
-            _weak: OnceLock<Weak<RwLock<Box<dyn AelicitBase>>>>,
+            _weak: OnceLock<WeakAelicitInner>,
         }
         // ====================================================================
         impl AelicitFromSelf for AelicitFromSelfField {
@@ -153,7 +161,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         impl WeakAssign for AelicitFromSelfField {
             fn _weak_assign(
                 &mut self,
-                weak: Weak<RwLock<Box<dyn AelicitBase>>>,
+                weak: WeakAelicitInner,
             ) -> ElicitResult<()> {
                 self._weak.set(weak).map_err(
                     |_| ElicitError::WeakAlreadyExists)
@@ -169,9 +177,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: AelicitBase,
             {
-                let r = Arc::new(RwLock::new(
-                    Box::new(val) as Box<dyn AelicitBase>
-                ));
+                let r = Arc::new(RwLock::new(Box::new(val) as RwLockInner));
                 r.write().as_mut()._weak_assign(Arc::<_>::downgrade(&r))?;
                 Ok(Aelicit(r))
             }

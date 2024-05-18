@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/05/01
+//  @date 2024/05/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -78,8 +78,7 @@ struct Derived{}
         impl #elicit_mod_author :: WeakAssign for #ident {
             fn _weak_assign(
                 &mut self,
-                _weak: std::rc::Weak<std::cell::RefCell<Box<(
-                    dyn #elicit_mod_author :: ElicitBase)>>>,
+                _weak: #elicit_mod_author :: WeakElicitInner,
             ) -> elicit::Result<()> {
                 #_weak_assign_impl
             }

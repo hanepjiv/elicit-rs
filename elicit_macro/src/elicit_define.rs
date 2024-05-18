@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2024/04/18
+//  @date 2024/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -43,6 +43,7 @@ fn quote_define(mod_ident: Ident, item: &ItemTrait) -> Result<TokenStream2> {
                 pub use super::_common::*;
                 pub use super::_inner::{
                     WeakAssign,
+                    WeakElicitInner,
                     ElicitFromSelfField
                 };
             }
@@ -84,14 +85,22 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        /// struct Elicit
-        #[derive(Debug, Clone)]
-        pub struct Elicit(Rc<RefCell<Box<dyn ElicitBase>>>);
+        type RefCellInner = Box<dyn ElicitBase>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
+        type ElicitInner = Rc<RefCell<RefCellInner>>;
+        // --------------------------------------------------------------------
+        /// struct Elicit
+        #[derive(Debug, Clone)]
+        pub struct Elicit(ElicitInner);
+        // ////////////////////////////////////////////////////////////////////
+        // ====================================================================
+        /// type WeakElicitInner
+        pub type WeakElicitInner = Weak<RefCell<RefCellInner>>;
+        // --------------------------------------------------------------------
         /// struct WeakElicit
         #[derive(Debug, Clone)]
-        pub struct WeakElicit(Weak<RefCell<Box<dyn ElicitBase>>>);
+        pub struct WeakElicit(WeakElicitInner);
         // ====================================================================
         impl WeakElicit {
             // ================================================================
@@ -119,7 +128,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// _weak_assign
             fn _weak_assign(
                 &mut self,
-                weak: Weak<RefCell<Box<dyn ElicitBase>>>,
+                weak: WeakElicitInner,
             ) -> ElicitResult<()>;
         }
         // ////////////////////////////////////////////////////////////////////
@@ -128,7 +137,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         #[derive(Debug, Clone, Default)]
         pub struct ElicitFromSelfField {
             /// _weak
-            _weak: OnceCell<Weak<RefCell<Box<dyn ElicitBase>>>>,
+            _weak: OnceCell<WeakElicitInner>,
         }
         // ====================================================================
         impl ElicitFromSelf for ElicitFromSelfField {
@@ -140,7 +149,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         impl WeakAssign for ElicitFromSelfField {
             fn _weak_assign(
                 &mut self,
-                weak: Weak<RefCell<Box<dyn ElicitBase>>>,
+                weak: WeakElicitInner,
             ) -> ElicitResult<()> {
                 self._weak.set(weak).map_err(
                     |_| ElicitError::WeakAlreadyExists)
@@ -156,11 +165,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: ElicitBase,
             {
-                let r = Rc::new(RefCell::new(
-                    Box::new(val) as Box<dyn ElicitBase>
-                ));
-                r.borrow_mut().as_mut()
-                    ._weak_assign(Rc::<_>::downgrade(&r))?;
+                let r = Rc::new(RefCell::new(Box::new(val) as RefCellInner));
+                r.borrow_mut().as_mut()._weak_assign(Rc::<_>::downgrade(&r))?;
                 Ok(Elicit(r))
             }
             // ================================================================
