@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/05/03
+//  @date 2024/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -52,22 +52,6 @@ pub(crate) mod mine {
                 _fsf: Default::default(),
                 i: a,
             }
-        }
-
-        ///
-        /// fn evil
-        ///
-        /// It is not possible to suppress calls to _weak_assign within
-        /// the same module.
-        ///
-        #[allow(box_pointers, dead_code)]
-        pub(crate) fn evil(&mut self) -> elicit::Result<()> {
-            use elicit::Mutex;
-            use mine_melicit::author::*;
-            use std::sync::Arc;
-            self._weak_assign(Arc::<Mutex<Box<dyn MelicitBase>>>::downgrade(
-                &Arc::new(Mutex::new(Box::<MineX>::default())),
-            ))
         }
     }
     // ------------------------------------------------------------------------
@@ -173,8 +157,6 @@ fn main() -> elicit::Result<()> {
     }
 
     let y = MineY::new(3);
-    // eprintln!("{:?}", y.evil());
-
     e = MineMelicit::new(y)?;
 
     if let Err(x) = e.try_with(|m| -> error::Result<'_, ()> {

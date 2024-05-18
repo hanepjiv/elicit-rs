@@ -71,6 +71,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         use std::{
             convert::From,
             fmt::Debug,
+            marker::Unpin,
+            pin::Pin,
             result::Result as StdResult,
             sync::{ OnceLock, Arc, Mutex, Weak },
         };
@@ -82,18 +84,24 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         /// trait MelicitBase
-        pub trait MelicitBase:
-        'static + Debug + #orig + MelicitFromSelf + WeakAssign
+        pub trait MelicitBase: 'static + Unpin + Debug
+            + #orig + MelicitFromSelf + WeakAssign
         {
+            // ================================================================
+            /// peek_ptr
+            #[allow(trivial_casts)]
+            fn peek_ptr(&self) -> usize {
+                &self as *const _ as usize
+            }
         }
         // ====================================================================
-        impl<T: 'static + Debug + #orig + MelicitFromSelf + WeakAssign>
+        impl<T: 'static + Unpin + Debug + #orig + MelicitFromSelf + WeakAssign>
             MelicitBase for T
         {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        type MutexInner = Box<dyn MelicitBase>;
+        type MutexInner = Pin<Box<dyn MelicitBase>>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         /// type Guard
@@ -178,7 +186,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: MelicitBase,
             {
-                let r = Arc::new(Mutex::new(Box::new(val) as MutexInner));
+                let r = Arc::new(Mutex::new(Box::pin(val) as MutexInner));
                 r.lock().expect("Melicit::new").as_mut()
                     ._weak_assign(Arc::<_>::downgrade(&r))?;
                 Ok(Melicit(r))
@@ -209,7 +217,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<LockError<Guard<'a>>>,
             {
-                f(self.lock()?.as_ref())
+                f(self.lock()?.as_ref().get_ref())
             }
             // ================================================================
             /// try_with
@@ -221,7 +229,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<TryLockError<Guard<'a>>>,
             {
-                f(self.try_lock()?.as_ref())
+                f(self.try_lock()?.as_ref().get_ref())
             }
             // ================================================================
             /// with_mut
@@ -233,7 +241,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<LockError<Guard<'a>>>,
             {
-                f(self.lock()?.as_mut())
+                f(self.lock()?.as_mut().get_mut())
             }
             // ================================================================
             /// try_with_mut
@@ -245,7 +253,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<TryLockError<Guard<'a>>>,
             {
-                f(self.try_lock()?.as_mut())
+                f(self.try_lock()?.as_mut().get_mut())
             }
         }
     })

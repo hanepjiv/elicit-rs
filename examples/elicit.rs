@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/05/03
+//  @date 2024/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -53,21 +53,6 @@ pub(crate) mod mine {
                 i: a,
             }
         }
-
-        ///
-        /// fn evil
-        ///
-        /// It is not possible to suppress calls to _weak_assign within
-        /// the same module.
-        ///
-        #[allow(box_pointers, dead_code)]
-        pub(crate) fn evil(&mut self) -> elicit::Result<()> {
-            use mine_elicit::author::*;
-            use std::{cell::RefCell, rc::Rc};
-            self._weak_assign(Rc::<RefCell<Box<dyn ElicitBase>>>::downgrade(
-                &Rc::new(RefCell::new(Box::<MineX>::default())),
-            ))
-        }
     }
     // ------------------------------------------------------------------------
     impl Mine for MineY {
@@ -96,9 +81,6 @@ fn main() -> elicit::Result<()> {
     })?;
 
     let y = MineY::new(1);
-
-    // eprintln!("{:?}", y.evil());
-
     e = MineElicit::new(y)?;
 
     e.try_with_mut(|m| -> elicit::Result<()> {

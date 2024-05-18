@@ -71,6 +71,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         use std::{
             convert::From,
             fmt::Debug,
+            marker::Unpin,
+            pin::Pin,
             result::Result as StdResult,
             sync::{ OnceLock, Arc, Weak, RwLock, },
         };
@@ -81,18 +83,25 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         /// trait AelicitBase
-        pub trait AelicitBase:
-        'static + Debug + #orig + AelicitFromSelf + WeakAssign
+        pub trait AelicitBase: 'static + Unpin + Debug
+            + #orig + AelicitFromSelf + WeakAssign
         {
+            // ================================================================
+            /// peek_ptr
+            #[allow(trivial_casts)]
+            fn peek_ptr(&self) -> usize {
+                &self as *const _ as usize
+            }
         }
         // ====================================================================
-        impl<T: 'static + Debug + #orig + AelicitFromSelf + WeakAssign>
-            AelicitBase for T
+        impl<T: 'static + Unpin + Debug +
+            #orig + AelicitFromSelf + WeakAssign>
+        AelicitBase for T
         {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        type RwLockInner = Box<dyn AelicitBase>;
+        type RwLockInner = Pin<Box<dyn AelicitBase>>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         /// type ReadGuard
@@ -180,7 +189,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: AelicitBase,
             {
-                let r = Arc::new(RwLock::new(Box::new(val) as RwLockInner));
+                let r = Arc::new(RwLock::new(Box::pin(val) as RwLockInner));
                 r.write().expect("Aelicit::new").as_mut()
                     ._weak_assign(Arc::<_>::downgrade(&r))?;
                 Ok(Aelicit(r))
@@ -220,7 +229,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<LockError<ReadGuard<'a>>>,
             {
-                f(self.read()?.as_ref())
+                f(self.read()?.as_ref().get_ref())
             }
             // ================================================================
             /// try_with
@@ -232,7 +241,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<TryLockError<ReadGuard<'a>>>,
             {
-                f(self.try_read()?.as_ref())
+                f(self.try_read()?.as_ref().get_ref())
             }
             // ================================================================
             /// with_mut
@@ -244,7 +253,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<LockError<WriteGuard<'a>>>,
             {
-                f(self.write()?.as_mut())
+                f(self.write()?.as_mut().get_mut())
             }
             // ================================================================
             /// try_with_mut
@@ -256,7 +265,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 's: 'a,
                 E: From<TryLockError<WriteGuard<'a>>>,
             {
-                f(self.try_write()?.as_mut())
+                f(self.try_write()?.as_mut().get_mut())
             }
         }
     })

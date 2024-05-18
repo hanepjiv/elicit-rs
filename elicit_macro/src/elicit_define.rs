@@ -67,6 +67,8 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             cell::{OnceCell, RefCell},
             convert::From,
             fmt::Debug,
+            marker::Unpin,
+            pin::Pin,
             rc::{Rc, Weak},
             result::Result as StdResult,
         };
@@ -74,18 +76,24 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         /// trait ElicitBase
-        pub trait ElicitBase:
-        'static + Debug + #orig + ElicitFromSelf + WeakAssign
+        pub trait ElicitBase: 'static + Unpin + Debug
+            + #orig + ElicitFromSelf + WeakAssign
         {
+            // ================================================================
+            /// peek_ptr
+            #[allow(trivial_casts)]
+            fn peek_ptr(&self) -> usize {
+                &self as *const _ as usize
+            }
         }
         // ====================================================================
-        impl<T: 'static + Debug + #orig + ElicitFromSelf + WeakAssign>
+        impl<T: 'static + Unpin + Debug + #orig + ElicitFromSelf + WeakAssign>
             ElicitBase for T
         {
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
-        type RefCellInner = Box<dyn ElicitBase>;
+        type RefCellInner = Pin<Box<dyn ElicitBase>>;
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
         type ElicitInner = Rc<RefCell<RefCellInner>>;
@@ -165,7 +173,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 T: ElicitBase,
             {
-                let r = Rc::new(RefCell::new(Box::new(val) as RefCellInner));
+                let r = Rc::new(RefCell::new(Box::pin(val) as RefCellInner));
                 r.borrow_mut().as_mut()._weak_assign(Rc::<_>::downgrade(&r))?;
                 Ok(Elicit(r))
             }

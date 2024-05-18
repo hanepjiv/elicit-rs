@@ -1,23 +1,24 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
-edition                 = "2021"
 name                    = "elicit_macro"
-version                 = "0.2.2"
-authors.workspace       = true
-license.workspace       = true
+version                 = "0.2.3"
+publish                 = false
+edition                 = "2021"
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
-documentation.workspace = true
-repository.workspace    = true
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
                             "README.md",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
-publish                 = false
+authors.workspace       = true
+license.workspace       = true
+documentation.workspace = true
+homepage.workspace      = true
+repository.workspace    = true
 # =============================================================================
 [lib]
 proc-macro              = true
