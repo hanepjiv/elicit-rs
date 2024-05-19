@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2024/05/19
+//  @date 2024/05/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -72,6 +72,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             rc::{Rc, Weak},
             result::Result as StdResult,
         };
+        // --------------------------------------------------------------------
         pub use elicit::{ Result as ElicitResult,  Error as ElicitError };
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
@@ -80,9 +81,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             + #orig + ElicitFromSelf + WeakAssign
         {
             // ================================================================
-            /// peek_ptr
+            /// usizeptr
             #[allow(trivial_casts)]
-            fn peek_ptr(&self) -> usize {
+            fn usizeptr(&self) -> usize {
                 &self as *const _ as usize
             }
         }
@@ -183,22 +184,18 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 WeakElicit(Rc::downgrade(&self.0))
             }
             // ================================================================
+            /// usizeptr
+            pub fn usizeptr(&self) -> usize {
+                self.0.borrow().as_ref().usizeptr()
+            }
+            // ================================================================
             /// with
             pub fn with<T, E>(
                 &self,
                 f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             {
-                f(&(*(*(self.0.as_ref().borrow()))))
-            }
-            // ================================================================
-            /// with_mut
-            pub fn with_mut<T, E>(
-                &self,
-                f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
-            ) -> StdResult<T, E>
-            {
-                f(&mut (*(*(self.0.as_ref().borrow_mut()))))
+                f(& *self.0.borrow().as_ref())
             }
             // ================================================================
             /// try_with
@@ -209,8 +206,16 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             where
                 E: From<ElicitError>
             {
-                f(&(*(*(self.0.as_ref().try_borrow()
-                        .map_err(ElicitError::from)?))))
+                f(& *self.0.try_borrow().map_err(ElicitError::from)?.as_ref())
+            }
+            // ================================================================
+            /// with_mut
+            pub fn with_mut<T, E>(
+                &self,
+                f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
+            ) -> StdResult<T, E>
+            {
+                f(&mut *self.0.borrow_mut().as_mut())
             }
             // ================================================================
             /// try_with_mut
@@ -219,10 +224,10 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
                 f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
             ) -> StdResult<T, E>
             where
-                E: From<ElicitError>
+                E: From<ElicitError>,
             {
-                f(&mut (*(*(self.0.as_ref().try_borrow_mut()
-                            .map_err(ElicitError::from)?))))
+                f(&mut *self.0.try_borrow_mut().map_err(ElicitError::from)?
+                  .as_mut())
             }
         }
     })

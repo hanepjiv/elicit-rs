@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/05/19
+//  @date 2024/05/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -84,9 +84,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             + #orig + AelicitFromSelf + WeakAssign
         {
             // ================================================================
-            /// peek_ptr
+            /// usizeptr
             #[allow(trivial_casts)]
-            fn peek_ptr(&self) -> usize {
+            fn usizeptr(&self) -> usize {
                 &self as *const _ as usize
             }
         }
@@ -193,6 +193,11 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// weak
             pub fn weak(&self) -> WeakAelicit {
                 WeakAelicit(Arc::downgrade(&self.0))
+            }
+            // ================================================================
+            /// usizeptr
+            pub fn usizeptr(&self) -> usize {
+                self.0.read().as_ref().usizeptr()
             }
             // ================================================================
             /// read

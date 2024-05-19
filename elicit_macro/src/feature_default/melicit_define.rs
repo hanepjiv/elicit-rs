@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/05/19
+//  @date 2024/05/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -76,6 +76,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             result::Result as StdResult,
             sync::{ OnceLock, Arc, Mutex, Weak },
         };
+        // --------------------------------------------------------------------
         pub use std::sync::{
             LockResult, PoisonError as LockError,
             TryLockResult, TryLockError,
@@ -88,9 +89,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             + #orig + MelicitFromSelf + WeakAssign
         {
             // ================================================================
-            /// peek_ptr
+            /// usizeptr
             #[allow(trivial_casts)]
-            fn peek_ptr(&self) -> usize {
+            fn usizeptr(&self) -> usize {
                 &self as *const _ as usize
             }
         }
@@ -195,6 +196,15 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
             /// weak
             pub fn weak(&self) -> WeakMelicit {
                 WeakMelicit(Arc::downgrade(&self.0))
+            }
+            // ================================================================
+            /// usizeptr
+            pub fn usizeptr<'s, 'a>(&'s self) ->
+                StdResult<usize, LockError<Guard<'a>>>
+            where
+                's: 'a,
+            {
+                Ok(self.0.lock()?.as_ref().usizeptr())
             }
             // ================================================================
             /// lock
