@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2024/05/20
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -82,15 +82,17 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
         {
             // ================================================================
             /// usizeptr
-            #[allow(trivial_casts)]
-            fn usizeptr(&self) -> usize {
-                &self as *const _ as usize
-            }
+            fn usizeptr(&self) -> usize;
         }
         // ====================================================================
         impl<T: 'static + Unpin + Debug + #orig + ElicitFromSelf + WeakAssign>
             ElicitBase for T
         {
+            // ================================================================
+            #[allow(trivial_casts)]
+            fn usizeptr(&self) -> usize {
+                self as *const _ as usize
+            }
         }
         // ////////////////////////////////////////////////////////////////////
         // ====================================================================
