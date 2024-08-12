@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/05/19
+//  @date 2024/08/12
 
 //!
 //! # Examples
@@ -100,22 +100,25 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
+    deprecated_safe,
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
     ffi_unwind_calls,
-    keyword_idents,
+    keyword_idents_2018,
+    keyword_idents_2024,
     let_underscore_drop,
     macro_use_extern_crate,
     meta_variable_misuse,
     missing_abi,
     missing_copy_implementations,
-    missing_debug_implementations,
     missing_docs,
+    missing_unsafe_on_extern,
     non_ascii_idents,
+    non_local_definitions,
+    redundant_lifetimes,
     rust_2021_incompatible_closure_captures,
     rust_2021_incompatible_or_patterns,
     rust_2021_prefixes_incompatible_syntax,
@@ -123,6 +126,8 @@
     single_use_lifetimes,
     trivial_numeric_casts,
     unit_bindings,
+    unnameable_types,
+    unreachable_pub,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
     unstable_features,
@@ -143,6 +148,7 @@
     async_fn_in_trait,
     bad_asm_style,
     bare_trait_objects,
+    boxed_slice_into_iter,
     break_with_label_and_loop,
     byte_slice_in_packed_struct_with_derive,
     clashing_extern_declarations,
@@ -151,7 +157,7 @@
     const_evaluatable_unchecked,
     const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
-    deprecated,
+    dead_code,
     deprecated_where_clause_location,
     deref_into_dyn_supertrait,
     deref_nullptr,
@@ -172,10 +178,8 @@
     improper_ctypes,
     improper_ctypes_definitions,
     incomplete_features,
-    indirect_structural_match,
     inline_no_sanitize,
     internal_features,
-    invalid_doc_attributes,
     invalid_from_utf8,
     invalid_macro_export_arguments,
     invalid_nan_comparisons,
@@ -187,7 +191,9 @@
     map_unit_fn,
     mixed_script_confusables,
     named_arguments_used_positionally,
+    never_type_fallback_flowing_into_unsafe,
     non_camel_case_types,
+    non_contiguous_range_endpoints,
     non_fmt_panics,
     non_shorthand_field_patterns,
     non_snake_case,
@@ -197,13 +203,14 @@
     opaque_hidden_inferred_bound,
     overlapping_range_endpoints,
     path_statements,
-    pointer_structural_match,
     private_bounds,
     private_interfaces,
     redundant_semicolons,
-    refining_impl_trait,
+    refining_impl_trait_internal,
+    refining_impl_trait_reachable,
     renamed_and_removed_lints,
     repr_transparent_external_private_fields,
+    self_constructor_from_outer_item,
     semicolon_in_expressions_from_macros,
     special_module_name,
     stable_features,
@@ -215,11 +222,13 @@
     tyvar_behind_raw_pointer,
     uncommon_codepoints,
     unconditional_recursion,
+    uncovered_param_in_projection,
     undefined_naked_function_abi,
     unexpected_cfgs,
     ungated_async_fn_track_caller,
     uninhabited_static,
     unknown_lints,
+    unknown_or_malformed_diagnostic_attributes,
     unnameable_test_items,
     unreachable_code,
     unreachable_patterns,
@@ -243,7 +252,7 @@
     unused_unsafe,
     unused_variables,
     useless_ptr_null_checks,
-    where_clauses_object_safety,
+    wasm_c_abi,
     while_true,
     writes_through_immutable_pointer,
     ambiguous_associated_items,
@@ -257,6 +266,7 @@
     incomplete_include,
     ineffective_unstable_trait_impl,
     invalid_atomic_ordering,
+    invalid_doc_attributes,
     invalid_from_utf8_unchecked,
     invalid_reference_casting,
     invalid_type_param_default,
@@ -270,7 +280,6 @@
     order_dependent_trait_objects,
     overflowing_literals,
     patterns_in_fns_without_body,
-    proc_macro_back_compat,
     proc_macro_derive_resolution_fallback,
     pub_use_of_private_extern_crate,
     soft_unstable,
@@ -280,11 +289,11 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    clippy::all,
-    box_pointers,
-    dead_code,
     trivial_casts,
-    unreachable_pub
+    missing_debug_implementations,
+    box_pointers,
+    clippy::all,
+    deprecated
 )]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
