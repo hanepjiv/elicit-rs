@@ -6,15 +6,17 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/08/12
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.80.1 (3f5fd8dd4 2024-08-06)
+// rustc 1.81.0 (eeb90cda1 2024-09-04)
 #![forbid(
+    clippy::all,
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
     deprecated_safe,
+    edition_2024_expr_fragment_specifier,
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
     ffi_unwind_calls,
@@ -25,6 +27,7 @@
     meta_variable_misuse,
     missing_abi,
     missing_copy_implementations,
+    missing_debug_implementations,
     missing_docs,
     missing_unsafe_on_extern,
     non_ascii_idents,
@@ -35,10 +38,12 @@
     rust_2021_prefixes_incompatible_syntax,
     rust_2021_prelude_collisions,
     single_use_lifetimes,
+    trivial_casts,
     trivial_numeric_casts,
     unit_bindings,
     unnameable_types,
     unreachable_pub,
+    unsafe_attr_outside_unsafe,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
     unstable_features,
@@ -69,6 +74,7 @@
     const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
     dead_code,
+    dependency_on_unit_never_type_fallback,
     deprecated_where_clause_location,
     deref_into_dyn_supertrait,
     deref_nullptr,
@@ -77,7 +83,6 @@
     drop_bounds,
     duplicate_macro_attributes,
     dyn_drop,
-    elided_lifetimes_in_associated_constant,
     ellipsis_inclusive_range_patterns,
     exported_private_dependencies,
     forbidden_lint_groups,
@@ -112,10 +117,12 @@
     noop_method_call,
     no_mangle_generic_items,
     opaque_hidden_inferred_bound,
+    out_of_scope_macro_calls,
     overlapping_range_endpoints,
     path_statements,
     private_bounds,
     private_interfaces,
+    ptr_cast_add_auto_to_object,
     redundant_semicolons,
     refining_impl_trait_internal,
     refining_impl_trait_reachable,
@@ -136,6 +143,7 @@
     uncovered_param_in_projection,
     undefined_naked_function_abi,
     unexpected_cfgs,
+    unfulfilled_lint_expectations,
     ungated_async_fn_track_caller,
     uninhabited_static,
     unknown_lints,
@@ -168,10 +176,12 @@
     writes_through_immutable_pointer,
     ambiguous_associated_items,
     arithmetic_overflow,
+    binary_asm_labels,
     bindings_with_variant_name,
     cenum_impl_drop_cast,
     conflicting_repr_hints,
     deprecated_cfg_attr_crate_type_name,
+    elided_lifetimes_in_associated_constant,
     enum_intrinsics_non_enums,
     ill_formed_attribute_input,
     incomplete_include,
@@ -199,12 +209,9 @@
     unconditional_panic,
     undropped_manually_drops,
     unknown_crate_types,
-    useless_deprecated,
-    trivial_casts,
-    missing_debug_implementations,
-    box_pointers
+    useless_deprecated
 )]
-#![deny(clippy::all, deprecated)]
+#![deny(deprecated)]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod find_field_attr;

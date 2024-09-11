@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/05/19
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -139,7 +139,6 @@ mod error {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-#[allow(box_pointers)]
 fn main() -> elicit::Result<()> {
     use mine::melicit_user::Melicit as MineMelicit;
     use mine::{MineX, MineY};

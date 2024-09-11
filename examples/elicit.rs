@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/05/19
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -63,7 +63,6 @@ pub(crate) mod mine {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-#[allow(box_pointers)]
 fn main() -> elicit::Result<()> {
     use mine::elicit_user::Elicit as MineElicit;
     use mine::{MineX, MineY};

@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit_macro"
-version                 = "0.2.3"
+version                 = "0.2.3.alpha.0"
 publish                 = false
 edition                 = "2021"
 keywords                = ["utility"]

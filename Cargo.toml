@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.0-alpha.0"
+version                 = "0.12.0-alpha.1"
 publish                 = false
 edition                 = "2021"
 description             = "SmartPointer-like structure for polymorphism."
