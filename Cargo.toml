@@ -43,11 +43,11 @@ parking_lot             = [ "elicit_macro/parking_lot", "dep:parking_lot" ]
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "^0.2"
-path                   = "./elicit_macro"
+version                 = "0.2.5"
+path                    = "./elicit_macro"
 # -----------------------------------------------------------------------------
 [dependencies.parking_lot]
 optional                = true
 
 default-features        = false
-version                 = "^0.12"
+version                 = "0.12.3"

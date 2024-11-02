@@ -32,7 +32,7 @@ parking_lot             = []
 # -----------------------------------------------------------------------------
 [dependencies.proc-macro2]
 default-features        = false
-version                 = "1"
+version                 = "1.0.89"
 features                = [ "proc-macro",
                             #"nightly",
                             #"span-locations"
@@ -40,13 +40,13 @@ features                = [ "proc-macro",
 # -----------------------------------------------------------------------------
 [dependencies.quote]
 default-features        = false
-version                 = "1"
+version                 = "1.0.37"
 features                = [ "proc-macro",
                             ]
 # -----------------------------------------------------------------------------
 [dependencies.syn]
 default-features        = false
-version                 = "2"
+version                 = "2.0.84"
 features                = [ #"clone-impls",
                             "derive",
                             "parsing",
