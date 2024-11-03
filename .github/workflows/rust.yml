@@ -18,7 +18,7 @@ jobs:
       - name: Setup Rust Toolchain for GitHub CI
       # You may pin to the exact commit or the version.
       # uses: actions-rust-lang/setup-rust-toolchain@11df97af8e8102fd60b60a77dfbf58d40cd843b8
-        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
         with:
           # Comma-separated list of Rust toolchain specifications. Last version becomes the default. -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
           toolchain: stable,beta,nightly # optional
@@ -42,18 +42,17 @@ jobs:
           #rustflags: # optional, default is -D warnings
           # Setup the last installed toolchain as the default via `rustup override`
           #override: # optional, default is true        
-    
-    - uses: actions/checkout@v4
-    
-    - name: Build
-      run: cargo build --verbose
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cargo build --verbose
+        
+      - name: Run tests
+      - run: cargo +stable   test --verbose
+      - run: cargo +beta     test --verbose
+      - run: cargo +nightly  test --verbose      
       
-    - name: Run tests
-      run: cargo +stable   test --verbose
-      run: cargo +beta     test --verbose
-      run: cargo +nightly  test --verbose      
-      
-    - name: Run tests parking_lot
-      run: cargo +stable   test --verbose --features parking_lot
-      run: cargo +beta     test --verbose --features parking_lot
-      run: cargo +nighlty  test --verbose --features parking_lot
+      - name: Run tests parking_lot
+      - run: cargo +stable   test --verbose --features parking_lot
+      - run: cargo +beta     test --verbose --features parking_lot
+      - run: cargo +nighlty  test --verbose --features parking_lot
+        
