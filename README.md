@@ -1,8 +1,5 @@
-# elicit-rs
-<!--
-## build status
-- main: [![Build Status](https://travis-ci.org/hanepjiv/elicit-rs.svg?branch=main)](https://travis-ci.org/hanepjiv/elicit-rs)
--->
+# elicit-rs [![Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/hanepjiv/elicit-rs/actions/workflows/rust.yml)
+
 ## License
 
 Licensed under either of
