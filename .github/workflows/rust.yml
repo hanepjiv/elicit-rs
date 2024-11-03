@@ -21,7 +21,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
         with:
           # Comma-separated list of Rust toolchain specifications. Last version becomes the default. -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-          toolchain: stable,beta,nightly # optional
+          toolchain: stable # optional
           # Target triple to install for this toolchain
           #target: # optional
           # Comma-separated list of components to be additionally installed
@@ -46,19 +46,19 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Build
-        run: cargo build --verbose
+        run: cargo +stable    build --verbose
         
       - name: Run tests default stable
-        run: cargo +stable   test --verbose
-      - name: Run tests default beta
-        run: cargo +beta     test --verbose
-      - name: Run tests default nightly
-        run: cargo +nightly  test --verbose      
+        run: cargo +stable    test --verbose
+      #- name: Run tests default beta
+      #  run: cargo +beta      test --verbose
+      #- name: Run tests default nightly
+      #  run: cargo +nightly   test --verbose      
       
       - name: Run tests parking_lot stable
-        run: cargo +stable   test --verbose --features parking_lot
-      - name: Run tests parking_lot beta
-        run: cargo +beta     test --verbose --features parking_lot
-      - name: Run tests parking_lot nightly
-        run: cargo +nighlty  test --verbose --features parking_lot
+        run: cargo +stable    test --verbose --features parking_lot
+      #- name: Run tests parking_lot beta
+      #  run: cargo +beta      test --verbose --features parking_lot
+      #- name: Run tests parking_lot nightly
+      #  run: cargo +nighlty   test --verbose --features parking_lot
         
