@@ -42,17 +42,23 @@ jobs:
           #rustflags: # optional, default is -D warnings
           # Setup the last installed toolchain as the default via `rustup override`
           #override: # optional, default is true        
+      
       - uses: actions/checkout@v4
+      
       - name: Build
         run: cargo build --verbose
         
-      - name: Run tests
+      - name: Run tests default stable
         run: cargo +stable   test --verbose
-      - run: cargo +beta     test --verbose
-      - run: cargo +nightly  test --verbose      
+      - name: Run tests default beta
+        run: cargo +beta     test --verbose
+      - name: Run tests default nightly
+        run: cargo +nightly  test --verbose      
       
-      - name: Run tests parking_lot
+      - name: Run tests parking_lot stable
         run: cargo +stable   test --verbose --features parking_lot
-      - run: cargo +beta     test --verbose --features parking_lot
-      - run: cargo +nighlty  test --verbose --features parking_lot
+      - name: Run tests parking_lot beta
+        run: cargo +beta     test --verbose --features parking_lot
+      - name: Run tests parking_lot nightly
+        run: cargo +nighlty  test --verbose --features parking_lot
         
