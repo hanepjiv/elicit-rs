@@ -2,11 +2,9 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.2-alpha.0"
-publish                 = false
-edition                 = "2021"
-description             = "SmartPointer-like structure for polymorphism."
+version                 = "0.12.2-alpha.1"
 keywords                = ["utility"]
+description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
@@ -14,13 +12,20 @@ include                 = [ "Cargo.toml",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
                             ]
+
+edition.workspace       = true
+rust-version.workspace  = true
 authors.workspace       = true
 license.workspace       = true
 documentation.workspace = true
 homepage.workspace      = true
 repository.workspace    = true
+
+publish                 = false
 # =============================================================================
 [workspace.package]
+edition                 = "2021"
+rust-version            = "1.82.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
