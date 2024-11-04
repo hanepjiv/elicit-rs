@@ -10,8 +10,20 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  setup:
+  #setup:
+  #  runs-on: ubuntu-latest
+  #  steps:
+
+
+  test:
+    #needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [stable, beta, nightly]
+        command: [test, clippy]
+        features: ['', '--features parking_lot']
     steps:
       - name: Setup Rust Toolchain for GitHub CI
       # You may pin to the exact commit or the version.
@@ -40,16 +52,6 @@ jobs:
           #rustflags: # optional, default is -D warnings
           # Setup the last installed toolchain as the default via `rustup override`
           #override: # optional, default is true
-
-  test:
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        toolchain: [stable, beta, nightly]
-        command: [test, clippy]
-        features: ['', '--features parking_lot']
-    steps:
-        - uses: actions/checkout@v4
-        - run: cargo +${{matrix.toolchain}} ${{matrix.command}} --verbose ${{matrix.features}}
+      - uses: actions/checkout@v4
+      - name: Run
+        run: cargo +${{matrix.toolchain}} ${{matrix.command}} --verbose ${{matrix.features}}
