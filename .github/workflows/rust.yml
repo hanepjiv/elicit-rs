@@ -10,10 +10,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  setup:
     runs-on: ubuntu-latest
-
     steps:
       - name: Setup Rust Toolchain for GitHub CI
       # You may pin to the exact commit or the version.
@@ -21,11 +19,11 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
         with:
           # Comma-separated list of Rust toolchain specifications. Last version becomes the default. -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-          toolchain: stable # optional
+          toolchain: stable,beta,nightly # optional
           # Target triple to install for this toolchain
           #target: # optional
           # Comma-separated list of components to be additionally installed
-          #components: # optional
+          components: clippy # optional
           # Automatically configure Rust cache
           #cache: # optional, default is true
           # Paths to multiple Cargo workspaces and their target directories, separated by newlines.
@@ -41,24 +39,16 @@ jobs:
           # set RUSTFLAGS environment variable, set to empty string to avoid overwriting build.rustflags
           #rustflags: # optional, default is -D warnings
           # Setup the last installed toolchain as the default via `rustup override`
-          #override: # optional, default is true        
-      
-      - uses: actions/checkout@v4
-      
-      - name: Build
-        run: cargo +stable    build --verbose
-        
-      - name: Run tests default stable
-        run: cargo +stable    test --verbose
-      #- name: Run tests default beta
-      #  run: cargo +beta      test --verbose
-      #- name: Run tests default nightly
-      #  run: cargo +nightly   test --verbose      
-      
-      - name: Run tests parking_lot stable
-        run: cargo +stable    test --verbose --features parking_lot
-      #- name: Run tests parking_lot beta
-      #  run: cargo +beta      test --verbose --features parking_lot
-      #- name: Run tests parking_lot nightly
-      #  run: cargo +nighlty   test --verbose --features parking_lot
-        
+          #override: # optional, default is true
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [nightly, beta, stable]
+        command: [test, clippy]
+        features: ['', '--features parking_lot']
+    steps:
+        run: cargo +${{matrix.toolchain}} ${{matrix.command}} --verbose ${{matrix.features}}
