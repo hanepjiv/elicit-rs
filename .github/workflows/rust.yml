@@ -3,8 +3,8 @@ name: Rust
 on:
   push:
     branches: [ "main" ]
-  #pull_request:
-  #  branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,6 +15,14 @@ jobs:
     steps:
       - run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
 
+      - name: Update env push
+        if: github.event_name == 'push'
+        run: echo "REV_BEFORE=${{ github.event.before }}" >> $GITHUB_ENV
+
+      - name: Update env pull_request
+        if: github.event_name == 'pull_request'
+        run: echo "REV_BEFORE=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+
       - name: Restore cached rust-toolchain
         id: cache-rust-toolchain-restore
         uses: actions/cache/restore@v4
@@ -22,10 +30,10 @@ jobs:
           path: |
             ~/.cargo/
             ~/.rustup/
-          key: ${{ runner.os }}-rust-toolchain-${{ github.event.before }}
+          key: ${{ runner.os }}-rust-toolchain-${{ env.REV_BEFORE }}
 
       - name: Setup Rust Toolchain for GitHub CI
-        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: 'stable,beta,nightly'
           components: 'clippy'
@@ -51,7 +59,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ github.event.before }}
+          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ env.REV_BEFORE }}
 
       - run: cargo update
 
