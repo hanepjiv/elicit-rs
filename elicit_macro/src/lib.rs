@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/10/18
+//  @date 2024/11/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -41,7 +41,6 @@
     rust_2021_prelude_collisions,
     rust_2024_prelude_collisions,
     single_use_lifetimes,
-    tail_expr_drop_order,
     trivial_casts,
     trivial_numeric_casts,
     unit_bindings,
@@ -74,7 +73,6 @@
     coherence_leak_check,
     confusable_idents,
     const_evaluatable_unchecked,
-    const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
     dead_code,
     dependency_on_unit_never_type_fallback,
@@ -138,7 +136,6 @@
     stable_features,
     static_mut_refs,
     suspicious_double_ref_op,
-    temporary_cstring_as_ptr,
     trivial_bounds,
     type_alias_bounds,
     tyvar_behind_raw_pointer,
@@ -157,7 +154,6 @@
     unreachable_patterns,
     unstable_name_collisions,
     unstable_syntax_pre_expansion,
-    unsupported_calling_conventions,
     unused_allocation,
     unused_assignments,
     unused_associated_type_bounds,
@@ -182,7 +178,6 @@
     bindings_with_variant_name,
     cenum_impl_drop_cast,
     conflicting_repr_hints,
-    deprecated_cfg_attr_crate_type_name,
     elided_lifetimes_in_associated_constant,
     enum_intrinsics_non_enums,
     explicit_builtin_cfgs_in_flags,
