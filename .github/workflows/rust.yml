@@ -51,4 +51,5 @@ jobs:
         command: [test, clippy]
         features: ['', '--features parking_lot']
     steps:
+        - uses: actions/checkout@v4
         - run: cargo +${{matrix.toolchain}} ${{matrix.command}} --verbose ${{matrix.features}}
