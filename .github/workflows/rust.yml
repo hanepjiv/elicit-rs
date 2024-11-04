@@ -33,9 +33,9 @@ jobs:
 
       - name: Save cached rust-toolchain
         id: cache-rust-toolchain-save
+        if: always()
         uses: actions/cache/save@v4
         with:
-          save-always: true
           path: |
             ~/.cargo/
             ~/.rustup/
@@ -73,9 +73,9 @@ jobs:
 
       - name: Save cached target
         id: cache-target-save
+        if: always()
         uses: actions/cache/save@v4
         with:
-          save-always: true
           path: |
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
