@@ -23,7 +23,7 @@ jobs:
           # Target triple to install for this toolchain
           #target: # optional
           # Comma-separated list of components to be additionally installed
-          components: clippy # optional
+          components: [clippy] # optional
           # Automatically configure Rust cache
           #cache: # optional, default is true
           # Paths to multiple Cargo workspaces and their target directories, separated by newlines.
