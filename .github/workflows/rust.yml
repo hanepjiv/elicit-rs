@@ -9,6 +9,16 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+  CACHE_RUST_TOOLCHAIN_PATH: |
+    ~/.cargo/
+    ~/.rustup/
+
+  CACHE_CARGO_TARGET_PATH: |
+    ~/.cargo/registry/index/
+    ~/.cargo/registry/cache/
+    ~/.cargo/git/db/
+    target/
+
 jobs:
   cargo:
     runs-on: ubuntu-latest
@@ -27,9 +37,7 @@ jobs:
         id: cache-rust-toolchain-restore
         uses: actions/cache/restore@v4
         with:
-          path: |
-            ~/.cargo/
-            ~/.rustup/
+          path: ${{ env.CACHE_RUST_TOOLCHAIN_PATH }}
           key: ${{ runner.os }}-rust-toolchain-${{ env.REV_BEFORE }}
 
       - name: Setup Rust Toolchain for GitHub CI
@@ -43,9 +51,7 @@ jobs:
         id: cache-rust-toolchain-save
         uses: actions/cache/save@v4
         with:
-          path: |
-            ~/.cargo/
-            ~/.rustup/
+          path: ${{ env.CACHE_RUST_TOOLCHAIN_PATH }}
           key: ${{ runner.os }}-rust-toolchain-${{ github.sha }}
 
       - uses: actions/checkout@v4
@@ -54,12 +60,25 @@ jobs:
         id: cache-target-restore
         uses: actions/cache/restore@v4
         with:
-          path: |
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
+          path: ${{ env.CACHE_CARGO_TARGET_PATH }}
           key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ env.REV_BEFORE }}
+
+      - run: cargo +nightly update -Z minimal-versions
+
+      - run: cargo +stable test --verbose
+      - run: cargo +stable clippy --verbose
+      - run: cargo +stable test --verbose --features parking_lot
+      - run: cargo +stable clippy --verbose --features parking_lot
+
+      - run: cargo +beta test --verbose
+      - run: cargo +beta clippy --verbose
+      - run: cargo +beta test --verbose --features parking_lot
+      - run: cargo +beta clippy --verbose --features parking_lot
+
+      - run: cargo +nightly test --verbose
+      - run: cargo +nightly clippy --verbose
+      - run: cargo +nightly test --verbose --features parking_lot
+      - run: cargo +nightly clippy --verbose --features parking_lot
 
       - run: cargo update
 
@@ -82,9 +101,5 @@ jobs:
         id: cache-target-save
         uses: actions/cache/save@v4
         with:
-          path: |
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
+          path: ${{ env.CACHE_CARGO_TARGET_PATH }}
           key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
