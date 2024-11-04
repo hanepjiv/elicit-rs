@@ -22,7 +22,7 @@ jobs:
           path: |
             ~/.cargo/
             ~/.rustup/
-          key: ${{ runner.os }}-rust-toolchain
+          key: ${{ runner.os }}-rust-toolchain-${{ github.event.before }}
 
       - name: Setup Rust Toolchain for GitHub CI
         uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
@@ -33,13 +33,12 @@ jobs:
 
       - name: Save cached rust-toolchain
         id: cache-rust-toolchain-save
-        if: always()
         uses: actions/cache/save@v4
         with:
           path: |
             ~/.cargo/
             ~/.rustup/
-          key: ${{ runner.os }}-rust-toolchain
+          key: ${{ runner.os }}-rust-toolchain-${{ github.sha }}
 
       - uses: actions/checkout@v4
 
@@ -52,7 +51,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}
+          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ github.event.before }}
 
       - run: cargo update
 
@@ -73,7 +72,6 @@ jobs:
 
       - name: Save cached target
         id: cache-target-save
-        if: always()
         uses: actions/cache/save@v4
         with:
           path: |
@@ -81,4 +79,4 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}
+          key: ${{ runner.os }}-cargo-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
