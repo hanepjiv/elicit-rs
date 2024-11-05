@@ -55,6 +55,7 @@ jobs:
           cache: false
 
       - name: Save cached rust-toolchain
+        if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
         id: cache-rust-toolchain-save
         uses: actions/cache/save@v4
         with:
