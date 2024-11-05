@@ -56,6 +56,11 @@ jobs:
           components: 'clippy'
           cache: false
 
+      - name: Install tools
+        if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
+        run: |
+          cargo install cargo-audit
+
       - name: Save cached rust-toolchain
         if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
         id: cache-rust-toolchain-save
@@ -70,6 +75,7 @@ jobs:
         run: |
           source ~/.cargo/env
           cargo update
+          cargo audit
 
       - name: Restore cached target
         id: cache-target-restore

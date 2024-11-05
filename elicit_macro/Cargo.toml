@@ -50,7 +50,7 @@ features                = [ "proc-macro",
 # -----------------------------------------------------------------------------
 [dependencies.syn]
 default-features        = false
-version                 = "2.0.84"
+version                 = "2.0.87"
 features                = [ #"clone-impls",
                             "derive",
                             "parsing",
