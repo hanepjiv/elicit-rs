@@ -2,72 +2,82 @@ name: Rust
 
 on:
   schedule:
-    - cron:  '0 11 */3 * *'
+    - cron: "0 11 */3 * *"
+
   push:
     branches: [ "main" ]
+
   pull_request:
     branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
 
-  CACHE_RUST_TOOLCHAIN_PATH: |
-    ~/.cargo/
-    ~/.rustup/
-
-  CACHE_CARGO_TARGET_PATH: |
-    ~/.cargo/registry/index/
-    ~/.cargo/registry/cache/
-    ~/.cargo/git/db/
-    target/
-
 jobs:
+  params:
+    runs-on: ubuntu-latest
+
+    outputs:
+      date: ${{ steps.date.outputs.ret }}
+
+      repos: ${{ steps.repos.outputs.ret }}
+
+      cache-toolchain-path: |
+        ~/.cargo/
+        ~/.rustup/
+
+      cache-toolchain-key: ${{ runner.os }}-${{ runner.arch }}-toolchain-${{ steps.date.outputs.ret }}
+
+      cache-target-path: |
+        ~/.cargo/registry/index/
+        ~/.cargo/registry/cache/
+        ~/.cargo/git/db/
+        target/
+
+      cache-target-key: ${{ runner.os }}-${{ runner.arch }}-target-${{ steps.repos.outputs.ret }}
+
+    steps:
+      - id: date
+        env:
+          TZ: "TZ"
+        run: echo "ret=$(date +'%Y%0m%0d')" >> $GITHUB_OUTPUT
+
+      - id: repos
+        run: echo "ret=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
   cargo:
     runs-on: ubuntu-latest
+
+    needs: params
+
     steps:
-      - name: Set current datetime
-        env:
-          TZ: 'TZ'
-        run: echo "CURRENT_DATE=$(date +'%Y%0m%0d')" >> $GITHUB_ENV
-
-      - name: Set repository name
-        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
-
-      #- name: Set base SHA push
-      #  if: github.event_name == 'push'
-      #  run: echo "SHA_BASE=${{ github.event.before }}" >> $GITHUB_ENV
-
-      #- name: Set base SHA pull_request
-      #  if: github.event_name == 'pull_request'
-      #  run: echo "SHA_BASE=${{ github.event.pull_request.base.sha }}" >> $GITHUB_ENV
-
-      - name: Restore cached rust-toolchain
-        id: cache-rust-toolchain-restore
+      - name: Restore cached toolchain
+        id: cache-toolchain-restore
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.CACHE_RUST_TOOLCHAIN_PATH }}
-          key: ${{ runner.os }}-${{ runner.arch }}-rust-toolchain-${{ env.CURRENT_DATE }}
+          path: ${{ needs.params.outputs.cache-toolchain-path }}
+          key: ${{ needs.params.outputs.cache-toolchain-key }}
 
       - name: Setup Rust Toolchain
-        if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
+        if: steps.cache-toolchain-restore.outputs.cache-hit != 'true'
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: 'stable,beta,nightly'
-          components: 'clippy'
+          toolchain: "stable,beta,nightly"
+          components: "clippy"
           cache: false
 
       - name: Install tools
-        if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
+        if: steps.cache-toolchain-restore.outputs.cache-hit != 'true'
         run: |
           cargo install cargo-audit
 
-      - name: Save cached rust-toolchain
-        if: steps.cache-rust-toolchain-restore.outputs.cache-hit != 'true'
-        id: cache-rust-toolchain-save
+      - name: Save cached toolchain
+        if: steps.cache-toolchain-restore.outputs.cache-hit != 'true'
+        id: cache-toolchain-save
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.CACHE_RUST_TOOLCHAIN_PATH }}
-          key: ${{ runner.os }}-${{ runner.arch }}-rust-toolchain-${{ env.CURRENT_DATE }}
+          path: ${{ needs.params.outputs.cache-toolchain-path }}
+          key: ${{ needs.params.outputs.cache-toolchain-key }}
 
       - uses: actions/checkout@v4
 
@@ -81,8 +91,8 @@ jobs:
         id: cache-target-restore
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.CACHE_CARGO_TARGET_PATH }}
-          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ env.REPOSITORY_NAME }}-${{ hashFiles('**/Cargo.lock') }}
+          path: ${{ needs.params.outputs.cache-target-path }}
+          key: ${{ needs.params.outputs.cache-target-key }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo
         run: |
@@ -90,42 +100,42 @@ jobs:
 
           cargo +nightly update -Z minimal-versions
 
-          cargo +stable test --verbose
-          cargo +stable clippy --verbose
-          cargo +stable test --verbose --features parking_lot
-          cargo +stable clippy --verbose --features parking_lot
+          cargo +stable test
+          cargo +stable clippy
+          cargo +stable test --features parking_lot
+          cargo +stable clippy --features parking_lot
 
-          cargo +beta test --verbose
-          cargo +beta clippy --verbose
-          cargo +beta test --verbose --features parking_lot
-          cargo +beta clippy --verbose --features parking_lot
+          cargo +beta test
+          cargo +beta clippy
+          cargo +beta test --features parking_lot
+          cargo +beta clippy --features parking_lot
 
-          cargo +nightly test --verbose
-          cargo +nightly clippy --verbose
-          cargo +nightly test --verbose --features parking_lot
-          cargo +nightly clippy --verbose --features parking_lot
+          cargo +nightly test
+          cargo +nightly clippy
+          cargo +nightly test --features parking_lot
+          cargo +nightly clippy --features parking_lot
 
           cargo update
 
-          cargo +stable test --verbose
-          cargo +stable clippy --verbose
-          cargo +stable test --verbose --features parking_lot
-          cargo +stable clippy --verbose --features parking_lot
+          cargo +stable test
+          cargo +stable clippy
+          cargo +stable test --features parking_lot
+          cargo +stable clippy --features parking_lot
 
-          cargo +beta test --verbose
-          cargo +beta clippy --verbose
-          cargo +beta test --verbose --features parking_lot
-          cargo +beta clippy --verbose --features parking_lot
+          cargo +beta test
+          cargo +beta clippy
+          cargo +beta test --features parking_lot
+          cargo +beta clippy --features parking_lot
 
-          cargo +nightly test --verbose
-          cargo +nightly clippy --verbose
-          cargo +nightly test --verbose --features parking_lot
-          cargo +nightly clippy --verbose --features parking_lot
+          cargo +nightly test
+          cargo +nightly clippy
+          cargo +nightly test --features parking_lot
+          cargo +nightly clippy --features parking_lot
 
       - name: Save cached target
         if: steps.cache-target-restore.outputs.cache-hit != 'true'
         id: cache-target-save
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.CACHE_CARGO_TARGET_PATH }}
-          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ env.REPOSITORY_NAME }}-${{ hashFiles('**/Cargo.lock') }}
+          path: ${{ needs.params.outputs.cache-target-path }}
+          key: ${{ needs.params.outputs.cache-target-key }}-${{ hashFiles('**/Cargo.lock') }} # use new hash
