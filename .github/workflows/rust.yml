@@ -20,8 +20,6 @@ jobs:
     outputs:
       date: ${{ steps.date.outputs.ret }}
 
-      repos: ${{ steps.repos.outputs.ret }}
-
       cache-toolchain-path: |
         ~/.cargo/
         ~/.rustup/
@@ -34,16 +32,13 @@ jobs:
         ~/.cargo/git/db/
         target/
 
-      cache-target-key: ${{ runner.os }}-${{ runner.arch }}-target-${{ steps.repos.outputs.ret }}
+      cache-target-key: ${{ runner.os }}-${{ runner.arch }}-target
 
     steps:
       - id: date
         env:
           TZ: "TZ"
         run: echo "ret=$(date +'%Y%0m%0d')" >> $GITHUB_OUTPUT
-
-      - id: repos
-        run: echo "ret=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
 
   cargo:
     runs-on: ubuntu-latest
