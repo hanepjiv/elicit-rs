@@ -60,15 +60,17 @@ jobs:
 
       - name: Setup Rust Toolchain
         if: steps.cache-toolchain-restore.outputs.cache-hit != 'true'
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: "stable,beta,nightly"
-          components: "clippy"
-          cache: false
-
-      - name: Install tools
-        if: steps.cache-toolchain-restore.outputs.cache-hit != 'true'
         run: |
+          if ! [ -x "$(command -v rustup)" ]; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          fi
+          rustup self update
+          rustup self upgrade-data
+          rustup set profile minimal
+          rustup install stable beta nightly
+          rustup component add --toolchain stable clippy
+          rustup component add --toolchain beta clippy
+          rustup component add --toolchain nightly clippy
           cargo install cargo-audit
 
       - name: Save cached toolchain
