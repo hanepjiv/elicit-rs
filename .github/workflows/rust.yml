@@ -64,8 +64,8 @@ jobs:
 
           rustup set profile minimal
 
-          rustup self update
-          rustup self upgrade-data
+          # rustup self update
+          # rustup self upgrade-data
 
           rustup install stable beta nightly
 
