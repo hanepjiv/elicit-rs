@@ -59,13 +59,20 @@ jobs:
           if ! [ -x "$(command -v rustup)" ]; then
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           fi
+
+          source ~/.cargo/env
+
           rustup set profile minimal
+
           rustup self update
           rustup self upgrade-data
+
           rustup install stable beta nightly
+
           rustup component add --toolchain stable clippy
           rustup component add --toolchain beta clippy
           rustup component add --toolchain nightly clippy
+
           cargo install cargo-audit
 
       - name: Save cached toolchain
