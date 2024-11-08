@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
+      repos: ${{ steps.repos.outputs.ret }}
+
       date: ${{ steps.date.outputs.ret }}
 
       cache-toolchain-path: |
@@ -32,9 +34,12 @@ jobs:
         ~/.cargo/git/db/
         target/
 
-      cache-target-key: ${{ runner.os }}-${{ runner.arch }}-target
+      cache-target-key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.repos.outputs.ret }}-target
 
     steps:
+      - id: repos
+        run: echo "ret=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
       - id: date
         env:
           TZ: "TZ"
@@ -63,9 +68,6 @@ jobs:
           source ~/.cargo/env
 
           rustup set profile minimal
-
-          # rustup self update
-          # rustup self upgrade-data
 
           rustup install stable beta nightly
 
