@@ -14,4 +14,4 @@ jobs:
   call:
     permissions:
       issues: write
-    uses: hanepjiv/github-actions/.github/workflows/ci-rust.yml@main
+    uses: hanepjiv/ghact-rust/.github/workflows/ci-rust.yml@main
