@@ -150,22 +150,22 @@ jobs:
           key: ${{ needs.params.outputs.cache-target-key }}-${{ hashFiles('**/Cargo.lock') }} # use new hash
 
       - name: Create issue when failed
-        if: ${{ failure() }}
+        if: ${{ failure() && github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
 
-          GH_REF_NAME: ${{ github.ref_name }}
-          GH_RUN_ID: ${{ github.run_id }}
-          GH_RUN_NUMBER: ${{ github.run_number }}
+          REF_NAME: ${{ github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
 
           TITLE: failed workflow
           ASSIGNEES: ${{ github.actor }}
           LABELS: workflows,ci
           BODY: |
-            ref_name: "GH_REF_NAME"
-            run_id: "$GH_RUN_ID"
-            run_number: "$GH_RUN_NUMBER"
+            ref_name: "REF_NAME"
+            run_id: "$RUN_ID"
+            run_number: "$RUN_NUMBER"
 
           PINNED: true
           CLOSE_PREVIOUS: true
