@@ -1,0 +1,15 @@
+name: CI Rust
+
+on:
+  schedule:
+    - cron: "0 11 */3 * *"
+
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  call:
+    uses: hanepjiv/github-actions/.github/workflows/ci-rust.yml@main
