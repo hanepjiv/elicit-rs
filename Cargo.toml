@@ -2,7 +2,8 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.2"
+version                 = "0.12.3-alpha.0"
+
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
 readme                  = "README.md"
@@ -21,7 +22,7 @@ documentation.workspace = true
 homepage.workspace      = true
 repository.workspace    = true
 
-publish                 = true
+publish                 = false
 # =============================================================================
 [workspace.package]
 edition                 = "2021"

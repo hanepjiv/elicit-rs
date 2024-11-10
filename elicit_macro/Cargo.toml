@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit_macro"
-version                 = "0.2.5"
+version                 = "0.2.6"
 
 keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
@@ -22,7 +22,7 @@ documentation.workspace = true
 homepage.workspace      = true
 repository.workspace    = true
 
-publish                 = true
+publish                 = false
 # =============================================================================
 [lib]
 proc-macro              = true
