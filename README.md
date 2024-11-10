@@ -1,4 +1,8 @@
-# elicit-rs [![Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/hanepjiv/elicit-rs/actions/workflows/rust.yml)
+# elicit-rs
+
+## build status
+
+- main: [![CI Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml)
 
 ## License
 
