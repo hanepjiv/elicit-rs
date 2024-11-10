@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/05/18
+//  @date 2024/11/10
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -42,8 +42,11 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
         }
     }
 
-    find_field_attr(&ast.data,
-                    "elicit_from_self_field", &mut elicit_from_self_field)?;
+    find_field_attr(
+        &ast.data,
+        "elicit_from_self_field",
+        &mut elicit_from_self_field,
+    )?;
 
     if elicit_mod_author.is_none() {
         return Err(Error::new(
@@ -66,23 +69,23 @@ struct Derived{}
     };
 
     Ok(quote! {
-        #[automatically_derived]
-        impl #elicit_mod_author :: ElicitFromSelf for #ident {
-            fn elicit_from_self(&self) ->
-                Option<#elicit_mod_author :: Elicit> {
-                    #elicit_impl
-                }
+    #[automatically_derived]
+    impl #elicit_mod_author :: ElicitFromSelf for #ident {
+        fn elicit_from_self(&self) ->
+        Option<#elicit_mod_author :: Elicit> {
+            #elicit_impl
         }
+    }
 
-        #[automatically_derived]
-        impl #elicit_mod_author :: WeakAssign for #ident {
-            fn _weak_assign(
-                &mut self,
-                _weak: #elicit_mod_author :: WeakElicitInner,
-            ) -> elicit::Result<()> {
-                #_weak_assign_impl
-            }
+    #[automatically_derived]
+    impl #elicit_mod_author :: WeakAssign for #ident {
+        fn _weak_assign(
+        &mut self,
+        _weak: #elicit_mod_author :: WeakElicitInner,
+        ) -> elicit::Result<()> {
+        #_weak_assign_impl
         }
+    }
     })
 }
 // ============================================================================
@@ -95,51 +98,51 @@ mod tests {
     fn test_00() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                #[elicit_mod_author(ident_mod)]
-                #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+            #[elicit_mod_author(ident_mod)]
+            #[elicit_from_self_field(ident_field)]
+            struct Orig {}
             })
-                .expect("parse")
+            .expect("parse")
         )
-                .is_ok());
+        .is_ok());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_01() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                // #[elicit_mod_author(ident_mod)]
-                #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+            // #[elicit_mod_author(ident_mod)]
+            #[elicit_from_self_field(ident_field)]
+            struct Orig {}
             })
-                .expect("parse")
+            .expect("parse")
         )
-                .is_err());
+        .is_err());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_02() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                #[elicit_mod_author(ident_mod)]
-                // #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+            #[elicit_mod_author(ident_mod)]
+            // #[elicit_from_self_field(ident_field)]
+            struct Orig {}
             })
-                .expect("parse")
+            .expect("parse")
         )
-                .is_ok());
+        .is_ok());
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_03() {
         assert!(expand(
             parse2::<DeriveInput>(quote! {
-                // #[elicit_mod_author(ident_mod)]
-                // #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+            // #[elicit_mod_author(ident_mod)]
+            // #[elicit_from_self_field(ident_field)]
+            struct Orig {}
             })
-                .expect("parse")
+            .expect("parse")
         )
-                .is_err());
+        .is_err());
     }
 }
