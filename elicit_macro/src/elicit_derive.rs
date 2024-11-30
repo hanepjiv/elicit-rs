@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! elicit_derive.rs
+//! `elicit_derive.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -10,7 +10,7 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use crate::include::*;
+use crate::include::{DeriveInput, Error, Ident, Result, Span, ToTokens, TokenStream2, quote};
 // ----------------------------------------------------------------------------
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
                         .require_list()?
                         .parse_args::<Ident>()?
                         .into_token_stream(),
-                )
+                );
             }
             _ => {}
         }
@@ -51,22 +51,16 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     if elicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            r###"#[derive(Debug, Elicit)]
+            r"#[derive(Debug, Elicit)]
 #[elicit_mod_author(ELICIT_MOD_AUTHOR)] // This attribute is necessary.
 struct Derived{}
-"###,
+",
         ));
     }
 
     let ident = ast.ident;
-    let elicit_impl = match elicit_from_self_field {
-        Some(ref x) => quote! {self.#x.elicit_from_self()},
-        None => quote! { None },
-    };
-    let _weak_assign_impl = match elicit_from_self_field {
-        Some(ref x) => quote! {self.#x._weak_assign(_weak)},
-        None => quote! { Ok(()) },
-    };
+    let elicit_impl = if let Some(ref x) = elicit_from_self_field { quote! {self.#x.elicit_from_self()} } else { quote! { None } };
+    let _weak_assign_impl = if let Some(ref x) = elicit_from_self_field { quote! {self.#x._weak_assign(_weak)} } else { quote! { Ok(()) } };
 
     Ok(quote! {
     #[automatically_derived]

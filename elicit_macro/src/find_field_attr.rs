@@ -1,19 +1,19 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! find_field_attr.rs
+//! `find_field_attr.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2024/04/26
+//  @date 2024/11/30
 
 // ////////////////////////////////////////////////////////////////////////////
-use crate::include::*;
+use crate::include::{Error, Ident, Result, Span, ToTokens, TokenStream2};
 // use  =======================================================================
-pub(crate) fn find_field_attr<T>(
+pub(crate) fn find_field_attr<T: ?Sized>(
     data: &syn::Data,
-    ident: T,
+    ident: &T,
     ret: &mut Option<TokenStream2>,
 ) -> Result<()>
 where
@@ -29,7 +29,7 @@ where
 
     for f in &n.named {
         for a in &f.attrs {
-            if !a.meta.path().is_ident(&ident) {
+            if !a.meta.path().is_ident(ident) {
                 continue;
             }
 

@@ -1,16 +1,18 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! aelicit_derive.rs
+//! `aelicit_derive.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/11/10
+//  @date 2024/11/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use crate::include::*;
+use crate::include::{
+    quote, DeriveInput, Error, Ident, Result, Span, ToTokens, TokenStream2,
+};
 // ----------------------------------------------------------------------------
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
@@ -36,7 +38,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
                         .require_list()?
                         .parse_args::<Ident>()?
                         .into_token_stream(),
-                )
+                );
             }
             _ => {}
         }
@@ -51,40 +53,42 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     if aelicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            r###"#[derive(Debug, Aelicit)]
+            r"#[derive(Debug, Aelicit)]
 #[aelicit_mod_author(AELICIT_MOD_AUTHOR)] // This attribute is necessary.
 struct Derived {}
-"###,
+",
         ));
     }
 
     let ident = ast.ident;
-    let aelicit_impl = match aelicit_from_self_field {
-        Some(ref x) => quote! {self.#x.aelicit_from_self()},
-        None => quote! { None },
+    let aelicit_impl = if let Some(ref x) = aelicit_from_self_field {
+        quote! {self.#x.aelicit_from_self()}
+    } else {
+        quote! { None }
     };
-    let _weak_assign_impl = match aelicit_from_self_field {
-        Some(ref x) => quote! {self.#x._weak_assign(_weak)},
-        None => quote! { Ok(()) },
+    let _weak_assign_impl = if let Some(ref x) = aelicit_from_self_field {
+        quote! {self.#x._weak_assign(_weak)}
+    } else {
+        quote! { Ok(()) }
     };
 
     Ok(quote! {
     #[automatically_derived]
     impl #aelicit_mod_author :: AelicitFromSelf for #ident {
-        fn aelicit_from_self(&self) ->
-        Option<#aelicit_mod_author :: Aelicit> {
-            #aelicit_impl
-        }
+    fn aelicit_from_self(&self) ->
+    Option<#aelicit_mod_author :: Aelicit> {
+        #aelicit_impl
+    }
     }
 
     #[automatically_derived]
     impl #aelicit_mod_author :: WeakAssign for #ident {
-        fn _weak_assign(
-        &mut self,
-        _weak: #aelicit_mod_author :: WeakAelicitInner,
-        ) -> elicit::Result<()> {
-        #_weak_assign_impl
-        }
+    fn _weak_assign(
+    &mut self,
+    _weak: #aelicit_mod_author :: WeakAelicitInner,
+    ) -> elicit::Result<()> {
+    #_weak_assign_impl
+    }
     }
     })
 }

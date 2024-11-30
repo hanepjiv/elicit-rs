@@ -72,7 +72,7 @@ fn main() -> elicit::Result<()> {
     e = MineElicit::new(MineX::default())?;
 
     e.try_with(|m| -> elicit::Result<()> {
-        println!("{:?}", m);
+        println!("{m:?}");
 
         assert!(m.action() == 0);
 
@@ -83,7 +83,7 @@ fn main() -> elicit::Result<()> {
     e = MineElicit::new(y)?;
 
     e.try_with_mut(|m| -> elicit::Result<()> {
-        println!("{:?}", m);
+        println!("{m:?}");
 
         assert!(m.action() == 1);
 

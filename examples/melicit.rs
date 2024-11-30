@@ -83,9 +83,9 @@ mod error {
         /// Elicit
         Elicit(elicit::Error),
 
-        /// MelicitLock
+        /// `MelicitLock`
         MelicitLock(MelicitLockError<MelicitGuard<'a>>),
-        /// MelicitTryLock
+        /// `MelicitTryLock`
         MelicitTryLock(MelicitTryLockError<MelicitGuard<'a>>),
     }
     // ========================================================================
@@ -118,7 +118,7 @@ mod error {
             &self,
             f: &mut ::std::fmt::Formatter<'_>,
         ) -> ::std::fmt::Result {
-            write!(f, "{:?}", self)
+            write!(f, "{self:?}")
         }
     }
     // ========================================================================
@@ -148,7 +148,7 @@ fn main() -> elicit::Result<()> {
     e = MineMelicit::new(MineX::default())?;
 
     if let Err(x) = e.with(|m| -> error::Result<'_, ()> {
-        println!("{:?}", m);
+        println!("{m:?}");
         assert!(m.action() == 0);
         Ok(())
     }) {
@@ -159,7 +159,7 @@ fn main() -> elicit::Result<()> {
     e = MineMelicit::new(y)?;
 
     if let Err(x) = e.try_with(|m| -> error::Result<'_, ()> {
-        println!("{:?}", m);
+        println!("{m:?}");
         assert!(m.action() == 3);
         Ok(())
     }) {

@@ -82,13 +82,13 @@ mod error {
         /// Elicit
         Elicit(elicit::Error),
 
-        /// AelicitLockRead
+        /// `AelicitLockRead`
         AelicitLockRead(AelicitLockError<AelicitReadGuard<'a>>),
-        /// AelicitLockWrite
+        /// `AelicitLockWrite`
         AelicitLockWrite(AelicitLockError<AelicitWriteGuard<'a>>),
-        /// AelicitTryLockRead
+        /// `AelicitTryLockRead`
         AelicitTryLockRead(AelicitTryLockError<AelicitReadGuard<'a>>),
-        /// AelicitTryLockWrite
+        /// `AelicitTryLockWrite`
         AelicitTryLockWrite(AelicitTryLockError<AelicitWriteGuard<'a>>),
     }
     // ========================================================================
@@ -139,7 +139,7 @@ mod error {
             &self,
             f: &mut ::std::fmt::Formatter<'_>,
         ) -> ::std::fmt::Result {
-            write!(f, "{:?}", self)
+            write!(f, "{self:?}")
         }
     }
     // ========================================================================
@@ -171,7 +171,7 @@ fn main() -> elicit::Result<()> {
     e = MineAelicit::new(MineX::default())?;
 
     if let Err(x) = e.with(|m| -> error::Result<'_, ()> {
-        println!("{:?}", m);
+        println!("{m:?}");
         assert!(m.action() == 0);
         Ok(())
     }) {
@@ -182,7 +182,7 @@ fn main() -> elicit::Result<()> {
     e = MineAelicit::new(y)?;
 
     if let Err(e) = e.try_with(|m| -> error::Result<'_, ()> {
-        println!("{:?}", m);
+        println!("{m:?}");
         assert!(m.action() == 2);
         Ok(())
     }) {
