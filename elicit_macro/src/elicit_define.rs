@@ -16,10 +16,7 @@ use crate::include::{
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub(crate) fn expand(
-    mod_ident: &Ident,
-    item: ItemTrait,
-) -> Result<TokenStream2> {
+pub fn expand(mod_ident: &Ident, item: ItemTrait) -> Result<TokenStream2> {
     let define = quote_define(mod_ident, &item)?;
     let mut ret = item.into_token_stream();
     ret.extend(define);
@@ -33,29 +30,29 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     Ok(quote! {
     #[allow(box_pointers)]
     mod #mod_ident {
-        mod _inner { #inner }
+    mod _inner { #inner }
 
-        mod _common {
-        pub use super::_inner::{
-            Elicit, ElicitBase, ElicitFromSelf,
-        };
-        }
+    mod _common {
+    pub use super::_inner::{
+        Elicit, ElicitBase, ElicitFromSelf,
+    };
+    }
 
-        /// mod author
-        pub mod author {
-        pub use super::_common::*;
-        pub use super::_inner::{
-            WeakAssign,
-            WeakElicitInner,
-            ElicitFromSelfField
-        };
-        }
+    /// mod author
+    pub mod author {
+    pub use super::_common::*;
+    pub use super::_inner::{
+        WeakAssign,
+        WeakElicitInner,
+        ElicitFromSelfField
+    };
+    }
 
-        /// mod user
-        pub mod user {
-        pub use super::_common::*;
-        pub use super::_inner::WeakElicit;
-        }
+    /// mod user
+    pub mod user {
+    pub use super::_common::*;
+    pub use super::_inner::WeakElicit;
+    }
     }
     })
 }
@@ -68,13 +65,13 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     use std::{
-        cell::{OnceCell, RefCell},
-        convert::From,
-        fmt::Debug,
-        marker::Unpin,
-        pin::Pin,
-        rc::{Rc, Weak},
-        result::Result as StdResult,
+    cell::{OnceCell, RefCell},
+    convert::From,
+    fmt::Debug,
+    marker::Unpin,
+    pin::Pin,
+    rc::{Rc, Weak},
+    result::Result as StdResult,
     };
     // --------------------------------------------------------------------
     pub use elicit::{ Result as ElicitResult,  Error as ElicitError };
@@ -82,21 +79,21 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     // ====================================================================
     /// trait ElicitBase
     pub trait ElicitBase: 'static + Unpin + Debug
-        + #orig + ElicitFromSelf + WeakAssign
+    + #orig + ElicitFromSelf + WeakAssign
     {
-        // ================================================================
-        /// usizeptr
-        fn usizeptr(&self) -> usize;
+    // ================================================================
+    /// usizeptr
+    fn usizeptr(&self) -> usize;
     }
     // ====================================================================
     impl<T: 'static + Unpin + Debug + #orig + ElicitFromSelf + WeakAssign>
-        ElicitBase for T
+    ElicitBase for T
     {
-        // ================================================================
-        #[allow(trivial_casts)]
-        fn usizeptr(&self) -> usize {
-        self as *const _ as usize
-        }
+    // ================================================================
+    #[allow(trivial_casts)]
+    fn usizeptr(&self) -> usize {
+    self as *const _ as usize
+    }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
@@ -118,123 +115,123 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     pub struct WeakElicit(WeakElicitInner);
     // ====================================================================
     impl WeakElicit {
-        // ================================================================
-        /// fn upgrade
-        pub fn upgrade(&self) -> Option<Elicit> {
-        self.0.upgrade().map(Elicit)
-        }
+    // ================================================================
+    /// fn upgrade
+    pub fn upgrade(&self) -> Option<Elicit> {
+    self.0.upgrade().map(Elicit)
+    }
     }
     // ====================================================================
     impl From<Elicit> for WeakElicit {
-        fn from(x: Elicit) -> WeakElicit {
-        x.weak()
-        }
+    fn from(x: Elicit) -> WeakElicit {
+    x.weak()
+    }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// trait ElicitFromSelf
     pub trait ElicitFromSelf {
-        /// elicit_from_self
-        fn elicit_from_self(&self) -> Option<Elicit>;
+    /// elicit_from_self
+    fn elicit_from_self(&self) -> Option<Elicit>;
     }
     // ====================================================================
     /// trait WeakAssign
     pub trait WeakAssign {
-        /// _weak_assign
-        fn _weak_assign(
-        &mut self,
-        weak: WeakElicitInner,
-        ) -> ElicitResult<()>;
+    /// _weak_assign
+    fn _weak_assign(
+    &mut self,
+    weak: WeakElicitInner,
+    ) -> ElicitResult<()>;
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// struct ElicitFromSelfField
     #[derive(Debug, Clone, Default)]
     pub struct ElicitFromSelfField {
-        /// _weak
-        _weak: OnceCell<WeakElicitInner>,
+    /// _weak
+    _weak: OnceCell<WeakElicitInner>,
     }
     // ====================================================================
     impl ElicitFromSelf for ElicitFromSelfField {
-        fn elicit_from_self(&self) -> Option<Elicit> {
-        self._weak.get()?.upgrade().map(Elicit)
-        }
+    fn elicit_from_self(&self) -> Option<Elicit> {
+    self._weak.get()?.upgrade().map(Elicit)
+    }
     }
     // ====================================================================
     impl WeakAssign for ElicitFromSelfField {
-        fn _weak_assign(
-        &mut self,
-        weak: WeakElicitInner,
-        ) -> ElicitResult<()> {
-        self._weak.set(weak).map_err(
-            |_| ElicitError::WeakAlreadyExists)
-        }
+    fn _weak_assign(
+    &mut self,
+    weak: WeakElicitInner,
+    ) -> ElicitResult<()> {
+    self._weak.set(weak).map_err(
+        |_| ElicitError::WeakAlreadyExists)
+    }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     impl Elicit {
-        // ================================================================
-        /// new
-        #[allow(trivial_casts)]
-        pub fn new<T>(val: T) -> ElicitResult<Self>
-        where
-        T: ElicitBase,
-        {
-        let r = Rc::new(RefCell::new(Box::pin(val) as RefCellInner));
-        r.borrow_mut().as_mut()._weak_assign(Rc::<_>::downgrade(&r))?;
-        Ok(Elicit(r))
-        }
-        // ================================================================
-        /// weak
-        pub fn weak(&self) -> WeakElicit {
-        WeakElicit(Rc::downgrade(&self.0))
-        }
-        // ================================================================
-        /// usizeptr
-        pub fn usizeptr(&self) -> usize {
-        self.0.borrow().as_ref().usizeptr()
-        }
-        // ================================================================
-        /// with
-        pub fn with<T, E>(
-        &self,
-        f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
-        ) -> StdResult<T, E>
-        {
-        f(& *self.0.borrow().as_ref())
-        }
-        // ================================================================
-        /// try_with
-        pub fn try_with<T, E>(
-        &self,
-        f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
-        ) -> StdResult<T, E>
-        where
-        E: From<ElicitError>
-        {
-        f(& *self.0.try_borrow().map_err(ElicitError::from)?.as_ref())
-        }
-        // ================================================================
-        /// with_mut
-        pub fn with_mut<T, E>(
-        &self,
-        f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
-        ) -> StdResult<T, E>
-        {
-        f(&mut *self.0.borrow_mut().as_mut())
-        }
-        // ================================================================
-        /// try_with_mut
-        pub fn try_with_mut<T, E>(
-        &self,
-        f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
-        ) -> StdResult<T, E>
-        where
-        E: From<ElicitError>,
-        {
-        f(&mut *self.0.try_borrow_mut().map_err(ElicitError::from)?
-          .as_mut())
-        }
+    // ================================================================
+    /// new
+    #[allow(trivial_casts)]
+    pub fn new<T>(val: T) -> ElicitResult<Self>
+    where
+    T: ElicitBase,
+    {
+    let r = Rc::new(RefCell::new(Box::pin(val) as RefCellInner));
+    r.borrow_mut().as_mut()._weak_assign(Rc::<_>::downgrade(&r))?;
+    Ok(Elicit(r))
+    }
+    // ================================================================
+    /// weak
+    pub fn weak(&self) -> WeakElicit {
+    WeakElicit(Rc::downgrade(&self.0))
+    }
+    // ================================================================
+    /// usizeptr
+    pub fn usizeptr(&self) -> usize {
+    self.0.borrow().as_ref().usizeptr()
+    }
+    // ================================================================
+    /// with
+    pub fn with<T, E>(
+    &self,
+    f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    {
+    f(& *self.0.borrow().as_ref())
+    }
+    // ================================================================
+    /// try_with
+    pub fn try_with<T, E>(
+    &self,
+    f: impl FnOnce(&dyn ElicitBase) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+    E: From<ElicitError>
+    {
+    f(& *self.0.try_borrow().map_err(ElicitError::from)?.as_ref())
+    }
+    // ================================================================
+    /// with_mut
+    pub fn with_mut<T, E>(
+    &self,
+    f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    {
+    f(&mut *self.0.borrow_mut().as_mut())
+    }
+    // ================================================================
+    /// try_with_mut
+    pub fn try_with_mut<T, E>(
+    &self,
+    f: impl FnOnce(&mut dyn ElicitBase) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+    E: From<ElicitError>,
+    {
+    f(&mut *self.0.try_borrow_mut().map_err(ElicitError::from)?
+      .as_mut())
+    }
     }
     })
 }

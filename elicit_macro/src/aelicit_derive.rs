@@ -18,7 +18,7 @@ use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
+pub fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut aelicit_mod_author = Option::<TokenStream2>::default();
     let mut aelicit_from_self_field = Option::<TokenStream2>::default();
 
@@ -61,23 +61,21 @@ struct Derived {}
     }
 
     let ident = ast.ident;
-    let aelicit_impl = if let Some(ref x) = aelicit_from_self_field {
-        quote! {self.#x.aelicit_from_self()}
-    } else {
-        quote! { None }
-    };
-    let _weak_assign_impl = if let Some(ref x) = aelicit_from_self_field {
-        quote! {self.#x._weak_assign(_weak)}
-    } else {
-        quote! { Ok(()) }
-    };
+    let aelicit_impl = aelicit_from_self_field.as_ref().map_or_else(
+        || quote! { None },
+        |x| quote! {self.#x.aelicit_from_self()},
+    );
+    let _weak_assign_impl = aelicit_from_self_field.as_ref().map_or_else(
+        || quote! { Ok(()) },
+        |x| quote! {self.#x._weak_assign(_weak)},
+    );
 
     Ok(quote! {
     #[automatically_derived]
     impl #aelicit_mod_author :: AelicitFromSelf for #ident {
     fn aelicit_from_self(&self) ->
     Option<#aelicit_mod_author :: Aelicit> {
-        #aelicit_impl
+    #aelicit_impl
     }
     }
 

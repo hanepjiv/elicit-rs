@@ -20,16 +20,16 @@ pub(crate) mod mine {
     use elicit::{melicit_define, Melicit};
     // ========================================================================
     #[melicit_define(mine_melicit)]
-    pub(crate) trait Mine: Send {
+    pub trait Mine: Send {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
     // pub(crate) mine_melicit::author as melicit_author;
-    pub(crate) use mine_melicit::user as melicit_user;
+    pub use mine_melicit::user as melicit_user;
     // ========================================================================
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    pub(crate) struct MineX {}
+    pub struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -40,7 +40,7 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
     // #[melicit_from_self_field(_fsf)] here
-    pub(crate) struct MineY {
+    pub struct MineY {
         #[melicit_from_self_field] // or here
         _fsf: mine_melicit::author::MelicitFromSelfField,
         i: i32,
@@ -48,7 +48,7 @@ pub(crate) mod mine {
     // ------------------------------------------------------------------------
     impl MineY {
         pub(crate) fn new(a: i32) -> Self {
-            MineY {
+            Self {
                 _fsf: Default::default(),
                 i: a,
             }
@@ -79,7 +79,7 @@ mod error {
     /// enum Error
     #[allow(dead_code)]
     #[derive(Debug)]
-    pub(crate) enum Error<'a> {
+    pub enum Error<'a> {
         /// Elicit
         Elicit(elicit::Error),
 
@@ -135,7 +135,7 @@ mod error {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// type Result
-    pub(crate) type Result<'a, T> = ::std::result::Result<T, Error<'a>>;
+    pub type Result<'a, T> = ::std::result::Result<T, Error<'a>>;
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================

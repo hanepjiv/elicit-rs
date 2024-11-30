@@ -6,17 +6,19 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/11/10
+//  @date 2024/11/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use crate::include::{DeriveInput, Error, Ident, Result, Span, ToTokens, TokenStream2, quote};
+use crate::include::{
+    quote, DeriveInput, Error, Ident, Result, Span, ToTokens, TokenStream2,
+};
 // ----------------------------------------------------------------------------
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
+pub fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut melicit_mod_author = Option::<TokenStream2>::default();
     let mut melicit_from_self_field = Option::<TokenStream2>::default();
 
@@ -59,26 +61,32 @@ struct Derived{}
     }
 
     let ident = ast.ident;
-    let melicit_impl = if let Some(ref x) = melicit_from_self_field { quote! { self.#x.melicit_from_self() } } else { quote! { None } };
-    let _weak_assign_impl = if let Some(ref x) = melicit_from_self_field { quote! { self.#x._weak_assign(_weak) } } else { quote! { Ok(()) } };
+    let melicit_impl = melicit_from_self_field.as_ref().map_or_else(
+        || quote! { None },
+        |x| quote! { self.#x.melicit_from_self() },
+    );
+    let _weak_assign_impl = melicit_from_self_field.as_ref().map_or_else(
+        || quote! { Ok(()) },
+        |x| quote! { self.#x._weak_assign(_weak) },
+    );
 
     Ok(quote! {
     #[automatically_derived]
     impl #melicit_mod_author :: MelicitFromSelf for #ident {
-        fn melicit_from_self(&self) ->
-        Option<#melicit_mod_author :: Melicit> {
-            #melicit_impl
-        }
+    fn melicit_from_self(&self) ->
+    Option<#melicit_mod_author :: Melicit> {
+        #melicit_impl
+    }
     }
 
     #[automatically_derived]
     impl #melicit_mod_author :: WeakAssign for #ident {
-        fn _weak_assign(
-        &mut self,
-        _weak:  #melicit_mod_author :: WeakMelicitInner,
-        ) -> elicit::Result<()> {
-        #_weak_assign_impl
-        }
+    fn _weak_assign(
+    &mut self,
+    _weak:      #melicit_mod_author :: WeakMelicitInner,
+    ) -> elicit::Result<()> {
+    #_weak_assign_impl
+    }
     }
     })
 }

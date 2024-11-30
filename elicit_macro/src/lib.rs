@@ -23,21 +23,19 @@ mod find_field_attr;
 ///
 pub(crate) mod include {
     // common  ----------------------------------------------------------------
-    pub(crate) use proc_macro2::{Span, TokenStream as TokenStream2};
-    pub(crate) use quote::{quote, ToTokens};
-    pub(crate) use syn::{parse_macro_input, Error};
+    pub use proc_macro2::{Span, TokenStream as TokenStream2};
+    pub use quote::{quote, ToTokens};
+    pub use syn::{parse_macro_input, Error};
 
-    pub(crate) type Result<T> = std::result::Result<T, Error>;
+    pub type Result<T> = std::result::Result<T, Error>;
 
     #[inline]
-    pub(crate) fn into_tokens(
-        res: Result<TokenStream2>,
-    ) -> proc_macro::TokenStream {
+    pub fn into_tokens(res: Result<TokenStream2>) -> proc_macro::TokenStream {
         res.unwrap_or_else(Error::into_compile_error).into()
     }
 
     // for elicit_macro  ------------------------------------------------------
-    pub(crate) use syn::{DeriveInput, Ident, ItemTrait};
+    pub use syn::{DeriveInput, Ident, ItemTrait};
 }
 // ============================================================================
 mod aelicit_derive;

@@ -20,16 +20,16 @@ pub(crate) mod mine {
     use elicit::{elicit_define, Elicit};
     // ========================================================================
     #[elicit_define(mine_elicit)]
-    pub(crate) trait Mine {
+    pub trait Mine {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
     // pub(crate) mine_elicit::author as elicit_author;
-    pub(crate) use mine_elicit::user as elicit_user;
+    pub use mine_elicit::user as elicit_user;
     // ========================================================================
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
-    pub(crate) struct MineX {}
+    pub struct MineX {}
     // ------------------------------------------------------------------------
     impl Mine for MineX {
         fn action(&self) -> i32 {
@@ -40,7 +40,7 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     // #[elicit_from_self_field(_fsf)] // here
-    pub(crate) struct MineY {
+    pub struct MineY {
         #[elicit_from_self_field] // or here
         _fsf: mine_elicit::author::ElicitFromSelfField,
         i: i32,
@@ -48,7 +48,7 @@ pub(crate) mod mine {
     // ------------------------------------------------------------------------
     impl MineY {
         pub(crate) fn new(a: i32) -> Self {
-            MineY {
+            Self {
                 _fsf: Default::default(),
                 i: a,
             }

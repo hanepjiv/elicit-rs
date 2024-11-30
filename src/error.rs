@@ -35,13 +35,13 @@ impl Display for Error {
 // ============================================================================
 impl From<std::cell::BorrowError> for Error {
     fn from(e: std::cell::BorrowError) -> Self {
-        Error::Borrow(e)
+        Self::Borrow(e)
     }
 }
 // ----------------------------------------------------------------------------
 impl From<std::cell::BorrowMutError> for Error {
     fn from(e: std::cell::BorrowMutError) -> Self {
-        Error::BorrowMut(e)
+        Self::BorrowMut(e)
     }
 }
 // ============================================================================
@@ -49,9 +49,9 @@ impl StdError for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
-            Error::WouldBlock | Error::WeakAlreadyExists => None,
-            Error::Borrow(ref e) => Some(e),
-            Error::BorrowMut(ref e) => Some(e),
+            Self::WouldBlock | Self::WeakAlreadyExists => None,
+            Self::Borrow(ref e) => Some(e),
+            Self::BorrowMut(ref e) => Some(e),
         }
     }
 }
@@ -67,14 +67,14 @@ mod tests {
     use super::Error;
     // ========================================================================
     #[test]
-    fn test_send() {
-        fn assert_send<T: Send>() {}
+    const fn test_send() {
+        const fn assert_send<T: Send>() {}
         assert_send::<Error>();
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_sync() {
-        fn assert_sync<T: Sync>() {}
+    const fn test_sync() {
+        const fn assert_sync<T: Sync>() {}
         assert_sync::<Error>();
     }
 }

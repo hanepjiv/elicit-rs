@@ -11,7 +11,7 @@
 // ////////////////////////////////////////////////////////////////////////////
 use crate::include::{Error, Ident, Result, Span, ToTokens, TokenStream2};
 // use  =======================================================================
-pub(crate) fn find_field_attr<T: ?Sized>(
+pub fn find_field_attr<T: ?Sized>(
     data: &syn::Data,
     ident: &T,
     ret: &mut Option<TokenStream2>,
