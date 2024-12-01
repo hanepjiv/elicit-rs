@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/09/11
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,9 +29,9 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
-    pub struct MineX {}
+    pub struct X {}
     // ------------------------------------------------------------------------
-    impl Mine for MineX {
+    impl Mine for X {
         fn action(&self) -> i32 {
             0i32
         }
@@ -40,22 +40,22 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     // #[elicit_from_self_field(_fsf)] // here
-    pub struct MineY {
+    pub struct Y {
         #[elicit_from_self_field] // or here
         _fsf: mine_elicit::author::ElicitFromSelfField,
         i: i32,
     }
     // ------------------------------------------------------------------------
-    impl MineY {
+    impl Y {
         pub(crate) fn new(a: i32) -> Self {
             Self {
-                _fsf: Default::default(),
+                _fsf: mine_elicit::author::ElicitFromSelfField::default(),
                 i: a,
             }
         }
     }
     // ------------------------------------------------------------------------
-    impl Mine for MineY {
+    impl Mine for Y {
         fn action(&self) -> i32 {
             self.i
         }
@@ -65,11 +65,11 @@ pub(crate) mod mine {
 // ============================================================================
 fn main() -> elicit::Result<()> {
     use mine::elicit_user::Elicit as MineElicit;
-    use mine::{MineX, MineY};
+    use mine::{X, Y};
 
     let mut e: MineElicit;
 
-    e = MineElicit::new(MineX::default())?;
+    e = MineElicit::new(X::default())?;
 
     e.try_with(|m| -> elicit::Result<()> {
         println!("{m:?}");
@@ -79,7 +79,7 @@ fn main() -> elicit::Result<()> {
         Ok(())
     })?;
 
-    let y = MineY::new(1);
+    let y = Y::new(1);
     e = MineElicit::new(y)?;
 
     e.try_with_mut(|m| -> elicit::Result<()> {

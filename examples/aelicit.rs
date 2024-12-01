@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/09/11
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -28,9 +28,9 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
-    pub struct MineX {}
+    pub struct X {}
     // ------------------------------------------------------------------------
-    impl Mine for MineX {
+    impl Mine for X {
         fn action(&self) -> i32 {
             0i32
         }
@@ -39,22 +39,22 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
     //#[aelicit_from_self_field(_fsf)] // here
-    pub struct MineY {
+    pub struct Y {
         #[aelicit_from_self_field] // or here
         _fsf: mine_aelicit::author::AelicitFromSelfField,
         i: i32,
     }
     // ------------------------------------------------------------------------
-    impl MineY {
+    impl Y {
         pub(crate) fn new(a: i32) -> Self {
             Self {
-                _fsf: Default::default(),
+                _fsf: mine_aelicit::author::AelicitFromSelfField::default(),
                 i: a,
             }
         }
     }
     // ------------------------------------------------------------------------
-    impl Mine for MineY {
+    impl Mine for Y {
         fn action(&self) -> i32 {
             self.i
         }
@@ -148,10 +148,10 @@ mod error {
         fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
             match *self {
                 Error::Elicit(ref e) => Some(e),
-                Error::AelicitLockRead(_) => None,
-                Error::AelicitLockWrite(_) => None,
-                Error::AelicitTryLockRead(_) => None,
-                Error::AelicitTryLockWrite(_) => None,
+                Error::AelicitLockRead(_)
+                | Error::AelicitLockWrite(_)
+                | Error::AelicitTryLockRead(_)
+                | Error::AelicitTryLockWrite(_) => None,
             }
         }
     }
@@ -164,11 +164,11 @@ mod error {
 // ============================================================================
 fn main() -> elicit::Result<()> {
     use mine::aelicit_user::Aelicit as MineAelicit;
-    use mine::{MineX, MineY};
+    use mine::{X, Y};
 
     let mut e: MineAelicit;
 
-    e = MineAelicit::new(MineX::default())?;
+    e = MineAelicit::new(X::default())?;
 
     if let Err(x) = e.with(|m| -> error::Result<'_, ()> {
         println!("{m:?}");
@@ -178,7 +178,7 @@ fn main() -> elicit::Result<()> {
         eprintln!("{x:?}");
     }
 
-    let y = MineY::new(2);
+    let y = Y::new(2);
     e = MineAelicit::new(y)?;
 
     if let Err(e) = e.try_with(|m| -> error::Result<'_, ()> {

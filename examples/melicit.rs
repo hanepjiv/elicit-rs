@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/09/11
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,9 +29,9 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    pub struct MineX {}
+    pub struct X {}
     // ------------------------------------------------------------------------
-    impl Mine for MineX {
+    impl Mine for X {
         fn action(&self) -> i32 {
             0i32
         }
@@ -40,22 +40,22 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
     // #[melicit_from_self_field(_fsf)] here
-    pub struct MineY {
+    pub struct Y {
         #[melicit_from_self_field] // or here
         _fsf: mine_melicit::author::MelicitFromSelfField,
         i: i32,
     }
     // ------------------------------------------------------------------------
-    impl MineY {
+    impl Y {
         pub(crate) fn new(a: i32) -> Self {
             Self {
-                _fsf: Default::default(),
+                _fsf: mine_melicit::author::MelicitFromSelfField::default(),
                 i: a,
             }
         }
     }
     // ------------------------------------------------------------------------
-    impl Mine for MineY {
+    impl Mine for Y {
         fn action(&self) -> i32 {
             self.i
         }
@@ -127,8 +127,7 @@ mod error {
         fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
             match *self {
                 Error::Elicit(ref e) => Some(e),
-                Error::MelicitLock(_) => None,
-                Error::MelicitTryLock(_) => None,
+                Error::MelicitLock(_) | Error::MelicitTryLock(_) => None,
             }
         }
     }
@@ -141,11 +140,11 @@ mod error {
 // ============================================================================
 fn main() -> elicit::Result<()> {
     use mine::melicit_user::Melicit as MineMelicit;
-    use mine::{MineX, MineY};
+    use mine::{X, Y};
 
     let mut e: MineMelicit;
 
-    e = MineMelicit::new(MineX::default())?;
+    e = MineMelicit::new(X::default())?;
 
     if let Err(x) = e.with(|m| -> error::Result<'_, ()> {
         println!("{m:?}");
@@ -155,7 +154,7 @@ fn main() -> elicit::Result<()> {
         eprintln!("{x:?}");
     }
 
-    let y = MineY::new(3);
+    let y = Y::new(3);
     e = MineMelicit::new(y)?;
 
     if let Err(x) = e.try_with(|m| -> error::Result<'_, ()> {
