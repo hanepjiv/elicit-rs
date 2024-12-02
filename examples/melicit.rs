@@ -17,7 +17,7 @@ use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 pub(crate) mod mine {
-    use elicit::{melicit_define, Melicit};
+    use elicit::{Melicit, melicit_define};
     // ========================================================================
     #[melicit_define(mine_melicit)]
     pub trait Mine: Send {

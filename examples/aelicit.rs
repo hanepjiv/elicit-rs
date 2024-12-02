@@ -17,7 +17,7 @@ use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 pub(crate) mod mine {
-    use elicit::{aelicit_define, Aelicit};
+    use elicit::{Aelicit, aelicit_define};
     #[aelicit_define(mine_aelicit)]
     pub trait Mine: Send + Sync {
         fn action(&self) -> i32;

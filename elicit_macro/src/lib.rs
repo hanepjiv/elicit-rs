@@ -24,8 +24,8 @@ mod find_field_attr;
 pub(crate) mod include {
     // common  ----------------------------------------------------------------
     pub use proc_macro2::{Span, TokenStream as TokenStream2};
-    pub use quote::{quote, ToTokens};
-    pub use syn::{parse_macro_input, Error};
+    pub use quote::{ToTokens, quote};
+    pub use syn::{Error, parse_macro_input};
 
     pub type Result<T> = std::result::Result<T, Error>;
 
@@ -55,7 +55,7 @@ use feature_default::{aelicit_define, melicit_define};
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::{
-    into_tokens, parse_macro_input, DeriveInput, Ident, ItemTrait,
+    DeriveInput, Ident, ItemTrait, into_tokens, parse_macro_input,
 };
 use proc_macro::TokenStream;
 // ////////////////////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::{
-    quote, Ident, ItemTrait, Result, ToTokens, TokenStream2,
+    Ident, ItemTrait, Result, ToTokens, TokenStream2, quote,
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -279,13 +279,15 @@ mod tests {
     // ========================================================================
     #[test]
     fn test_00() {
-        assert!(expand(
-            &parse2(quote!(mod_ident)).expect("parse attr"),
-            parse2(quote!(
-                trait Orig {}
-            ))
-            .expect("parse item")
-        )
-        .is_ok());
+        assert!(
+            expand(
+                &parse2(quote!(mod_ident)).expect("parse attr"),
+                parse2(quote!(
+                    trait Orig {}
+                ))
+                .expect("parse item")
+            )
+            .is_ok()
+        );
     }
 }

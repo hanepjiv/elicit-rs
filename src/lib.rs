@@ -320,5 +320,5 @@ pub use std::sync::{
 // ============================================================================
 pub use self::error::{Error, Result};
 pub use elicit_macro::{
-    aelicit_define, elicit_define, melicit_define, Aelicit, Elicit, Melicit,
+    Aelicit, Elicit, Melicit, aelicit_define, elicit_define, melicit_define,
 };
