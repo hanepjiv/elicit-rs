@@ -5,9 +5,11 @@ name                    = "elicit"
 version                 = "0.12.3-alpha.2"
 publish                 = false
 
-keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
+keywords                = ["utility"]
+categories              = ["rust-patterns"]
 readme                  = "README.md"
+
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
                             "README.md",
@@ -24,8 +26,8 @@ homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
+rust-version            = "1.83.0"
 edition                 = "2021"
-rust-version            = "1.82.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
