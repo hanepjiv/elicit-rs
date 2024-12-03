@@ -5,9 +5,11 @@ name                    = "elicit_macro"
 version                 = "0.2.7"
 publish                 = false
 
-keywords                = ["utility"]
 description             = "SmartPointer-like structure for polymorphism."
+keywords                = ["utility"]
+categories              = ["rust-patterns"]
 readme                  = "README.md"
+
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
                             "README.md",
