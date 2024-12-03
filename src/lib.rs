@@ -6,102 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2024/11/10
+//  @date 2024/12/03
 
-//!
-//! # Examples
-//!
-//! ## Elicit
-//!
-//! ```
-//! pub(crate) mod mine {
-//!     use elicit::{elicit_define, Elicit};
-//!
-//!     #[elicit_define(mine_elicit)]
-//!     pub(crate) trait Mine {
-//!         fn action(&self) -> i32;
-//!         fn action_mut(&mut self) -> i32;
-//!     }
-//!
-//!     // pub(crate) mine_elicit::author as elicit_author;
-//!     pub(crate) use mine_elicit::user as elicit_user;
-//!
-//!     #[derive(Debug, Default, Clone, Elicit)]
-//!     #[elicit_mod_author(mine_elicit::author)]
-//!     pub(crate) struct MineX {}
-//!
-//!     impl Mine for MineX {
-//!         fn action(&self) -> i32 {
-//!             0i32
-//!         }
-//!         fn action_mut(&mut self) -> i32 {
-//!             0i32
-//!         }
-//!     }
-//!
-//!     #[derive(Debug, Clone, Elicit)]
-//!     #[elicit_mod_author(mine_elicit::author)]
-//!     // #[elicit_from_self_field(_fsf)] // here
-//!     pub(crate) struct MineY {
-//!         #[elicit_from_self_field] // or here
-//!         _fsf: mine_elicit::author::ElicitFromSelfField,
-//!         i: i32,
-//!     }
-//!
-//!     impl MineY {
-//!         pub(crate) fn new(a: i32) -> Self {
-//!             MineY {
-//!                 _fsf: Default::default(),
-//!                 i: a,
-//!             }
-//!         }
-//!     }
-//!
-//!     impl Mine for MineY {
-//!         fn action(&self) -> i32 {
-//!             self.i
-//!         }
-//!         fn action_mut(&mut self) -> i32 {
-//!             self.i += 1;
-//!             self.i
-//!         }
-//!     }
-//! }
-//!
-//! pub(crate) fn fire() -> elicit::Result<()> {
-//!     use mine::elicit_user::Elicit as MineElicit;
-//!     use mine::{MineX, MineY};
-//!
-//!     let mut e: MineElicit;
-//!
-//!     e = MineElicit::new(MineX::default())?;
-//!
-//!     e.try_with(|m| -> elicit::Result<()> {
-//!         println!("{:?}", m);
-//!         assert!(m.action() == 0);
-//!         Ok(())
-//!     })?;
-//!
-//!     let y = MineY::new(1);
-//!     e = MineElicit::new(y)?;
-//!
-//!     e.try_with_mut(|m| -> elicit::Result<()> {
-//!         println!("{:?}", m);
-//!         assert!(m.action_mut() == 2);
-//!         Ok(())
-//!     })?;
-//!
-//!     Ok(())
-//! }
-//!
-//! fire().expect("Doc-tests");
-//! ```
-//!
-
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-/*
-// rustc 1.82.0 (f6e511eec 2024-10-15)
+// rustc 1.83.0 (90b35a623 2024-11-26)
 #![forbid(
     absolute_paths_not_starting_with_crate,
     ambiguous_negative_literals,
@@ -111,6 +21,7 @@
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
     ffi_unwind_calls,
+    if_let_rescope,
     impl_trait_overcaptures,
     keyword_idents_2018,
     keyword_idents_2024,
@@ -123,15 +34,16 @@
     missing_docs,
     missing_unsafe_on_extern,
     non_ascii_idents,
-    non_local_definitions,
     redundant_imports,
     redundant_lifetimes,
     rust_2021_incompatible_closure_captures,
     rust_2021_incompatible_or_patterns,
     rust_2021_prefixes_incompatible_syntax,
     rust_2021_prelude_collisions,
+    rust_2024_guarded_string_incompatible_syntax,
     rust_2024_prelude_collisions,
     single_use_lifetimes,
+    tail_expr_drop_order,
     trivial_casts,
     trivial_numeric_casts,
     unit_bindings,
@@ -176,6 +88,7 @@
     drop_bounds,
     duplicate_macro_attributes,
     dyn_drop,
+    elided_named_lifetimes,
     ellipsis_inclusive_range_patterns,
     exported_private_dependencies,
     forbidden_lint_groups,
@@ -205,6 +118,7 @@
     non_camel_case_types,
     non_contiguous_range_endpoints,
     non_fmt_panics,
+    non_local_definitions,
     non_shorthand_field_patterns,
     non_snake_case,
     non_upper_case_globals,
@@ -217,10 +131,10 @@
     private_bounds,
     private_interfaces,
     ptr_cast_add_auto_to_object,
+    ptr_to_integer_transmute_in_consts,
     redundant_semicolons,
     refining_impl_trait_internal,
     refining_impl_trait_reachable,
-    renamed_and_removed_lints,
     repr_transparent_external_private_fields,
     self_constructor_from_outer_item,
     semicolon_in_expressions_from_macros,
@@ -228,6 +142,7 @@
     stable_features,
     static_mut_refs,
     suspicious_double_ref_op,
+    temporary_cstring_as_ptr,
     trivial_bounds,
     type_alias_bounds,
     tyvar_behind_raw_pointer,
@@ -246,6 +161,7 @@
     unreachable_patterns,
     unstable_name_collisions,
     unstable_syntax_pre_expansion,
+    unsupported_fn_ptr_calling_conventions,
     unused_allocation,
     unused_assignments,
     unused_associated_type_bounds,
@@ -302,7 +218,7 @@
     useless_deprecated,
     wasm_c_abi
 )]
-*/
+#![warn(renamed_and_removed_lints)]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod error;
