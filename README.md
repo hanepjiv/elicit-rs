@@ -2,7 +2,7 @@
 
 ## Build Status
 
-- main: [![CI Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml)
+- [main](https://github.com/hanepjiv/elicit-rs/tree/main): [![CI Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml)
 
 # Examples
 
