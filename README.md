@@ -14,8 +14,8 @@ pub(crate) mod mine {
 
     #[elicit_define(mine_elicit)]
     pub(crate) trait Mine {
-    fn action(&self) -> i32;
-    fn action_mut(&mut self) -> i32;
+        fn action(&self) -> i32;
+        fn action_mut(&mut self) -> i32;
     }
 
     // pub(crate) mine_elicit::author as elicit_author;
@@ -26,40 +26,40 @@ pub(crate) mod mine {
     pub(crate) struct X {}
 
     impl Mine for X {
-    fn action(&self) -> i32 {
-        0i32
-    }
-    fn action_mut(&mut self) -> i32 {
-        0i32
-    }
+        fn action(&self) -> i32 {
+            0i32
+        }
+        fn action_mut(&mut self) -> i32 {
+            0i32
+        }
     }
 
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     // #[elicit_from_self_field(_fsf)] // here
     pub(crate) struct Y {
-    #[elicit_from_self_field] // or here
-    _fsf: mine_elicit::author::ElicitFromSelfField,
-    i: i32,
+        #[elicit_from_self_field] // or here
+        _fsf: mine_elicit::author::ElicitFromSelfField,
+        i: i32,
     }
 
     impl Y {
-    pub(crate) fn new(a: i32) -> Self {
-        Y {
-        _fsf: Default::default(),
-        i: a,
+        pub(crate) fn new(a: i32) -> Self {
+            Y {
+                _fsf: Default::default(),
+                i: a,
+            }
         }
-    }
     }
 
     impl Mine for Y {
-    fn action(&self) -> i32 {
-        self.i
-    }
-    fn action_mut(&mut self) -> i32 {
-        self.i += 1;
-        self.i
-    }
+        fn action(&self) -> i32 {
+            self.i
+        }
+        fn action_mut(&mut self) -> i32 {
+            self.i += 1;
+            self.i
+        }
     }
 }
 
@@ -73,17 +73,17 @@ pub(crate) fn fire() -> elicit::Result<()> {
 
     e.try_with(|m| -> elicit::Result<()> {
     println!("{:?}", m);
-    assert!(m.action() == 0);
-    Ok(())
+        assert!(m.action() == 0);
+        Ok(())
     })?;
 
     let y = Y::new(1);
     e = MineElicit::new(y)?;
 
     e.try_with_mut(|m| -> elicit::Result<()> {
-    println!("{:?}", m);
-    assert!(m.action_mut() == 2);
-    Ok(())
+        println!("{:?}", m);
+        assert!(m.action_mut() == 2);
+        Ok(())
     })?;
 
     Ok(())
@@ -97,7 +97,7 @@ fire().expect("Doc-tests");
 Licensed under either of
 
  * Apache License, Version 2.0
-   ([LICENSE-APACHE](LICENSE-APACHE-2.0) or http://www.apache.org/licenses/LICENSE-2.0)
+   ([LICENSE-APACHE-2.0](LICENSE-APACHE-2.0) or http://www.apache.org/licenses/LICENSE-2.0)
  * MIT license
    ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
