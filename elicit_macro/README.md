@@ -1,14 +1,16 @@
 # elicit-rs
-<!--
-## build status
-- main: [![Build Status](https://travis-ci.org/hanepjiv/elicit-rs.svg?branch=main)](https://travis-ci.org/hanepjiv/elicit-rs)
--->
+
+## Build Status
+
+- [main](https://github.com/hanepjiv/elicit-rs/tree/main): [![CI Rust](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/hanepjiv/elicit-rs/actions/workflows/ci-rust.yml)
+
+
 ## License
 
 Licensed under either of
 
  * Apache License, Version 2.0
-   ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+   ([LICENSE-APACHE-2.0](LICENSE-APACHE-2.0) or http://www.apache.org/licenses/LICENSE-2.0)
  * MIT license
    ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
