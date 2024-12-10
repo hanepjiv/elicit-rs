@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/11/30
+//  @date 2024/12/10
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,7 +16,10 @@ use crate::include::{
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub fn expand(mod_ident: &Ident, item: ItemTrait) -> Result<TokenStream2> {
+pub(crate) fn expand(
+    mod_ident: &Ident,
+    item: ItemTrait,
+) -> Result<TokenStream2> {
     let define = quote_define(mod_ident, &item)?;
     let mut ret = item.into_token_stream();
     ret.extend(define);
@@ -30,34 +33,34 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     Ok(quote! {
     #[allow(box_pointers)]
     mod #mod_ident {
-    mod _inner { #inner }
+        mod _inner { #inner }
 
-    mod _common {
-    pub use super::_inner::{
-        Melicit, MelicitBase, MelicitFromSelf,
-    };
-    }
+        mod _common {
+        pub use super::_inner::{
+            Melicit, MelicitBase, MelicitFromSelf,
+        };
+        }
 
-    /// mod author
-    pub mod author {
-    pub use super::_common::*;
-    pub use super::_inner::{
-        WeakAssign,
-        WeakMelicitInner,
-        MelicitFromSelfField
-    };
-    }
+        /// mod author
+        pub mod author {
+        pub use super::_common::*;
+        pub use super::_inner::{
+            WeakAssign,
+            WeakMelicitInner,
+            MelicitFromSelfField
+        };
+        }
 
-    /// mod user
-    pub mod user {
-    pub use super::_common::*;
-    pub use super::_inner::{
-        WeakMelicit,
-        LockError, LockResult,
-        TryLockError, TryLockResult,
-        Guard,
-    };
-    }
+        /// mod user
+        pub mod user {
+        pub use super::_common::*;
+        pub use super::_inner::{
+            WeakMelicit,
+            LockError, LockResult,
+            TryLockError, TryLockResult,
+            Guard,
+        };
+        }
     }
     })
 }
@@ -70,38 +73,38 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     use std::{
-    convert::From,
-    fmt::Debug,
-    marker::Unpin,
-    pin::Pin,
-    result::Result as StdResult,
-    sync::{ OnceLock, Arc, Mutex, Weak },
+        convert::From,
+        fmt::Debug,
+        marker::Unpin,
+        pin::Pin,
+        result::Result as StdResult,
+        sync::{ OnceLock, Arc, Mutex, Weak },
     };
     // --------------------------------------------------------------------
     pub use std::sync::{
-    LockResult, PoisonError as LockError,
-    TryLockResult, TryLockError,
+        LockResult, PoisonError as LockError,
+        TryLockResult, TryLockError,
     };
     pub use elicit::{ Result as ElicitResult, Error as ElicitError };
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// trait MelicitBase
     pub trait MelicitBase: 'static + Unpin + Debug
-    + #orig + MelicitFromSelf + WeakAssign
+        + #orig + MelicitFromSelf + WeakAssign
     {
-    // ================================================================
-    /// usizeptr
-    fn usizeptr(&self) -> usize;
+        // ================================================================
+        /// usizeptr
+        fn usizeptr(&self) -> usize;
     }
     // ====================================================================
     impl<T: 'static + Unpin + Debug + #orig + MelicitFromSelf + WeakAssign>
-    MelicitBase for T
+        MelicitBase for T
     {
-    // ================================================================
-    #[allow(trivial_casts)]
-    fn usizeptr(&self) -> usize {
-    self as *const _ as usize
-    }
+        // ================================================================
+        #[allow(trivial_casts)]
+        fn usizeptr(&self) -> usize {
+        self as *const _ as usize
+        }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
@@ -127,147 +130,147 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     pub struct WeakMelicit(WeakMelicitInner);
     // ====================================================================
     impl WeakMelicit {
-    // ================================================================
-    /// fn upgrade
-    pub fn upgrade(&self) -> Option<Melicit> {
-    self.0.upgrade().map(Melicit)
-    }
+        // ================================================================
+        /// fn upgrade
+        pub fn upgrade(&self) -> Option<Melicit> {
+        self.0.upgrade().map(Melicit)
+        }
     }
     // ====================================================================
     impl From<Melicit> for WeakMelicit {
-    fn from(x: Melicit) -> WeakMelicit {
-    x.weak()
-    }
+        fn from(x: Melicit) -> WeakMelicit {
+        x.weak()
+        }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// trait MelicitFromSelf
     pub trait MelicitFromSelf {
-    /// melicit_from_self
-    fn melicit_from_self(&self) -> Option<Melicit>;
+        /// melicit_from_self
+        fn melicit_from_self(&self) -> Option<Melicit>;
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// trait WeakAssign
     pub trait WeakAssign {
-    /// _weak_assign
-    fn _weak_assign(
-    &mut self,
-    weak: WeakMelicitInner,
-    ) -> ElicitResult<()>;
+        /// _weak_assign
+        fn _weak_assign(
+        &mut self,
+        weak: WeakMelicitInner,
+        ) -> ElicitResult<()>;
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     /// struct MelicitFromSelfField
     #[derive(Debug, Clone, Default)]
     pub struct MelicitFromSelfField {
-    /// _weak
-    _weak: OnceLock<WeakMelicitInner>,
+        /// _weak
+        _weak: OnceLock<WeakMelicitInner>,
     }
     // ====================================================================
     impl MelicitFromSelf for MelicitFromSelfField {
-    fn melicit_from_self(&self) -> Option<Melicit> {
-    self._weak.get()?.upgrade().map(Melicit)
-    }
+        fn melicit_from_self(&self) -> Option<Melicit> {
+        self._weak.get()?.upgrade().map(Melicit)
+        }
     }
     // ====================================================================
     impl WeakAssign for MelicitFromSelfField {
-    fn _weak_assign(
-    &mut self,
-    weak: WeakMelicitInner,
-    ) -> ElicitResult<()> {
-    self._weak.set(weak).map_err(
-        |_| ElicitError::WeakAlreadyExists)
-    }
+        fn _weak_assign(
+        &mut self,
+        weak: WeakMelicitInner,
+        ) -> ElicitResult<()> {
+        self._weak.set(weak).map_err(
+            |_| ElicitError::WeakAlreadyExists)
+        }
     }
     // ////////////////////////////////////////////////////////////////////
     // ====================================================================
     impl Melicit {
-    // ================================================================
-    /// new
-    #[allow(trivial_casts)]
-    pub fn new<T>(val: T) -> ElicitResult<Self>
-    where
-    T: MelicitBase,
-    {
-    let r = Arc::new(Mutex::new(Box::pin(val) as MutexInner));
-    r.lock().expect("Melicit::new").as_mut()
-        ._weak_assign(Arc::<_>::downgrade(&r))?;
-    Ok(Melicit(r))
-    }
-    // ================================================================
-    /// weak
-    pub fn weak(&self) -> WeakMelicit {
-    WeakMelicit(Arc::downgrade(&self.0))
-    }
-    // ================================================================
-    /// usizeptr
-    pub fn usizeptr<'s, 'a>(&'s self) ->
-    StdResult<usize, LockError<Guard<'a>>>
-    where
-    's: 'a,
-    {
-    Ok(self.0.lock()?.as_ref().usizeptr())
-    }
-    // ================================================================
-    /// lock
-    pub fn lock(&self) -> LockResult<Guard<'_>>
-    {
-    self.0.lock()
-    }
-    // ================================================================
-    /// try_lock
-    pub fn try_lock(&self) -> TryLockResult<Guard<'_>> {
-    self.0.try_lock()
-    }
-    // ================================================================
-    /// with
-    pub fn with<'s, 'a, T, E>(
-    &'s self,
-    f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
-    where
-    's: 'a,
-    E: From<LockError<Guard<'a>>>,
-    {
-    f(self.lock()?.as_ref().get_ref())
-    }
-    // ================================================================
-    /// try_with
-    pub fn try_with<'s, 'a, T, E>(
-    &'s self,
-    f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
-    where
-    's: 'a,
-    E: From<TryLockError<Guard<'a>>>,
-    {
-    f(self.try_lock()?.as_ref().get_ref())
-    }
-    // ================================================================
-    /// with_mut
-    pub fn with_mut<'s, 'a, T, E>(
-    &'s self,
-    f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
-    where
-    's: 'a,
-    E: From<LockError<Guard<'a>>>,
-    {
-    f(self.lock()?.as_mut().get_mut())
-    }
-    // ================================================================
-    /// try_with_mut
-    pub fn try_with_mut<'s, 'a, T, E>(
-    &'s self,
-    f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
-    where
-    's: 'a,
-    E: From<TryLockError<Guard<'a>>>,
-    {
-    f(self.try_lock()?.as_mut().get_mut())
-    }
+        // ================================================================
+        /// new
+        #[allow(trivial_casts)]
+        pub fn new<T>(val: T) -> ElicitResult<Self>
+        where
+        T: MelicitBase,
+        {
+        let r = Arc::new(Mutex::new(Box::pin(val) as MutexInner));
+        r.lock().expect("Melicit::new").as_mut()
+            ._weak_assign(Arc::<_>::downgrade(&r))?;
+        Ok(Melicit(r))
+        }
+        // ================================================================
+        /// weak
+        pub fn weak(&self) -> WeakMelicit {
+        WeakMelicit(Arc::downgrade(&self.0))
+        }
+        // ================================================================
+        /// usizeptr
+        pub fn usizeptr<'s, 'a>(&'s self) ->
+        StdResult<usize, LockError<Guard<'a>>>
+        where
+        's: 'a,
+        {
+        Ok(self.0.lock()?.as_ref().usizeptr())
+        }
+        // ================================================================
+        /// lock
+        pub fn lock(&self) -> LockResult<Guard<'_>>
+        {
+        self.0.lock()
+        }
+        // ================================================================
+        /// try_lock
+        pub fn try_lock(&self) -> TryLockResult<Guard<'_>> {
+        self.0.try_lock()
+        }
+        // ================================================================
+        /// with
+        pub fn with<'s, 'a, T, E>(
+        &'s self,
+        f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
+        ) -> StdResult<T, E>
+        where
+        's: 'a,
+        E: From<LockError<Guard<'a>>>,
+        {
+        f(self.lock()?.as_ref().get_ref())
+        }
+        // ================================================================
+        /// try_with
+        pub fn try_with<'s, 'a, T, E>(
+        &'s self,
+        f: impl FnOnce(&dyn MelicitBase) -> StdResult<T, E>,
+        ) -> StdResult<T, E>
+        where
+        's: 'a,
+        E: From<TryLockError<Guard<'a>>>,
+        {
+        f(self.try_lock()?.as_ref().get_ref())
+        }
+        // ================================================================
+        /// with_mut
+        pub fn with_mut<'s, 'a, T, E>(
+        &'s self,
+        f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
+        ) -> StdResult<T, E>
+        where
+        's: 'a,
+        E: From<LockError<Guard<'a>>>,
+        {
+        f(self.lock()?.as_mut().get_mut())
+        }
+        // ================================================================
+        /// try_with_mut
+        pub fn try_with_mut<'s, 'a, T, E>(
+        &'s self,
+        f: impl FnOnce(&mut dyn MelicitBase) -> StdResult<T, E>,
+        ) -> StdResult<T, E>
+        where
+        's: 'a,
+        E: From<TryLockError<Guard<'a>>>,
+        {
+        f(self.try_lock()?.as_mut().get_mut())
+        }
     }
     })
 }

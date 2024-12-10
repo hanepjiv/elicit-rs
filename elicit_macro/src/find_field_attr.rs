@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2024/11/30
+//  @date 2024/12/10
 
 // ////////////////////////////////////////////////////////////////////////////
 use crate::include::{Error, Ident, Result, Span, ToTokens, TokenStream2};
 // use  =======================================================================
-pub fn find_field_attr<T: ?Sized>(
+pub(crate) fn find_field_attr<T: ?Sized>(
     data: &syn::Data,
     ident: &T,
     ret: &mut Option<TokenStream2>,

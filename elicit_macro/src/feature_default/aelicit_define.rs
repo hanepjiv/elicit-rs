@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/11/30
+//  @date 2024/12/10
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,7 +16,10 @@ use crate::include::{
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub fn expand(mod_ident: &Ident, item: ItemTrait) -> Result<TokenStream2> {
+pub(crate) fn expand(
+    mod_ident: &Ident,
+    item: ItemTrait,
+) -> Result<TokenStream2> {
     let define = quote_define(mod_ident, &item)?;
     let mut ret = item.into_token_stream();
     ret.extend(define);
@@ -34,7 +37,7 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
     mod _common {
     pub use super::_inner::{
-        Aelicit, AelicitBase, AelicitFromSelf,
+    Aelicit, AelicitBase, AelicitFromSelf,
     };
     }
 
@@ -42,9 +45,9 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     pub mod author {
     pub use super::_common::*;
     pub use super::_inner::{
-        WeakAssign,
-        WeakAelicitInner,
-        AelicitFromSelfField
+    WeakAssign,
+    WeakAelicitInner,
+    AelicitFromSelfField
     };
     }
 
@@ -52,10 +55,10 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     pub mod user {
     pub use super::_common::*;
     pub use super::_inner::{
-        WeakAelicit,
-        LockError, LockResult,
-        TryLockError, TryLockResult,
-        ReadGuard, WriteGuard
+    WeakAelicit,
+    LockError, LockResult,
+    TryLockError, TryLockResult,
+    ReadGuard, WriteGuard
     };
     }
     }
@@ -179,7 +182,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     weak: WeakAelicitInner,
     ) -> ElicitResult<()> {
     self._weak.set(weak).map_err(
-        |_| ElicitError::WeakAlreadyExists)
+    |_| ElicitError::WeakAlreadyExists)
     }
     }
     // ////////////////////////////////////////////////////////////////////
@@ -194,7 +197,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     {
     let r = Arc::new(RwLock::new(Box::pin(val) as RwLockInner));
     r.write().expect("Aelicit::new").as_mut()
-        ._weak_assign(Arc::<_>::downgrade(&r))?;
+    ._weak_assign(Arc::<_>::downgrade(&r))?;
     Ok(Aelicit(r))
     }
     // ================================================================

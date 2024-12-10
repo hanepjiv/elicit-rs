@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/11/30
+//  @date 2024/12/10
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,7 +18,7 @@ use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// fn expand
-pub fn expand(ast: DeriveInput) -> Result<TokenStream2> {
+pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut elicit_mod_author = Option::<TokenStream2>::default();
     let mut elicit_from_self_field = Option::<TokenStream2>::default();
 
@@ -75,7 +75,7 @@ struct Derived{}
     impl #elicit_mod_author :: ElicitFromSelf for #ident {
     fn elicit_from_self(&self) ->
     Option<#elicit_mod_author :: Elicit> {
-        #elicit_impl
+    #elicit_impl
     }
     }
 
