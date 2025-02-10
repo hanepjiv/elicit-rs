@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2025/01/20
+//  @date 2025/01/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
