@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/12/10
+//  @date 2025/03/02
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -20,16 +20,16 @@ pub(crate) mod mine {
     use elicit::{Elicit, elicit_define};
     // ========================================================================
     #[elicit_define(mine_elicit)]
-    pub(crate) trait Mine {
+    pub(super) trait Mine {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
-    // pub(crate) mine_elicit::author as elicit_author;
-    pub(crate) use mine_elicit::user as elicit_user;
+    // pub(super) mine_elicit::author as elicit_author;
+    pub(super) use mine_elicit::user as elicit_user;
     // ========================================================================
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
-    pub(crate) struct X {}
+    pub(super) struct X {}
     // ------------------------------------------------------------------------
     impl Mine for X {
         fn action(&self) -> i32 {
@@ -40,14 +40,14 @@ pub(crate) mod mine {
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     // #[elicit_from_self_field(_fsf)] // here
-    pub(crate) struct Y {
+    pub(super) struct Y {
         #[elicit_from_self_field] // or here
         _fsf: mine_elicit::author::ElicitFromSelfField,
         i: i32,
     }
     // ------------------------------------------------------------------------
     impl Y {
-        pub(crate) fn new(a: i32) -> Self {
+        pub(super) fn new(a: i32) -> Self {
             Self {
                 _fsf: mine_elicit::author::ElicitFromSelfField::default(),
                 i: a,

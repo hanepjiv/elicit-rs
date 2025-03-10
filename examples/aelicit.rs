@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/12/10
+//  @date 2025/03/02
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,10 +16,11 @@ use elicit_macro as _;
 use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// mine
 pub(crate) mod mine {
     use elicit::{Aelicit, aelicit_define};
     #[aelicit_define(mine_aelicit)]
-    pub(crate) trait Mine: Send + Sync {
+    pub(super) trait Mine: Send + Sync {
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
@@ -63,13 +64,15 @@ pub(crate) mod mine {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(feature = "parking_lot")]
-mod error {
+/// error
+pub(crate) mod error {
     pub(crate) type Result<'a, T> = elicit::Result<T>;
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
-mod error {
-    use super::mine::aelicit_user::{
+/// error
+pub(crate) mod error {
+    use crate::mine::aelicit_user::{
         LockError as AelicitLockError, ReadGuard as AelicitReadGuard,
         TryLockError as AelicitTryLockError, WriteGuard as AelicitWriteGuard,
     };

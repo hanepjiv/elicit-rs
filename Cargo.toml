@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.4-alpha.0"
+version                 = "0.12.4-alpha.1"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -35,9 +35,9 @@ homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-proc-macro2             = { default-features = false, version = "1.0.93" }
-quote                   = { default-features = false, version = "1.0.38" }
-syn                     = { default-features = false, version = "2.0.98" }
+proc-macro2             = { default-features = false, version = "1.0.94" }
+quote                   = { default-features = false, version = "1.0.39" }
+syn                     = { default-features = false, version = "2.0.100" }
 # -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
@@ -187,7 +187,6 @@ overlapping_range_endpoints = "forbid"
 path_statements = "forbid"
 private_bounds = "forbid"
 private_interfaces = "forbid"
-ptr_cast_add_auto_to_object = "forbid"
 ptr_to_integer_transmute_in_consts = "forbid"
 redundant_semicolons = "forbid"
 refining_impl_trait_internal = "forbid"
@@ -259,7 +258,6 @@ missing_fragment_specifier = "forbid"
 mutable_transmutes = "forbid"
 named_asm_labels = "forbid"
 no_mangle_const_items = "forbid"
-order_dependent_trait_objects = "forbid"
 overflowing_literals = "forbid"
 patterns_in_fns_without_body = "forbid"
 proc_macro_derive_resolution_fallback = "forbid"
