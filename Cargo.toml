@@ -36,7 +36,7 @@ repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
 proc-macro2             = { default-features = false, version = "1.0.94" }
-quote                   = { default-features = false, version = "1.0.39" }
+quote                   = { default-features = false, version = "1.0.40" }
 syn                     = { default-features = false, version = "2.0.100" }
 # -----------------------------------------------------------------------------
 [workspace]
