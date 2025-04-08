@@ -6,47 +6,50 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2024/12/03
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::{error::Error as StdError, fmt::Display};
+use core::{error::Error as StdError, fmt::Display};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// `WouldBlock`,
     WouldBlock,
     /// `WeakAlreadyExists`
     WeakAlreadyExists,
     /// Borrow
-    Borrow(std::cell::BorrowError),
+    Borrow(core::cell::BorrowError),
     /// `BorrowMut`
-    BorrowMut(std::cell::BorrowMutError),
+    BorrowMut(core::cell::BorrowMutError),
 }
 // ============================================================================
 impl Display for Error {
-    // ========================================================================
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        <Self as std::fmt::Debug>::fmt(self, f)
+    #[inline]
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Debug>::fmt(self, f)
     }
 }
 // ============================================================================
-impl From<std::cell::BorrowError> for Error {
-    fn from(e: std::cell::BorrowError) -> Self {
+impl From<core::cell::BorrowError> for Error {
+    #[inline]
+    fn from(e: core::cell::BorrowError) -> Self {
         Self::Borrow(e)
     }
 }
 // ----------------------------------------------------------------------------
-impl From<std::cell::BorrowMutError> for Error {
-    fn from(e: std::cell::BorrowMutError) -> Self {
+impl From<core::cell::BorrowMutError> for Error {
+    #[inline]
+    fn from(e: core::cell::BorrowMutError) -> Self {
         Self::BorrowMut(e)
     }
 }
 // ============================================================================
 impl StdError for Error {
-    // ========================================================================
+    #[inline]
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
             Self::WouldBlock | Self::WeakAlreadyExists => None,
@@ -58,7 +61,7 @@ impl StdError for Error {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type `Result<T>`
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]

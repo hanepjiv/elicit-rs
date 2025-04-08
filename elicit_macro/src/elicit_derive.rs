@@ -6,12 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2024/12/10
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::{
-    DeriveInput, Error, Ident, Result, Span, ToTokens, TokenStream2, quote,
+    DeriveInput, Error, Ident, Result, Span, ToTokens as _, TokenStream2,
+    quote,
 };
 // ----------------------------------------------------------------------------
 use crate::find_field_attr::find_field_attr;
@@ -53,7 +54,7 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     if elicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            r"#[derive(Debug, Elicit)]
+            "#[derive(Debug, Elicit)]
 #[elicit_mod_author(ELICIT_MOD_AUTHOR)] // This attribute is necessary.
 struct Derived{}
 ",
@@ -92,67 +93,68 @@ struct Derived{}
 }
 // ============================================================================
 #[cfg(test)]
+#[expect(clippy::expect_used, clippy::unwrap_used, reason = "checked")]
 mod tests {
     use super::*;
     use syn::parse2;
     // ========================================================================
     #[test]
     fn test_00() {
-        assert!(
+        drop(
             expand(
                 parse2::<DeriveInput>(quote! {
                 #[elicit_mod_author(ident_mod)]
                 #[elicit_from_self_field(ident_field)]
                 struct Orig {}
                 })
-                .expect("parse")
+                .expect("parse"),
             )
-            .is_ok()
+            .unwrap(),
         );
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_01() {
-        assert!(
+        drop(
             expand(
                 parse2::<DeriveInput>(quote! {
                 // #[elicit_mod_author(ident_mod)]
                 #[elicit_from_self_field(ident_field)]
                 struct Orig {}
                 })
-                .expect("parse")
+                .expect("parse"),
             )
-            .is_err()
+            .unwrap_err(),
         );
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_02() {
-        assert!(
+        drop(
             expand(
                 parse2::<DeriveInput>(quote! {
                 #[elicit_mod_author(ident_mod)]
                 // #[elicit_from_self_field(ident_field)]
                 struct Orig {}
                 })
-                .expect("parse")
+                .expect("parse"),
             )
-            .is_ok()
+            .unwrap(),
         );
     }
     // ------------------------------------------------------------------------
     #[test]
     fn test_03() {
-        assert!(
+        drop(
             expand(
                 parse2::<DeriveInput>(quote! {
                 // #[elicit_mod_author(ident_mod)]
                 // #[elicit_from_self_field(ident_field)]
                 struct Orig {}
                 })
-                .expect("parse")
+                .expect("parse"),
             )
-            .is_err()
+            .unwrap_err(),
         );
     }
 }

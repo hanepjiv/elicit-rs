@@ -6,11 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2025/03/02
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
-use crate::include::{Error, Ident, Result, Span, ToTokens, TokenStream2};
+use crate::include::{
+    Error, Ident, Result, Span, ToTokens as _, TokenStream2,
+};
 // use  =======================================================================
+#[expect(clippy::unwrap_used, reason = "checked")]
 pub(crate) fn find_field_attr<T: ?Sized>(
     data: &syn::Data,
     ident: &T,
@@ -19,11 +22,11 @@ pub(crate) fn find_field_attr<T: ?Sized>(
 where
     Ident: PartialEq<T>,
 {
-    let syn::Data::Struct(x) = data else {
+    let syn::Data::Struct(ref x) = *data else {
         return Ok(());
     };
 
-    let syn::Fields::Named(n) = &x.fields else {
+    let syn::Fields::Named(ref n) = x.fields else {
         return Ok(());
     };
 

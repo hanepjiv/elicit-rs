@@ -8,7 +8,7 @@
 //  @since 2024/04/10
 //  @date 2025/03/02
 
-#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
+#![cfg_attr(doc, doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md")))]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 pub(crate) mod find_field_attr;
@@ -25,7 +25,7 @@ pub(crate) mod include {
     pub(crate) use quote::{ToTokens, quote};
     pub(crate) use syn::{Error, parse_macro_input};
 
-    pub(crate) type Result<T> = std::result::Result<T, Error>;
+    pub(crate) type Result<T> = core::result::Result<T, Error>;
 
     #[inline]
     pub(crate) fn into_tokens(

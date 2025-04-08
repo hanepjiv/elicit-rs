@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2025/03/02
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,11 +29,11 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
-    pub(super) struct X {}
+    pub(super) struct X;
     // ------------------------------------------------------------------------
     impl Mine for X {
         fn action(&self) -> i32 {
-            0i32
+            0_i32
         }
     }
     // ========================================================================
@@ -69,12 +69,12 @@ fn main() -> elicit::Result<()> {
 
     let mut e: MineElicit;
 
-    e = MineElicit::new(X::default())?;
+    e = MineElicit::new(X)?;
 
     e.try_with(|m| -> elicit::Result<()> {
         println!("{m:?}");
 
-        assert!(m.action() == 0);
+        assert!(m.action() == 0_i32, "default");
 
         Ok(())
     })?;
@@ -85,7 +85,7 @@ fn main() -> elicit::Result<()> {
     e.try_with_mut(|m| -> elicit::Result<()> {
         println!("{m:?}");
 
-        assert!(m.action() == 1);
+        assert!(m.action() == 1_i32, "user defined");
 
         Ok(())
     })?;

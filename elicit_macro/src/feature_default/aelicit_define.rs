@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2024/12/10
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use crate::include::{
-    Ident, ItemTrait, Result, ToTokens, TokenStream2, quote,
+    Ident, ItemTrait, Result, ToTokens as _, TokenStream2, quote,
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -27,7 +27,6 @@ pub(crate) fn expand(
 }
 // ----------------------------------------------------------------------------
 /// fn `quote_define`
-#[allow(clippy::unnecessary_wraps)]
 fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     let inner = quote_inner(&item.ident)?;
     Ok(quote! {
@@ -66,7 +65,11 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
 }
 // ----------------------------------------------------------------------------
 /// fn `quote_inner`
-#[allow(clippy::unnecessary_wraps, clippy::too_many_lines)]
+#[expect(
+    clippy::unnecessary_wraps,
+    clippy::too_many_lines,
+    reason = "checked"
+)]
 fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     let orig = quote! { super::super::#a_orig };
     Ok(quote! {
@@ -287,21 +290,22 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
 }
 // ============================================================================
 #[cfg(test)]
+#[expect(clippy::expect_used, clippy::unwrap_used, reason = "checked")]
 mod tests {
     use super::*;
     use syn::parse2;
     // ========================================================================
     #[test]
     fn test_00() {
-        assert!(
+        drop(
             expand(
                 &parse2(quote!(mod_ident)).expect("parse attr"),
                 parse2(quote!(
                     trait Orig {}
                 ))
-                .expect("parse item")
+                .expect("parse item"),
             )
-            .is_ok()
+            .unwrap(),
         );
     }
 }

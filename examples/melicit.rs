@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2024/12/10
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,11 +29,11 @@ pub(crate) mod mine {
     // ========================================================================
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
-    pub(crate) struct X {}
+    pub(crate) struct X;
     // ------------------------------------------------------------------------
     impl Mine for X {
         fn action(&self) -> i32 {
-            0i32
+            0_i32
         }
     }
     // ========================================================================
@@ -77,7 +77,7 @@ mod error {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// enum Error
-    #[allow(dead_code)]
+    #[expect(dead_code, reason = "checked")]
     #[derive(Debug)]
     pub(crate) enum Error<'a> {
         /// Elicit
@@ -113,18 +113,18 @@ mod error {
         }
     }
     // ========================================================================
-    impl ::std::fmt::Display for Error<'_> {
+    impl ::core::fmt::Display for Error<'_> {
         fn fmt(
             &self,
-            f: &mut ::std::fmt::Formatter<'_>,
-        ) -> ::std::fmt::Result {
+            f: &mut ::core::fmt::Formatter<'_>,
+        ) -> ::core::fmt::Result {
             write!(f, "{self:?}")
         }
     }
     // ========================================================================
-    impl ::std::error::Error for Error<'static> {
+    impl ::core::error::Error for Error<'static> {
         // ====================================================================
-        fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
             match *self {
                 Error::Elicit(ref e) => Some(e),
                 Error::MelicitLock(_) | Error::MelicitTryLock(_) => None,
@@ -134,7 +134,7 @@ mod error {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
     /// type Result
-    pub(crate) type Result<'a, T> = ::std::result::Result<T, Error<'a>>;
+    pub(crate) type Result<'a, T> = ::core::result::Result<T, Error<'a>>;
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -144,11 +144,11 @@ fn main() -> elicit::Result<()> {
 
     let mut e: MineMelicit;
 
-    e = MineMelicit::new(X::default())?;
+    e = MineMelicit::new(X)?;
 
     if let Err(x) = e.with(|m| -> error::Result<'_, ()> {
         println!("{m:?}");
-        assert!(m.action() == 0);
+        assert!(m.action() == 0_i32, "default");
         Ok(())
     }) {
         eprintln!("{x:?}");
@@ -159,7 +159,7 @@ fn main() -> elicit::Result<()> {
 
     if let Err(x) = e.try_with(|m| -> error::Result<'_, ()> {
         println!("{m:?}");
-        assert!(m.action() == 3);
+        assert!(m.action() == 3_i32, "user defined");
         Ok(())
     }) {
         eprintln!("{x:?}");
