@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2025/04/06
+//  @date 2025/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -285,7 +285,7 @@ mod tests {
     use syn::parse2;
     // ========================================================================
     #[test]
-    fn test_00() {
+    fn case_00() {
         drop(
             expand(
                 &parse2(quote!(mod_ident)).expect("parse attr"),

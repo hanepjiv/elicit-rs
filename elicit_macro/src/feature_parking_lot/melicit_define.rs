@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2025/04/06
+//  @date 2025/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -36,7 +36,7 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
 
     mod _common {
     pub use super::_inner::{
-        Melicit, MelicitBase, MelicitFromSelf,
+    Melicit, MelicitBase, MelicitFromSelf,
     };
     }
 
@@ -44,9 +44,9 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     pub mod author {
     pub use super::_common::*;
     pub use super::_inner::{
-        WeakAssign,
-        WeakMelicitInner,
-        MelicitFromSelfField
+    WeakAssign,
+    WeakMelicitInner,
+    MelicitFromSelfField
     };
     }
 
@@ -54,8 +54,8 @@ fn quote_define(mod_ident: &Ident, item: &ItemTrait) -> Result<TokenStream2> {
     pub mod user {
     pub use super::_common::*;
     pub use super::_inner::{
-        WeakMelicit,
-        Guard,
+    WeakMelicit,
+    Guard,
     };
     }
     }
@@ -178,7 +178,7 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     weak: WeakMelicitInner,
     ) -> ElicitResult<()> {
     self._weak.set(weak).map_err(
-        |_| ElicitError::WeakAlreadyExists)
+    |_| ElicitError::WeakAlreadyExists)
     }
     }
     // ////////////////////////////////////////////////////////////////////
@@ -238,9 +238,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     E: From<ElicitError>,
     {
     if let Some(x) = self.try_lock() {
-        f(x.as_ref().get_ref())
+    f(x.as_ref().get_ref())
     } else {
-        Err(ElicitError::WouldBlock.into())
+    Err(ElicitError::WouldBlock.into())
     }
     }
     // ================================================================
@@ -265,9 +265,9 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     E: From<ElicitError>,
     {
     if let Some(mut x) = self.try_lock() {
-        f(x.as_mut().get_mut())
+    f(x.as_mut().get_mut())
     } else {
-        Err(ElicitError::WouldBlock.into())
+    Err(ElicitError::WouldBlock.into())
     }
     }
     }
@@ -281,7 +281,7 @@ mod tests {
     use syn::parse2;
     // ========================================================================
     #[test]
-    fn test_00() {
+    fn case_00() {
         drop(
             expand(
                 &parse2(quote!(mod_ident)).expect("parse attr"),

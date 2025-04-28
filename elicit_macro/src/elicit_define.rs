@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/11
-//  @date 2025/04/06
+//  @date 2025/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -229,11 +229,11 @@ fn quote_inner(a_orig: &Ident) -> Result<TokenStream2> {
     // ================================================================
     /// try_with_mut
     pub fn try_with_mut<T, E>(
-        &self,
-        f: impl FnOnce(&mut dyn ElicitBase
-        ) -> StdResult<T, E>) -> StdResult<T, E>
+    &self,
+    f: impl FnOnce(&mut dyn ElicitBase
+    ) -> StdResult<T, E>) -> StdResult<T, E>
     where
-        E: From<ElicitError>,
+    E: From<ElicitError>,
     {
     f(&mut *self.0.try_borrow_mut().map_err(ElicitError::from)?
       .as_mut())
@@ -249,7 +249,7 @@ mod tests {
     use syn::parse2;
     // ========================================================================
     #[test]
-    fn test_00() {
+    fn case_00() {
         drop(
             expand(
                 &parse2(quote!(mod_ident)).expect("parse attr"),

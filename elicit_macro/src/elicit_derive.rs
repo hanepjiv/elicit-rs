@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2025/04/06
+//  @date 2025/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -99,7 +99,7 @@ mod tests {
     use syn::parse2;
     // ========================================================================
     #[test]
-    fn test_00() {
+    fn case_00() {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
@@ -114,7 +114,7 @@ mod tests {
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_01() {
+    fn case_01() {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
@@ -129,7 +129,7 @@ mod tests {
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_02() {
+    fn case_02() {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
@@ -144,7 +144,7 @@ mod tests {
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_03() {
+    fn case_03() {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
