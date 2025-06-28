@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.4-alpha.3"
+version                 = "0.12.4-alpha.4"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -27,7 +27,7 @@ repository.workspace    = true
 # =============================================================================
 [workspace.package]
 edition                 = "2024"
-rust-version            = "1.86.0"
+rust-version            = "1.88.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
@@ -37,7 +37,7 @@ repository              = "https://github.com/hanepjiv/elicit-rs.git"
 [workspace.dependencies]
 proc-macro2             = { default-features = false, version = "1.0.95" }
 quote                   = { default-features = false, version = "1.0.40" }
-syn                     = { default-features = false, version = "2.0.101" }
+syn                     = { default-features = false, version = "2.0.104" }
 # -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
@@ -62,13 +62,18 @@ path                    = "./elicit_macro"
 optional                = true
 
 default-features        = false
-version                 = "0.12.3"
+version                 = "0.12.4"
 # =============================================================================
 [lints]
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.86.0 (05f9846f8 2025-03-31)
+# rustc 1.88.0 (6b00bc388 2025-06-23)
+
+dead_code = "deny"
+deprecated = "deny"
+trivial_casts = "deny"
+
 absolute_paths_not_starting_with_crate = "forbid"
 ambiguous_negative_literals = "forbid"
 closure_returning_async_block = "forbid"
@@ -136,6 +141,7 @@ coherence_leak_check = "forbid"
 confusable_idents = "forbid"
 const_evaluatable_unchecked = "forbid"
 const_item_mutation = "forbid"
+dangerous_implicit_autorefs = "forbid"
 dangling_pointers_from_temporaries = "forbid"
 dependency_on_unit_never_type_fallback = "forbid"
 deprecated_where_clause_location = "forbid"
@@ -146,7 +152,6 @@ dropping_references = "forbid"
 drop_bounds = "forbid"
 duplicate_macro_attributes = "forbid"
 dyn_drop = "forbid"
-elided_named_lifetimes = "forbid"
 ellipsis_inclusive_range_patterns = "forbid"
 exported_private_dependencies = "forbid"
 forbidden_lint_groups = "forbid"
@@ -211,12 +216,12 @@ ungated_async_fn_track_caller = "forbid"
 uninhabited_static = "forbid"
 unknown_or_malformed_diagnostic_attributes = "forbid"
 unnameable_test_items = "forbid"
+unnecessary_transmutes = "forbid"
 unpredictable_function_pointer_comparisons = "forbid"
 unreachable_code = "forbid"
 unreachable_patterns = "forbid"
 unstable_name_collisions = "forbid"
 unstable_syntax_pre_expansion = "forbid"
-unsupported_fn_ptr_calling_conventions = "forbid"
 unused_allocation = "forbid"
 unused_assignments = "forbid"
 unused_associated_type_bounds = "forbid"
@@ -250,12 +255,12 @@ ineffective_unstable_trait_impl = "forbid"
 invalid_atomic_ordering = "forbid"
 invalid_doc_attributes = "forbid"
 invalid_from_utf8_unchecked = "forbid"
+invalid_null_arguments = "forbid"
 invalid_reference_casting = "forbid"
 invalid_type_param_default = "forbid"
 let_underscore_lock = "forbid"
 long_running_const_eval = "forbid"
 macro_expanded_macro_exports_accessed_by_absolute_paths = "forbid"
-missing_fragment_specifier = "forbid"
 mutable_transmutes = "forbid"
 named_asm_labels = "forbid"
 no_mangle_const_items = "forbid"
@@ -273,7 +278,3 @@ useless_deprecated = "forbid"
 
 renamed_and_removed_lints = "warn"
 unknown_lints = "warn"
-
-dead_code = "deny"
-deprecated = "deny"
-trivial_casts = "deny"
