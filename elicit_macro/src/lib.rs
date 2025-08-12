@@ -6,9 +6,10 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2025/03/02
+//  @date 2025/07/28
 
-#![cfg_attr(doc, doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md")))]
+#![cfg_attr(doc, doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"),
+                                            "/README.md")))]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 pub(crate) mod find_field_attr;
