@@ -1,8 +1,9 @@
+
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.4-alpha.5"
+version                 = "0.12.4-alpha.6"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -27,7 +28,7 @@ repository.workspace    = true
 # =============================================================================
 [workspace.package]
 edition                 = "2024"
-rust-version            = "1.89.0"
+rust-version            = "1.85.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
@@ -35,9 +36,9 @@ homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-proc-macro2             = { default-features = false, version = "1.0.97" }
+proc-macro2             = { default-features = false, version = "1.0.101" }
 quote                   = { default-features = false, version = "1.0.40" }
-syn                     = { default-features = false, version = "2.0.104" }
+syn                     = { default-features = false, version = "2.0.106" }
 # -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
@@ -68,8 +69,7 @@ version                 = "0.12.4"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.89.0 (29483883e 2025-08-04)
-
+# rustc 1.90.0 (1159e78c4 2025-09-14)
 dead_code = "deny"
 deprecated = "deny"
 trivial_casts = "deny"
@@ -126,7 +126,6 @@ unused_qualifications = "forbid"
 unused_results = "forbid"
 variant_size_differences = "forbid"
 aarch64_softfloat_neon = "forbid"
-ambiguous_glob_imports = "forbid"
 ambiguous_glob_reexports = "forbid"
 ambiguous_wide_pointer_comparisons = "forbid"
 anonymous_parameters = "forbid"
@@ -173,8 +172,11 @@ irrefutable_let_patterns = "forbid"
 large_assignments = "forbid"
 late_bound_lifetime_arguments = "forbid"
 legacy_derive_helpers = "forbid"
+malformed_diagnostic_attributes = "forbid"
+malformed_diagnostic_format_literals = "forbid"
 map_unit_fn = "forbid"
 mismatched_lifetime_syntaxes = "forbid"
+misplaced_diagnostic_attributes = "forbid"
 missing_abi = "forbid"
 mixed_script_confusables = "forbid"
 named_arguments_used_positionally = "forbid"
@@ -215,7 +217,7 @@ unexpected_cfgs = "forbid"
 unfulfilled_lint_expectations = "forbid"
 ungated_async_fn_track_caller = "forbid"
 uninhabited_static = "forbid"
-unknown_or_malformed_diagnostic_attributes = {level = "forbid", priority = -1}
+unknown_diagnostic_attributes = "forbid"
 unnameable_test_items = "forbid"
 unnecessary_transmutes = "forbid"
 unpredictable_function_pointer_comparisons = "forbid"
@@ -244,6 +246,7 @@ useless_ptr_null_checks = "forbid"
 uses_power_alignment = "forbid"
 while_true = "forbid"
 ambiguous_associated_items = "forbid"
+ambiguous_glob_imports = "forbid"
 arithmetic_overflow = "forbid"
 binary_asm_labels = "forbid"
 bindings_with_variant_name = "forbid"
@@ -279,5 +282,5 @@ undropped_manually_drops = "forbid"
 unknown_crate_types = "forbid"
 useless_deprecated = "forbid"
 
-renamed_and_removed_lints = "deny"
-unknown_lints = "deny"
+renamed_and_removed_lints = "warn"
+unknown_lints = "warn"
