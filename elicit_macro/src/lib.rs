@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2025/07/28
+//  @date 2025/11/17
 
 #![cfg_attr(doc, doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"),
                                             "/README.md")))]
@@ -68,6 +68,7 @@ use proc_macro::TokenStream;
 /// ```
 ///
 #[proc_macro_attribute]
+#[inline]
 pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     into_tokens(elicit_define::expand(
         &parse_macro_input!(attr as Ident),
@@ -90,6 +91,7 @@ pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     Elicit,
     attributes(elicit_mod_author, elicit_from_self_field)
 )]
+#[inline]
 pub fn on_elicit_derive(ts: TokenStream) -> TokenStream {
     into_tokens(elicit_derive::expand(parse_macro_input!(ts as DeriveInput)))
 }
@@ -102,6 +104,7 @@ pub fn on_elicit_derive(ts: TokenStream) -> TokenStream {
 /// ```
 ///
 #[proc_macro_attribute]
+#[inline]
 pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     into_tokens(aelicit_define::expand(
         &parse_macro_input!(attr as Ident),
@@ -124,6 +127,7 @@ pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     Aelicit,
     attributes(aelicit_mod_author, aelicit_from_self_field)
 )]
+#[inline]
 pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
     into_tokens(aelicit_derive::expand(parse_macro_input!(
         ts as DeriveInput
@@ -138,6 +142,7 @@ pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
 /// ```
 ///
 #[proc_macro_attribute]
+#[inline]
 pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     into_tokens(melicit_define::expand(
         &parse_macro_input!(attr as Ident),
@@ -160,6 +165,7 @@ pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     Melicit,
     attributes(melicit_mod_author, melicit_from_self_field)
 )]
+#[inline]
 pub fn on_melicit_derive(ts: TokenStream) -> TokenStream {
     into_tokens(melicit_derive::expand(parse_macro_input!(
         ts as DeriveInput
