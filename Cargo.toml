@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.4"
+version                 = "0.12.5-alpha.0"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -55,7 +55,7 @@ parking_lot             = [ "elicit_macro/parking_lot", "dep:parking_lot" ]
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "0.2.7"
+version                 = "0.2.8"
 path                    = "./elicit_macro"
 # -----------------------------------------------------------------------------
 [dependencies.parking_lot]

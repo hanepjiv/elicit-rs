@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit_macro"
-version                 = "0.2.7"
+version                 = "0.2.8"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
