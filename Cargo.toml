@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.5-alpha.2"
+version                 = "0.12.5-alpha.3"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -27,7 +27,7 @@ repository.workspace    = true
 # =============================================================================
 [workspace.package]
 edition                 = "2024"
-rust-version            = "1.86.0"
+rust-version            = "1.87.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
