@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.5-alpha.1"
+version                 = "0.12.5-alpha.2"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
@@ -35,8 +35,8 @@ homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-proc-macro2             = { default-features = false, version = "1.0.105" }
-quote                   = { default-features = false, version = "1.0.43" }
+proc-macro2             = { default-features = false, version = "1.0.106" }
+quote                   = { default-features = false, version = "1.0.44" }
 syn                     = { default-features = false, version = "2.0.114" }
 # -----------------------------------------------------------------------------
 [workspace]
