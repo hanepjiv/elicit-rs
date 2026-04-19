@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2025/04/28
+//  @date 2026/03/29
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -74,20 +74,20 @@ struct Derived {}
     Ok(quote! {
     #[automatically_derived]
     impl #aelicit_mod_author :: AelicitFromSelf for #ident {
-    fn aelicit_from_self(&self) ->
-    Option<#aelicit_mod_author :: Aelicit> {
-    #aelicit_impl
-    }
+        fn aelicit_from_self(&self) ->
+        Option<#aelicit_mod_author :: Aelicit> {
+            #aelicit_impl
+        }
     }
 
     #[automatically_derived]
     impl #aelicit_mod_author :: WeakAssign for #ident {
-    fn _weak_assign(
-    &mut self,
-    _weak: #aelicit_mod_author :: WeakAelicitInner,
-    ) -> elicit::Result<()> {
-    #_weak_assign_impl
-    }
+        fn _weak_assign(
+        &mut self,
+        _weak: #aelicit_mod_author :: WeakAelicitInner,
+        ) -> elicit::Result<()> {
+        #_weak_assign_impl
+        }
     }
     })
 }
@@ -103,9 +103,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[aelicit_mod_author(ident_mod)]
-                #[aelicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[aelicit_mod_author(ident_mod)]
+                    #[aelicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -118,9 +118,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[aelicit_mod_author(ident_mod)]
-                #[aelicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[aelicit_mod_author(ident_mod)]
+                    #[aelicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -133,9 +133,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[aelicit_mod_author(ident_mod)]
-                // #[aelicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[aelicit_mod_author(ident_mod)]
+                    // #[aelicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -148,9 +148,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[aelicit_mod_author(ident_mod)]
-                // #[aelicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[aelicit_mod_author(ident_mod)]
+                    // #[aelicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
