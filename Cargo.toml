@@ -2,16 +2,17 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.4"
+version                 = "0.13.0"
 publish                 = true
 
 description             = "SmartPointer-like structure for polymorphism."
-keywords                = ["utility"]
-categories              = ["rust-patterns"]
+keywords                = [ "utility", ]
+categories              = [ "rust-patterns", ]
 readme                  = "README.md"
 
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
+                            "CHANGELOG.md",
                             "README.md",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
@@ -22,7 +23,6 @@ rust-version.workspace  = true
 authors.workspace       = true
 license.workspace       = true
 documentation.workspace = true
-homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
@@ -31,13 +31,12 @@ rust-version            = "1.85.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
-homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-proc-macro2             = { default-features = false, version = "1.0.103" }
-quote                   = { default-features = false, version = "1.0.42" }
-syn                     = { default-features = false, version = "2.0.110" }
+proc-macro2             = { default-features = false, version = "1.0.107" }
+quote                   = { default-features = false, version = "1.0.47" }
+syn                     = { default-features = false, version = "3.0.6" }
 # -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
@@ -55,7 +54,7 @@ parking_lot             = [ "elicit_macro/parking_lot", "dep:parking_lot" ]
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "0.2.7"
+version                 = "0.13.0"
 path                    = "./elicit_macro"
 # -----------------------------------------------------------------------------
 [dependencies.parking_lot]

@@ -1,12 +1,12 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! `elicit_derive.rs`
+//! `elicit_derive.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2025/04/28
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,7 +18,7 @@ use crate::include::{
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// fn expand
+/// fn expand.
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut elicit_mod_author = Option::<TokenStream2>::default();
     let mut elicit_from_self_field = Option::<TokenStream2>::default();
@@ -103,9 +103,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[elicit_mod_author(ident_mod)]
-                #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[elicit_mod_author(ident_mod)]
+                    #[elicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -118,9 +118,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[elicit_mod_author(ident_mod)]
-                #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[elicit_mod_author(ident_mod)]
+                    #[elicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -133,9 +133,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[elicit_mod_author(ident_mod)]
-                // #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[elicit_mod_author(ident_mod)]
+                    // #[elicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -148,9 +148,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[elicit_mod_author(ident_mod)]
-                // #[elicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[elicit_mod_author(ident_mod)]
+                    // #[elicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )

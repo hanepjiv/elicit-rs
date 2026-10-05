@@ -1,12 +1,12 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! melicit.rs
+//! melicit.rs.
 
 //  Copyright 2017 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2025/04/06
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,17 +16,21 @@ use elicit_macro as _;
 use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// mod Mine.
 pub(crate) mod mine {
     use elicit::{Melicit, melicit_define};
     // ========================================================================
+    /// trait Mine.
     #[melicit_define(mine_melicit)]
     pub(crate) trait Mine: Send {
+        /// fn action.
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
     // pub(crate) mine_melicit::author as melicit_author;
     pub(crate) use mine_melicit::user as melicit_user;
     // ========================================================================
+    /// struct X.
     #[derive(Debug, Default, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
     pub(crate) struct X;
@@ -37,16 +41,20 @@ pub(crate) mod mine {
         }
     }
     // ========================================================================
+    /// struct Y.
     #[derive(Debug, Clone, Melicit)]
     #[melicit_mod_author(mine_melicit::author)]
     // #[melicit_from_self_field(_fsf)] here
     pub(crate) struct Y {
+        /// _fsf.
         #[melicit_from_self_field] // or here
         _fsf: mine_melicit::author::MelicitFromSelfField,
+        /// i.
         i: i32,
     }
     // ------------------------------------------------------------------------
     impl Y {
+        /// fn new.
         pub(crate) fn new(a: i32) -> Self {
             Self {
                 _fsf: mine_melicit::author::MelicitFromSelfField::default(),
@@ -64,11 +72,14 @@ pub(crate) mod mine {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(feature = "parking_lot")]
+/// mod error.
 mod error {
+    /// type Result.
     pub(crate) type Result<'a, T> = elicit::Result<T>;
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
+/// mod error.
 mod error {
     use super::mine::melicit_user::{
         Guard as MelicitGuard, LockError as MelicitLockError,
@@ -76,16 +87,16 @@ mod error {
     };
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
-    /// enum Error
+    /// enum Error.
     #[expect(dead_code, reason = "checked")]
     #[derive(Debug)]
     pub(crate) enum Error<'a> {
-        /// Elicit
+        /// Elicit.
         Elicit(elicit::Error),
 
-        /// `MelicitLock`
+        /// `MelicitLock`.
         MelicitLock(MelicitLockError<MelicitGuard<'a>>),
-        /// `MelicitTryLock`
+        /// `MelicitTryLock`.
         MelicitTryLock(MelicitTryLockError<MelicitGuard<'a>>),
     }
     // ========================================================================
@@ -133,7 +144,7 @@ mod error {
     }
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
-    /// type Result
+    /// type Result.
     pub(crate) type Result<'a, T> = ::core::result::Result<T, Error<'a>>;
 }
 // ////////////////////////////////////////////////////////////////////////////

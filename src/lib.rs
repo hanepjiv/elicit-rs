@@ -1,12 +1,12 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! lib.rs
+//! lib.rs.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/08
-//  @date 2025/09/20
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================

@@ -1,15 +1,15 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! `melicit_derive.rs`
+//! `melicit_derive.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2025/04/28
+//  @date 2026/03/29
 
 // ////////////////////////////////////////////////////////////////////////////
-// use  =======================================================================
+// use	=======================================================================
 use crate::include::{
     DeriveInput, Error, Ident, Result, Span, ToTokens as _, TokenStream2,
     quote,
@@ -18,7 +18,7 @@ use crate::include::{
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// fn expand
+/// fn expand.
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut melicit_mod_author = Option::<TokenStream2>::default();
     let mut melicit_from_self_field = Option::<TokenStream2>::default();
@@ -76,7 +76,7 @@ struct Derived{}
     impl #melicit_mod_author :: MelicitFromSelf for #ident {
     fn melicit_from_self(&self) ->
     Option<#melicit_mod_author :: Melicit> {
-    #melicit_impl
+        #melicit_impl
     }
     }
 
@@ -84,7 +84,7 @@ struct Derived{}
     impl #melicit_mod_author :: WeakAssign for #ident {
     fn _weak_assign(
     &mut self,
-    _weak:      #melicit_mod_author :: WeakMelicitInner,
+    _weak:	#melicit_mod_author :: WeakMelicitInner,
     ) -> elicit::Result<()> {
     #_weak_assign_impl
     }
@@ -103,9 +103,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[melicit_mod_author(ident_mod)]
-                #[melicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[melicit_mod_author(ident_mod)]
+                    #[melicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -118,9 +118,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[melicit_mod_author(ident_mod)]
-                #[melicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[melicit_mod_author(ident_mod)]
+                    #[melicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -133,9 +133,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                #[melicit_mod_author(ident_mod)]
-                // #[melicit_from_self_field(ident_field)]
-                struct Orig {}
+                    #[melicit_mod_author(ident_mod)]
+                    // #[melicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )
@@ -148,9 +148,9 @@ mod tests {
         drop(
             expand(
                 parse2::<DeriveInput>(quote! {
-                // #[melicit_mod_author(ident_mod)]
-                // #[melicit_from_self_field(ident_field)]
-                struct Orig {}
+                    // #[melicit_mod_author(ident_mod)]
+                    // #[melicit_from_self_field(ident_field)]
+                    struct Orig {}
                 })
                 .expect("parse"),
             )

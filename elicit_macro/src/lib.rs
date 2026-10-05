@@ -1,12 +1,12 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! lib.rs
+//! lib.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/10
-//  @date 2025/11/17
+//  @date 2026/10/04
 
 #![cfg_attr(doc, doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"),
                                             "/README.md")))]
@@ -14,20 +14,20 @@
 // mod  =======================================================================
 pub(crate) mod find_field_attr;
 // ============================================================================
-///
-/// mod include
+/// mod include.
 ///
 /// `proc_macro::TokenStream` is not included in `crate::include` to suppress
 /// "procedural macro API is used outside of a procedural macro".
-///
 pub(crate) mod include {
     // common  ----------------------------------------------------------------
     pub(crate) use proc_macro2::{Span, TokenStream as TokenStream2};
     pub(crate) use quote::{ToTokens, quote};
     pub(crate) use syn::{Error, parse_macro_input};
 
+    /// Result.
     pub(crate) type Result<T> = core::result::Result<T, Error>;
 
+    /// fn `into_tokens`.
     #[inline]
     pub(crate) fn into_tokens(
         res: Result<TokenStream2>,
@@ -61,12 +61,12 @@ use crate::include::{
 use proc_macro::TokenStream;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// fn `elicit_define`.
 ///
 /// ```compile_fail
 /// #[elicit_define(MODULE)]
 /// trait Base {..}
 /// ```
-///
 #[proc_macro_attribute]
 #[inline]
 pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -76,6 +76,7 @@ pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     ))
 }
 // ============================================================================
+/// fn `on_elicit_derive`.
 ///
 /// ```compile_fail
 /// #[derive(Debug, Elicit)]
@@ -86,7 +87,6 @@ pub fn elicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///   _fsf: ElicitFromSelfField,
 /// }
 /// ```
-///
 #[proc_macro_derive(
     Elicit,
     attributes(elicit_mod_author, elicit_from_self_field)
@@ -97,12 +97,12 @@ pub fn on_elicit_derive(ts: TokenStream) -> TokenStream {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// fn `aelicit_define`.
 ///
 /// ```compile_fail
 /// #[aelicit_define(MODULE)]
 /// trait Base {..}
 /// ```
-///
 #[proc_macro_attribute]
 #[inline]
 pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -112,6 +112,7 @@ pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     ))
 }
 // ============================================================================
+/// fn `on_aelicit_defive`.
 ///
 /// ```compile_fail
 /// #[derive(Debug, Aelicit)]
@@ -122,7 +123,6 @@ pub fn aelicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///   _fsf: AelicitFromSelfField,
 /// }
 /// ```
-///
 #[proc_macro_derive(
     Aelicit,
     attributes(aelicit_mod_author, aelicit_from_self_field)
@@ -135,12 +135,12 @@ pub fn on_aelicit_derive(ts: TokenStream) -> TokenStream {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// fn `melicit_define`.
 ///
 /// ```compile_fail
 /// #[melicit_define(MODULE)]
 /// trait Base {..}
 /// ```
-///
 #[proc_macro_attribute]
 #[inline]
 pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -150,6 +150,7 @@ pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
     ))
 }
 // ============================================================================
+/// fn `on_melicit_derive`.
 ///
 /// ```compile_fail
 /// #[derive(Debug, Melicit)]
@@ -160,7 +161,6 @@ pub fn melicit_define(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///   _fsf: MelicitFromSelfField,
 /// }
 /// ```
-///
 #[proc_macro_derive(
     Melicit,
     attributes(melicit_mod_author, melicit_from_self_field)

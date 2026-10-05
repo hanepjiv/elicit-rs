@@ -1,6 +1,6 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! `feature_parking_rot.rs`
+//! `feature_parking_rot.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -9,6 +9,6 @@
 //  @date 2024/12/10
 
 // ////////////////////////////////////////////////////////////////////////////
-// mod  =======================================================================
+// mod	=======================================================================
 pub(crate) mod aelicit_define;
 pub(crate) mod melicit_define;

@@ -1,12 +1,12 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
-//! aelicit.rs
+//! aelicit.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2025/04/06
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,37 +16,46 @@ use elicit_macro as _;
 use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// mine
+/// mod mine.
 pub(crate) mod mine {
     use elicit::{Aelicit, aelicit_define};
+    // ========================================================================
+    /// trait Mine.
     #[aelicit_define(mine_aelicit)]
     pub(super) trait Mine: Send + Sync {
+        /// fn action.
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
     // pub(crate) use mine_aelicit::author as aelicit_author;
     pub(crate) use mine_aelicit::user as aelicit_user;
     // ========================================================================
+    /// struct X.
     #[derive(Debug, Default, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
     pub(crate) struct X;
     // ------------------------------------------------------------------------
     impl Mine for X {
+        /// fn action.
         fn action(&self) -> i32 {
             0_i32
         }
     }
     // ========================================================================
+    /// struct Y.
     #[derive(Debug, Clone, Aelicit)]
     #[aelicit_mod_author(mine_aelicit::author)]
     //#[aelicit_from_self_field(_fsf)] // here
     pub(crate) struct Y {
+        /// _fsf.
         #[aelicit_from_self_field] // or here
         _fsf: mine_aelicit::author::AelicitFromSelfField,
+        /// i.
         i: i32,
     }
     // ------------------------------------------------------------------------
     impl Y {
+        /// fn new.
         pub(crate) fn new(a: i32) -> Self {
             Self {
                 _fsf: mine_aelicit::author::AelicitFromSelfField::default(),
@@ -64,13 +73,14 @@ pub(crate) mod mine {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(feature = "parking_lot")]
-/// error
+/// mod error.
 pub(crate) mod error {
+    /// type Result.
     pub(crate) type Result<'a, T> = elicit::Result<T>;
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
-/// error
+/// mod error.
 pub(crate) mod error {
     use crate::mine::aelicit_user::{
         LockError as AelicitLockError, ReadGuard as AelicitReadGuard,
@@ -78,20 +88,20 @@ pub(crate) mod error {
     };
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
-    /// enum Error
+    /// enum Error.
     #[expect(dead_code, reason = "checked")]
     #[derive(Debug)]
     pub(crate) enum Error<'a> {
-        /// Elicit
+        /// Elicit.
         Elicit(elicit::Error),
 
-        /// `AelicitLockRead`
+        /// `AelicitLockRead`.
         AelicitLockRead(AelicitLockError<AelicitReadGuard<'a>>),
-        /// `AelicitLockWrite`
+        /// `AelicitLockWrite`.
         AelicitLockWrite(AelicitLockError<AelicitWriteGuard<'a>>),
-        /// `AelicitTryLockRead`
+        /// `AelicitTryLockRead`.
         AelicitTryLockRead(AelicitTryLockError<AelicitReadGuard<'a>>),
-        /// `AelicitTryLockWrite`
+        /// `AelicitTryLockWrite`.
         AelicitTryLockWrite(AelicitTryLockError<AelicitWriteGuard<'a>>),
     }
     // ========================================================================
@@ -160,7 +170,7 @@ pub(crate) mod error {
     }
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
-    /// type Result
+    /// type Result.
     pub(crate) type Result<'a, T> = ::core::result::Result<T, Error<'a>>;
 }
 // ////////////////////////////////////////////////////////////////////////////
