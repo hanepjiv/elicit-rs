@@ -1,29 +1,29 @@
 // -*- coding:utf-8-unix; -*-
 
-//! error.rs
+//! error.rs.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/12/31
-//  @date 2026/05/16
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use core::{error::Error as StdError, fmt::Display};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum Error
+/// enum Error.
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum Error {
-    /// `WouldBlock`,
+    /// `WouldBlock`.
     WouldBlock,
-    /// `WeakAlreadyExists`
+    /// `WeakAlreadyExists`.
     WeakAlreadyExists,
-    /// Borrow
+    /// Borrow.
     Borrow(core::cell::BorrowError),
-    /// `BorrowMut`
+    /// `BorrowMut`.
     BorrowMut(core::cell::BorrowMutError),
 }
 // ============================================================================
@@ -60,7 +60,7 @@ impl StdError for Error {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type `Result<T>`
+/// type `Result<T>`.
 pub type Result<T> = core::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================

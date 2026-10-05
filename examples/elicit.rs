@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! elicit.rs
+//! elicit.rs.
 
 //  Copyright 2017 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/13
-//  @date 2026/05/16
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,17 +16,21 @@ use elicit_macro as _;
 use parking_lot as _;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// mod mine.
 pub(crate) mod mine {
     use elicit::{Elicit, elicit_define};
     // ========================================================================
+    /// trait Mine.
     #[elicit_define(mine_elicit)]
     pub(super) trait Mine {
+        /// fn action.
         fn action(&self) -> i32;
     }
     // ------------------------------------------------------------------------
     // pub(super) mine_elicit::author as elicit_author;
     pub(super) use mine_elicit::user as elicit_user;
     // ========================================================================
+    /// struct X.
     #[derive(Debug, Default, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     pub(super) struct X;
@@ -37,16 +41,20 @@ pub(crate) mod mine {
         }
     }
     // ========================================================================
+    /// struct Y.
     #[derive(Debug, Clone, Elicit)]
     #[elicit_mod_author(mine_elicit::author)]
     // #[elicit_from_self_field(_fsf)] // here
     pub(super) struct Y {
         #[elicit_from_self_field] // or here
+        /// _fsf.
         _fsf: mine_elicit::author::ElicitFromSelfField,
+        /// i.
         i: i32,
     }
     // ------------------------------------------------------------------------
     impl Y {
+        /// fn new.
         pub(super) fn new(a: i32) -> Self {
             Self {
                 _fsf: mine_elicit::author::ElicitFromSelfField::default(),

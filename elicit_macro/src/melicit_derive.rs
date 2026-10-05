@@ -1,6 +1,6 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `melicit_derive.rs`
+//! `melicit_derive.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -9,7 +9,7 @@
 //  @date 2026/03/29
 
 // ////////////////////////////////////////////////////////////////////////////
-// use  =======================================================================
+// use	=======================================================================
 use crate::include::{
     DeriveInput, Error, Ident, Result, Span, ToTokens as _, TokenStream2,
     quote,
@@ -18,7 +18,7 @@ use crate::include::{
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// fn expand
+/// fn expand.
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut melicit_mod_author = Option::<TokenStream2>::default();
     let mut melicit_from_self_field = Option::<TokenStream2>::default();
@@ -74,20 +74,20 @@ struct Derived{}
     Ok(quote! {
     #[automatically_derived]
     impl #melicit_mod_author :: MelicitFromSelf for #ident {
-        fn melicit_from_self(&self) ->
-        Option<#melicit_mod_author :: Melicit> {
-            #melicit_impl
-        }
+    fn melicit_from_self(&self) ->
+    Option<#melicit_mod_author :: Melicit> {
+        #melicit_impl
+    }
     }
 
     #[automatically_derived]
     impl #melicit_mod_author :: WeakAssign for #ident {
-        fn _weak_assign(
-        &mut self,
-        _weak:  #melicit_mod_author :: WeakMelicitInner,
-        ) -> elicit::Result<()> {
-        #_weak_assign_impl
-        }
+    fn _weak_assign(
+    &mut self,
+    _weak:	#melicit_mod_author :: WeakMelicitInner,
+    ) -> elicit::Result<()> {
+    #_weak_assign_impl
+    }
     }
     })
 }

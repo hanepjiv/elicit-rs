@@ -2,16 +2,17 @@
 # =============================================================================
 [package]
 name                    = "elicit"
-version                 = "0.12.5-alpha.5"
+version                 = "0.13.0-alpha.0"
 publish                 = false
 
 description             = "SmartPointer-like structure for polymorphism."
-keywords                = ["utility"]
-categories              = ["rust-patterns"]
+keywords                = [ "utility", ]
+categories              = [ "rust-patterns", ]
 readme                  = "README.md"
 
 include                 = [ "Cargo.toml",
                             "src/**/*.rs",
+                            "CHANGELOG.md",
                             "README.md",
                             "LICENSE-APACHE-2.0",
                             "LICENSE-MIT"
@@ -22,22 +23,20 @@ rust-version.workspace  = true
 authors.workspace       = true
 license.workspace       = true
 documentation.workspace = true
-homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
 edition                 = "2024"
-rust-version            = "1.87.0"
+rust-version            = "1.85.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/elicit/"
-homepage                = "https://github.com/hanepjiv/elicit-rs"
 repository              = "https://github.com/hanepjiv/elicit-rs.git"
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-proc-macro2             = { default-features = false, version = "1.0.106" }
-quote                   = { default-features = false, version = "1.0.46" }
-syn                     = { default-features = false, version = "2.0.118" }
+proc-macro2             = { default-features = false, version = "1.0.107" }
+quote                   = { default-features = false, version = "1.0.47" }
+syn                     = { default-features = false, version = "3.0.6" }
 # -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
@@ -55,7 +54,7 @@ parking_lot             = [ "elicit_macro/parking_lot", "dep:parking_lot" ]
 # -----------------------------------------------------------------------------
 [dependencies.elicit_macro]
 default-features        = false
-version                 = "0.2.8"
+version                 = "0.13.0"
 path                    = "./elicit_macro"
 # -----------------------------------------------------------------------------
 [dependencies.parking_lot]
@@ -68,7 +67,7 @@ version                 = "0.12.5"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.97.1 (8bab26f4f 2026-07-14)
+# rustc 1.99.0 (b940084d7 2026-09-28)
 
 dead_code_pub_in_binary = "warn"
 
@@ -87,15 +86,14 @@ edition_2024_expr_fragment_specifier = "forbid"
 elided_lifetimes_in_paths = "forbid"
 explicit_outlives_requirements = "forbid"
 ffi_unwind_calls = "forbid"
-fuzzy_provenance_casts = "forbid"
 if_let_rescope = "forbid"
+implicit_provenance_casts = "forbid"
 impl_trait_overcaptures = "forbid"
 impl_trait_redundant_captures = "forbid"
 keyword_idents_2018 = "forbid"
 keyword_idents_2024 = "forbid"
 let_underscore_drop = "forbid"
 linker_info = "forbid"
-lossy_provenance_casts = "forbid"
 macro_use_extern_crate = "forbid"
 meta_variable_misuse = "forbid"
 missing_copy_implementations = "forbid"
@@ -106,6 +104,7 @@ multiple_supertrait_upcastable = "forbid"
 must_not_suspend = "forbid"
 non_ascii_idents = "forbid"
 non_exhaustive_omitted_patterns = "forbid"
+raw_borrows_via_references = "forbid"
 redundant_imports = "forbid"
 redundant_lifetimes = "forbid"
 resolving_to_items_shadowing_supertrait_items = "forbid"
@@ -157,6 +156,7 @@ confusable_idents = "forbid"
 const_evaluatable_unchecked = "forbid"
 const_item_interior_mutations = "forbid"
 const_item_mutation = "forbid"
+c_void_returns = "forbid"
 dangling_pointers_from_locals = "forbid"
 dangling_pointers_from_temporaries = "forbid"
 deprecated_where_clause_location = "forbid"
@@ -193,8 +193,10 @@ large_assignments = "forbid"
 late_bound_lifetime_arguments = "forbid"
 linker_messages = "forbid"
 malformed_diagnostic_attributes = "forbid"
+malformed_diagnostic_filters = "forbid"
 malformed_diagnostic_format_literals = "forbid"
 map_unit_fn = "forbid"
+method_call_on_diverging_infer_var = "forbid"
 mismatched_lifetime_syntaxes = "forbid"
 misplaced_diagnostic_attributes = "forbid"
 missing_abi = "forbid"
@@ -209,23 +211,25 @@ non_shorthand_field_patterns = "forbid"
 non_snake_case = "forbid"
 non_upper_case_globals = "forbid"
 noop_method_call = "forbid"
-no_mangle_generic_items = "forbid"
 opaque_hidden_inferred_bound = "forbid"
 overlapping_range_endpoints = "forbid"
 path_statements = "forbid"
 private_bounds = "forbid"
 private_interfaces = "forbid"
 ptr_to_integer_transmute_in_consts = "forbid"
+recursion_depth_exceeding_limit = "forbid"
 redundant_semicolons = "forbid"
 refining_impl_trait_internal = "forbid"
 refining_impl_trait_reachable = "forbid"
 repr_c_enums_larger_than_int = "forbid"
 rtsan_nonblocking_async = "forbid"
 self_constructor_from_outer_item = "forbid"
+semicolon_in_expressions_from_non_local_macros = "forbid"
 special_module_name = "forbid"
 stable_features = "forbid"
 static_mut_refs = "forbid"
 suspicious_double_ref_op = "forbid"
+suspicious_runtime_symbol_definitions = "forbid"
 tail_call_track_caller = "forbid"
 trivial_bounds = "forbid"
 type_alias_bounds = "forbid"
@@ -277,7 +281,7 @@ default_overrides_default_fields = "forbid"
 dependency_on_unit_never_type_fallback = "forbid"
 deref_nullptr = "forbid"
 duplicate_features = "forbid"
-elided_lifetimes_in_associated_constant = "forbid"
+duplicate_tools = "forbid"
 enum_intrinsics_non_enums = "forbid"
 explicit_builtin_cfgs_in_flags = "forbid"
 ill_formed_attribute_input = "forbid"
@@ -288,6 +292,7 @@ invalid_from_utf8_unchecked = "forbid"
 invalid_macro_export_arguments = "forbid"
 invalid_null_arguments = "forbid"
 invalid_reference_casting = "forbid"
+invalid_runtime_symbol_definitions = "forbid"
 invalid_type_param_default = "forbid"
 legacy_derive_helpers = "forbid"
 let_underscore_lock = "forbid"
@@ -302,7 +307,6 @@ overflowing_literals = "forbid"
 patterns_in_fns_without_body = "forbid"
 proc_macro_derive_resolution_fallback = "forbid"
 pub_use_of_private_extern_crate = "forbid"
-repr_transparent_non_zst_fields = "forbid"
 semicolon_in_expressions_from_macros = "forbid"
 test_unstable_lint = "forbid"
 text_direction_codepoint_in_comment = "forbid"

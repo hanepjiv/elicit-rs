@@ -1,18 +1,19 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `find_field_attr.rs`
+//! `find_field_attr.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/17
-//  @date 2026/05/16
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 use crate::include::{
     Error, Ident, Result, Span, ToTokens as _, TokenStream2,
 };
 // use  =======================================================================
+/// fn `find_field_attr`.
 #[expect(clippy::unwrap_used, reason = "checked")]
 pub(crate) fn find_field_attr<T>(
     data: &syn::Data,

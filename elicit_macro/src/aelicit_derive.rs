@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `aelicit_derive.rs`
+//! `aelicit_derive.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/14
-//  @date 2026/03/29
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,7 +18,8 @@ use crate::include::{
 use crate::find_field_attr::find_field_attr;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// fn expand
+/// fn expand.
+#[rustfmt::skip]
 pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     let mut aelicit_mod_author = Option::<TokenStream2>::default();
     let mut aelicit_from_self_field = Option::<TokenStream2>::default();
@@ -54,7 +55,8 @@ pub(crate) fn expand(ast: DeriveInput) -> Result<TokenStream2> {
     if aelicit_mod_author.is_none() {
         return Err(Error::new(
             Span::call_site(),
-            "#[derive(Debug, Aelicit)]
+            "
+#[derive(Debug, Aelicit)]
 #[aelicit_mod_author(AELICIT_MOD_AUTHOR)] // This attribute is necessary.
 struct Derived {}
 ",
@@ -72,23 +74,23 @@ struct Derived {}
     );
 
     Ok(quote! {
-    #[automatically_derived]
-    impl #aelicit_mod_author :: AelicitFromSelf for #ident {
-        fn aelicit_from_self(&self) ->
-        Option<#aelicit_mod_author :: Aelicit> {
-            #aelicit_impl
+        #[automatically_derived]
+        impl #aelicit_mod_author :: AelicitFromSelf for #ident {
+            fn aelicit_from_self(&self) ->
+                Option<#aelicit_mod_author :: Aelicit> {
+                    #aelicit_impl
+                }
         }
-    }
 
-    #[automatically_derived]
-    impl #aelicit_mod_author :: WeakAssign for #ident {
-        fn _weak_assign(
-        &mut self,
-        _weak: #aelicit_mod_author :: WeakAelicitInner,
-        ) -> elicit::Result<()> {
-        #_weak_assign_impl
+        #[automatically_derived]
+        impl #aelicit_mod_author :: WeakAssign for #ident {
+            fn _weak_assign(
+                &mut self,
+                _weak: #aelicit_mod_author :: WeakAelicitInner,
+            ) -> elicit::Result<()> {
+                #_weak_assign_impl
+            }
         }
-    }
     })
 }
 // ============================================================================
